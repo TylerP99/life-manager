@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const UserController = require("../controllers/user-controller");
+
 // Sign up page
 router.get("/signup", UserController.get_signup_page);
 

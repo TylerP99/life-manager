@@ -40,3 +40,7 @@ const GoalSchema = new mongoose.Schema({
         required: true
     }
 },{timestamps:true});
+
+const Goal = mongoose.model("Goal", GoalSchema);
+
+module.exports = Goal;

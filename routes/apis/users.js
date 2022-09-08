@@ -38,7 +38,7 @@ router.get("/signout", UserController.get_signout_page);
 router.post("/signout", UserController.signout_user);
 
 // User settings
-router.get("/settings", UserController.get_signout_page);
+router.get("/settings", UserController.get_settings_page);
 
 // Change user information
 router.put("/settings/edit", UserController.change_user_info);

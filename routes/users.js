@@ -44,3 +44,5 @@ router.get("/settings", UserController.get_settings_page);
 
 // Change user information
 router.put("/settings/edit", UserController.change_user_info);
+
+module.exports = router;

@@ -40,8 +40,9 @@ app.use(flash());
 
 
 // Routes
+app.use("/", require("./routes/index.js"));
 
 // Start app
-app.listen(PORT, _ => {
-    console.log(`Server running on port ${PORT}`)
+app.listen(process.env.PORT, _ => {
+    console.log(`Server running on port ${process.env.PORT}`)
 });

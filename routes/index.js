@@ -7,7 +7,9 @@ const IndexController = require("../controllers/index-controller.js");
 router.get("/", IndexController.get_landing_page);
 
 // Users
-router.use("/users", require("users.js"));
+router.use("/users", require("./users.js"));
 
 // Apis
-router.use("/api", require("api.js"));
+router.use("/api", require("./api.js"));
+
+module.exports = router;

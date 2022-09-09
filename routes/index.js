@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+const IndexController = require("../controllers/index-controller.js");
+
 // Landing page
-router.get("/", get_landing_page);
+router.get("/", IndexController.get_landing_page);
 
 // Users
 router.use("/users", require("users.js"));

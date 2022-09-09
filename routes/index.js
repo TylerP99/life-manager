@@ -6,6 +6,9 @@ const IndexController = require("../controllers/index-controller.js");
 // Landing page
 router.get("/", IndexController.get_landing_page);
 
+// Dashboard
+router.get("/dashboard", IndexController.get_dashboard);
+
 // Users
 router.use("/users", require("./users.js"));
 

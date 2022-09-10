@@ -1,5 +1,6 @@
 const validator = require("validator");
 const User = require("../models/User");
+const passport = require("passport");
 
 module.exports = {
     get_signup_page: (req, res, next) => {
@@ -32,6 +33,8 @@ module.exports = {
                 return res.redirect("/users/signup");
             }
 
+            user.email = validator.normalizeEmail(user.email, { gmail_remove_dots: false });
+
             // Store in db
             const newUser = await User.create(user);
 
@@ -52,8 +55,31 @@ module.exports = {
     },
     authenticate_user: (req, res, next) => {
         // Check email and password fields have valid info (not empty)
+        const errors = [];
+        if(!validator.isEmail(req.body.email)) errors.push({ msg: "Enter a valid email." });
+        if(!validator.isEmpty(req.body.password)) errors.push({ msg: "Password cannot be empty." });
+
+        if(errors.length) {
+            req.flash("errors", errors);
+            return res.redirect("/users/signin");
+        }
+
+        req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
 
         // Use passport authenticate function to log user in
+        passport.authenticate("local", (err, user, info) => {
+            if(err) return next(err);
+            if(!user) {
+                console.log(info);
+                req.flash("errors", info);
+                return res.redirect("/users/signin");
+            }
+            req.logIn(user, (err) => {
+                if(err) return next(err);
+                req.flash("success", { msg: "You have been logged in!" });
+                return res.redirect(req.session.returnTo || "/dashboard");
+            });
+        })(req,res,next);
     },
     get_forgot_username_page: (req, res, next) => {
         res.render("users/forgot-username.ejs");
@@ -78,6 +104,16 @@ module.exports = {
     },
     signout_user: (req, res, next) => {
         // Use the logout function and destroy the session
+        req.logout((err) => {
+            if(err) return next(err);
+            console.log("Logged out");
+        });
+
+        req.session.destroy((err) => {
+            if(err) console.error("Failed to destroy session", err);
+            req.user = null;
+            res.redirect("/users/signin");
+        })
     },
     get_settings_page: (req, res, next) => {
         res.render("users/settings.ejs");

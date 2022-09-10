@@ -1,13 +1,51 @@
+const validator = require("validator");
+const User = require("../models/User");
+
 module.exports = {
     get_signup_page: (req, res, next) => {
         res.render("users/signup.ejs");
     },
     create_new_user: (req, res, next) => {
         // Verify credentials are valid
+        const user = {
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password
+        };
+        const errors = [];
 
-        // Store in db
+        try{
+            // Email valid (and not empty)
+            if(!validator.isEmail(user.email)) { errors.push({msg: "That is not a valid email."}) };
+            // Password long enough (and not empty)
+            if(!validator.isLength(user.password, {min:8})) { errors.push({msg: "Password must be at least 8 characters long."}) };
+            // Password matches confirmation (and not empty)
+            if(user.password !== req.body.password2) { errors.push({msg: "Passwords must match."}) };
 
-        // Send user to verify email page
+            // Check if user exists
+            const existingUser = await User.findOne({$or: [{email:user.email}, {username: user.username}]});
+            if(existingUser) { errors.push({msg: "A user with that username or email already exists."}) };
+
+            // If there are errors, reload signup with flash info
+            if(errors.length) {
+                req.flash("errors", errors);
+                return res.redirect("/users/signup");
+            }
+
+            // Store in db
+            const newUser = await User.create(user);
+
+            req.logIn(newUser,(err) => {
+                if(err) return next(err);
+                res.redirect("/dashboard");
+            });
+            // Send user to verify email page
+            //res.redirect("/user/verifyEmail");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
     get_signin_page: (req, res, next) => {
         res.render("users/signin.ejs");

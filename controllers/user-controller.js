@@ -6,7 +6,7 @@ module.exports = {
     get_signup_page: (req, res, next) => {
         res.render("users/signup.ejs");
     },
-    create_new_user: (req, res, next) => {
+    create_new_user: async (req, res, next) => {
         // Verify credentials are valid
         const user = {
             username: req.body.username,

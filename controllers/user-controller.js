@@ -57,7 +57,7 @@ module.exports = {
         // Check email and password fields have valid info (not empty)
         const errors = [];
         if(!validator.isEmail(req.body.email)) errors.push({ msg: "Enter a valid email." });
-        if(!validator.isEmpty(req.body.password)) errors.push({ msg: "Password cannot be empty." });
+        if(validator.isEmpty(req.body.password)) errors.push({ msg: "Password cannot be empty." });
 
         if(errors.length) {
             req.flash("errors", errors);
@@ -75,6 +75,7 @@ module.exports = {
                 return res.redirect("/users/signin");
             }
             req.logIn(user, (err) => {
+                console.log("Logged in")
                 if(err) return next(err);
                 req.flash("success", { msg: "You have been logged in!" });
                 return res.redirect(req.session.returnTo || "/dashboard");

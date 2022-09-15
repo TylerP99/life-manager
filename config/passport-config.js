@@ -7,6 +7,7 @@ function init_passport_local(passport) {
             try{
                 // Get user from db
                 const user = await User.findOne({email: email});
+                console.log(user);
 
                 if(!user) { // Email not found
                     return done(null, false, {msg: `That email (${email}) was not found.`});

@@ -2,15 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 const UserController = require("../controllers/user-controller");
+const { forwardIfAuthenticated, ensureAuthenticated } = require("../middleware/auth");
 
 // Sign up page
-router.get("/signup", UserController.get_signup_page);
+router.get("/signup", forwardIfAuthenticated, UserController.get_signup_page);
 
 // Sign up request
 router.post("/create", UserController.create_new_user);
 
 // Sign in page
-router.get("/signin", UserController.get_signin_page);
+router.get("/signin", forwardIfAuthenticated, UserController.get_signin_page);
 
 // Authenticate
 router.post("/authenticate", UserController.authenticate_user);
@@ -22,7 +23,7 @@ router.get("/forgotUsername", UserController.get_forgot_username_page);
 router.post("/forgotUsername", UserController.forgot_username_request);
 
 // Forgot password page
-router.get("/forgotPassword", UserController.get_forgot_password_page);
+router.get("/forgotPassword", forwardIfAuthenticated, UserController.get_forgot_password_page);
 
 // Forgot password request
 router.post("/forgotPassword", UserController.forgot_password_request);
@@ -40,7 +41,7 @@ router.get("/signout", UserController.get_signout_page);
 router.post("/signout", UserController.signout_user);
 
 // User settings
-router.get("/settings", UserController.get_settings_page);
+router.get("/settings", ensureAuthenticated, UserController.get_settings_page);
 
 // Change user information
 router.put("/settings/edit", UserController.change_user_info);

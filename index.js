@@ -39,6 +39,7 @@ app.use(passport.session());
 app.use(flash());
 
 // Method Override for form PUTs and DELETEs
+const methodOverride = require("method-override");
 app.use(methodOverride("_method"));
 
 // Routes

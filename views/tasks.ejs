@@ -30,9 +30,10 @@
                     <h2><%= tasks[i].name %></h2>
                     <p>Complete: <%=tasks[i].completed%></p>
                     <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
-                    <span><%= tasks[i].date %></span>
-                    <% if(tasks[i].startTime)%> <span><%=tasks[i].startTime%></span>
-                    <% if(tasks[i].endTime)%> <span><%=tasks[i].endTime%></span>
+                    <section>
+                        <span><%= tasks[i].date.toDateString() %></span>
+                        <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &mdash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
+                    </section>
 
                     <section class="options">
                         <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
@@ -40,6 +41,9 @@
                         </form>
                         <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
                             <button type="submit">Mark Complete</button>
+                        </form>
+                        <form action="/api/task/markIncomplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                            <button type="submit">Mark Incomplete</button>
                         </form>
                         <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST">
                             <section>

@@ -16,6 +16,6 @@ router.put("/update", TaskController.update_task);
 router.put("/markComplete", TaskController.mark_complete);
 
 // Delete task
-router.delete("/delete", TaskController.delete_task);
+router.delete("/delete/:id", TaskController.delete_task);
 
 module.exports = router;

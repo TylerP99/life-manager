@@ -19,8 +19,6 @@ module.exports = {
             owner: req.user.id
         };
 
-        console.log(task);
-
         if(req.body.description) task.description = req.body.description;
         if(req.body.startTime) {
             req.body.startTime = req.body.startTime.split(":");
@@ -57,8 +55,19 @@ module.exports = {
     mark_complete: (req,res,next) => {
 
     },
-    delete_task: (req,res,next) => {
+    delete_task: async (req,res,next) => {
+        const taskID = req.params.id;
 
+        try {
+            await Task.findByIdAndDelete(taskID);
+
+            req.flash("success", "Task successfully deleted");
+            res.redirect("/tasks");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     }
 };
 

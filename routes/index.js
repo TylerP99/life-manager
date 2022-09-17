@@ -10,6 +10,9 @@ router.get("/", IndexController.get_landing_page);
 // Dashboard
 router.get("/dashboard", ensureAuthenticated, IndexController.get_dashboard);
 
+// Tasks
+router.get("/tasks", ensureAuthenticated, IndexController.get_tasks_page);
+
 // Users
 router.use("/users", require("./users.js"));
 

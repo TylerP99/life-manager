@@ -15,7 +15,8 @@ module.exports = {
         // Form task object from request
         const task = {
             name: req.body.name,
-            date: req.body.date
+            date: req.body.date,
+            owner: req.user.id
         };
         if(req.body.description) task.description = req.body.description;
         if(req.body.startTime) {

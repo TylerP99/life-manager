@@ -70,12 +70,10 @@ module.exports = {
         passport.authenticate("local", (err, user, info) => {
             if(err) return next(err);
             if(!user) {
-                console.log(info);
                 req.flash("errors", info);
                 return res.redirect("/users/signin");
             }
             req.logIn(user, (err) => {
-                console.log("Logged in")
                 if(err) return next(err);
                 req.flash("success", { msg: "You have been logged in!" });
                 return res.redirect(req.session.returnTo || "/dashboard");
@@ -107,7 +105,6 @@ module.exports = {
         // Use the logout function and destroy the session
         req.logout((err) => {
             if(err) return next(err);
-            console.log("Logged out");
         });
 
         req.session.destroy((err) => {

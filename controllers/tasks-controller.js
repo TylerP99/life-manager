@@ -49,8 +49,31 @@ module.exports = {
             next(e);
         }
     },
-    update_task: (req,res,next) => {
+    update_task: async (req,res,next) => {
+        const taskID = req.params.id;
+        const updatedTask = {};
+        if(req.body.name) updatedTask.name = req.body.name;
+        if(req.body.description) updatedTask.description = req.body.description;
+        if(req.body.date) updatedTask.date = new Date(req.body.date);
+        if(req.body.startTime) updatedTask.startTime = req.body.startTime;
+        if(req.body.endTime) updatedTask.endTime = req.body.endTime;
 
+        const errors = validate_task(updatedTask);
+        if(errors.length) {
+            req.flash("errors", errors);
+            res.redirect("/tasks");
+        }
+
+        try {
+            await Task.findByIdAndUpdate(taskID, updatedTask, {upsert:false});
+
+            req.flash("success", "Task successfully updated");
+            res.redirect("/tasks")
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
     mark_complete: (req,res,next) => {
 
@@ -76,7 +99,7 @@ function validate_task(task) {
     const today = new Date(Date.now());
     // Check name
     // Verify name is at most 50 characters
-    if(task.name.length > 50) errors.push("Name can't be more than 50 characters long.");
+    if(task.name && task.name.length > 50) errors.push("Name can't be more than 50 characters long.");
 
     // Check description
     // Verify description is at most 250 characters
@@ -85,9 +108,9 @@ function validate_task(task) {
     // Check date
     // Verify date is on or after today
     // Date must have a year equal to or greater than current year
-    if(task.date.getFullYear() < today.getFullYear() || // Year is before current year
+    if( task.date && ( task.date.getFullYear() < today.getFullYear() || // Year is before current year
     (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() < today.getMonth()) || // Year is current year, but month is before current month
-    (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() == today.getMonth() && task.date.getDate() < today.getDate()) ) { // Year is current year, month is current month, date is before current date
+    (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() == today.getMonth() && task.date.getDate() < today.getDate()) ) ) { // Year is current year, month is current month, date is before current date
         errors.push("Date must be on or after the current date.");
     }
 

@@ -8,6 +8,21 @@
 </head>
 <body>
 
+    <section>
+        <section>
+            <% if(locals.messages.errors) { %>
+                <% for(let i = 0; i < locals.messages.errors.length; ++i) { %>
+                    <p><%=locals.messages.errors[i]%></p>
+                <% } %>
+            <% } %>
+        </section>
+        <section>
+            <% if(locals.messages.success) { %>
+                <p><%=locals.messages.success%></p>
+            <% } %>
+        </section>
+    </section>
+
     <section id="task-display">
         <% if(tasks.length) { %>
             <% for(let i = 0; i < tasks.length; ++i) { %>
@@ -21,6 +36,55 @@
                     <section class="options">
                         <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
                             <button type="submit">Delete this task</button>
+                        </form>
+                        <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                            <button type="submit">Mark Complete</button>
+                        </form>
+                        <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                            <section>
+                                <label for="name">Name</label>
+                                <input id=""
+                                 name="name"
+                                 type="text"
+                                 maxlength="50"
+                                 placeholder="Enter name here"
+                                 value="<%=tasks[i].name%>"
+                                 >
+                            </section>
+                            <section>
+                                <label for="description">Description</label>
+                                <textarea id="description"
+                                 name="description"
+                                 maxlength = "250"
+                                 placeholder = "Enter description here"
+                                 spellcheck = "true"
+                                >
+                                <% if(tasks[i].description) %> <%=tasks[i].description%>
+                                </textarea>
+                            </section>
+                            <section>
+                                <label for="date">Date</label>
+                                <input id="date"
+                                 name="date"
+                                 type="date"
+                                 value="<%=tasks[i].date%>"
+                                 >
+                            </section>
+                            <section>
+                                <label for="startTime">Start Time</label>
+                                <input id="startTime"
+                                 name="startTime"
+                                 type="time">
+                            </section>
+                            <section>
+                                <label for="endTime">End Time</label>
+                                <input id="endTime"
+                                 name="endTime"
+                                 type="time">
+                            </section>
+                            <section>
+                                <button type="submit">Create Task</button>
+                            </section>
                         </form>
                     </section>
 

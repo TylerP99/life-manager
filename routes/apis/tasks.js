@@ -10,10 +10,10 @@ const TaskController = require("../../controllers/tasks-controller.js");
 router.post("/create", TaskController.create_task);
 
 // Update task properties
-router.put("/update", TaskController.update_task);
+router.put("/update/:id", TaskController.update_task);
 
 // Mark task as complete
-router.put("/markComplete", TaskController.mark_complete);
+router.put("/markComplete/:id", TaskController.mark_complete);
 
 // Delete task
 router.delete("/delete/:id", TaskController.delete_task);

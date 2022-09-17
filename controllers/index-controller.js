@@ -1,6 +1,6 @@
 // Index controller
 
-const Task = require("../models/User");
+const Task = require("../models/Task");
 
 module.exports = {
     get_landing_page: (req, res) => {

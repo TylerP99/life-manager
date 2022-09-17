@@ -88,7 +88,7 @@ module.exports = {
             next(e);
         }
     },
-    mark_complete: (req,res,next) => {
+    mark_complete: async (req,res,next) => {
         const taskID = req.params.id;
         try {
             await Task.findByIdAndUpdate(taskID, {completed: true}, {upsert:false});
@@ -101,7 +101,7 @@ module.exports = {
             next(e);
         }
     },
-    mark_incomplete: (req,res,next) => {
+    mark_incomplete: async (req,res,next) => {
         const taskID = req.params.id;
         try {
             await Task.findByIdAndUpdate(taskID, {completed: false}, {upsert:false});

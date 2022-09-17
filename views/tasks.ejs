@@ -57,10 +57,7 @@
                                  name="description"
                                  maxlength = "250"
                                  placeholder = "Enter description here"
-                                 spellcheck = "true"
-                                >
-                                <% if(tasks[i].description) %> <%=tasks[i].description%>
-                                </textarea>
+                                 spellcheck = "true"><%if(tasks[i].description) %><%=tasks[i].description%></textarea>
                             </section>
                             <section>
                                 <label for="date">Date</label>
@@ -83,7 +80,7 @@
                                  type="time">
                             </section>
                             <section>
-                                <button type="submit">Create Task</button>
+                                <button type="submit">Update Task</button>
                             </section>
                         </form>
                     </section>

@@ -13,9 +13,10 @@ module.exports = {
     // }
     create_task: async (req,res,next) => {
         // Form task object from request
+        req.body.date = req.body.date.split("-");
         const task = {
             name: req.body.name,
-            date: new Date(req.body.date),
+            date: new Date(req.body.date[0], req.body.date[1]-1, req.body.date[2]),
             owner: req.user.id
         };
 
@@ -52,19 +53,31 @@ module.exports = {
     update_task: async (req,res,next) => {
         const taskID = req.params.id;
         const updatedTask = {};
-        if(req.body.name) updatedTask.name = req.body.name;
-        if(req.body.description) updatedTask.description = req.body.description;
-        if(req.body.date) updatedTask.date = new Date(req.body.date);
-        if(req.body.startTime) updatedTask.startTime = req.body.startTime;
-        if(req.body.endTime) updatedTask.endTime = req.body.endTime;
-
-        const errors = validate_task(updatedTask);
-        if(errors.length) {
-            req.flash("errors", errors);
-            res.redirect("/tasks");
-        }
+        
+        if(req.body.date) req.body.date = req.body.date.split("-");
 
         try {
+            // Want date for start and end time if user didnt adjust it
+            const task = await Task.findById(taskID);
+
+            if(req.body.name) updatedTask.name = req.body.name;
+            if(req.body.description) updatedTask.description = req.body.description;
+            (req.body.date) ? updatedTask.date = new Date(req.body.date[0], req.body.date[1]-1, req.body.date[2]) : updatedTask.date = task.date;
+            if(req.body.startTime) {
+                req.body.startTime = req.body.startTime.split(":");
+                updatedTask.startTime = new Date( updatedTask.date.getFullYear(), updatedTask.date.getMonth(), updatedTask.date.getDate(), req.body.startTime[0], req.body.startTime[1] );
+            }
+            if(req.body.endTime) {
+                req.body.endTime = req.body.endTime.split(":");
+                updatedTask.endTime = new Date( updatedTask.date.getFullYear(), updatedTask.date.getMonth(), updatedTask.date.getDate(), req.body.endTime[0], req.body.endTime[1] );
+            }
+
+            const errors = validate_task(updatedTask);
+            if(errors.length) {
+                req.flash("errors", errors);
+                return res.redirect("/tasks");
+            }
+
             await Task.findByIdAndUpdate(taskID, updatedTask, {upsert:false});
 
             req.flash("success", "Task successfully updated");
@@ -113,7 +126,6 @@ function validate_task(task) {
     (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() == today.getMonth() && task.date.getDate() < today.getDate()) ) ) { // Year is current year, month is current month, date is before current date
         errors.push("Date must be on or after the current date.");
     }
-
     // Check startTime
     // Check endTime
     // Verify startTime is before endTime

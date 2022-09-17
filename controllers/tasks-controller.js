@@ -11,21 +11,24 @@ module.exports = {
     //     startTime (optional)
     //     endTime (optional)
     // }
-    create_task: (req,res,next) => {
+    create_task: async (req,res,next) => {
         // Form task object from request
         const task = {
             name: req.body.name,
-            date: req.body.date,
+            date: new Date(req.body.date),
             owner: req.user.id
         };
+
+        console.log(task);
+
         if(req.body.description) task.description = req.body.description;
         if(req.body.startTime) {
             req.body.startTime = req.body.startTime.split(":");
-            task.startTime = new Date( req.body.date.getFullYear(), req.body.date.getMonth(), req.body.date.getDate(), req.body.startTime[0], req.body.startTime[1] );
+            task.startTime = new Date( task.date.getFullYear(), task.date.getMonth(), task.date.getDate(), req.body.startTime[0], req.body.startTime[1] );
         }
         if(req.body.endTime) {
             req.body.endTime = req.body.endTime.split(":");
-            task.endTime = new Date( req.body.date.getFullYear(), req.body.date.getMonth(), req.body.date.getDate(), req.body.endTime[0], req.body.endTime[1] );
+            task.endTime = new Date( task.date.getFullYear(), task.date.getMonth(), task.date.getDate(), req.body.endTime[0], req.body.endTime[1] );
         }
 
         // Validate it
@@ -82,8 +85,8 @@ function validate_task(task) {
     // Check startTime
     // Check endTime
     // Verify startTime is before endTime
-    if( (task.startTime && task.endTime) && (startTime.getHours() > endTime.getHours() ||
-    (startTime.getHours() == endTime.getHours() && startTime.getMinutes() > endTime.getMinutes() ) ) ) {
+    if( (task.startTime && task.endTime) && (task.startTime.getHours() > task.endTime.getHours() ||
+    (task.startTime.getHours() == task.endTime.getHours() && task.startTime.getMinutes() > task.endTime.getMinutes() ) ) ) {
         errors.push("Start time must be before end time.");
     }
 

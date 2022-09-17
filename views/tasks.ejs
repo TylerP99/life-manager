@@ -8,7 +8,66 @@
 </head>
 <body>
 
-    
+    <section id="task-display">
+        <% if(tasks.length) { %>
+            <% for(let i = 0; i < tasks.length; ++i) { %>
+                <section>
+                    <h2><%= tasks[i].name %></h2>
+                    <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
+                    <span><%= tasks[i].date %></span>
+                    <% if(tasks[i].startTime)%> <span><%=tasks[i].startTime%></span>
+                    <% if(tasks[i].endTime)%> <span><%=tasks[i].endTime%></span>
+                </section>
+            <% } %>
+        <% } %>
+    </section>
+
+    <section id="create-task">
+        <h2>Create new task</h2>
+        <form action="/api/task/create" method="POST">
+            <section>
+                <label for=""></label>
+                <input id=""
+                 name=""
+                 type=""
+                 maxlength="50"
+                 placeholder="Enter name here"
+                 required>
+            </section>
+            <section>
+                <label for="description">Description</label>
+                <textarea id="description"
+                 name="description"
+                 maxlength = "250"
+                 placeholder = "Enter description here"
+                 spellcheck = "true"
+                >
+                </textarea>
+            </section>
+            <section>
+                <label for="date">Date</label>
+                <input id="date"
+                 name="date"
+                 type="date"
+                 required>
+            </section>
+            <section>
+                <label for="startTime">Start Time</label>
+                <input id="startTime"
+                 name="startTime"
+                 type="time">
+            </section>
+            <section>
+                <label for="endTime">End Time</label>
+                <input id="endTime"
+                 name="endTime"
+                 type="time">
+            </section>
+            <section>
+                <button type="submit">Create Task</button>
+            </section>
+        </form>
+    </section>
     
 </body>
 </html>

@@ -11,12 +11,19 @@
     <section id="task-display">
         <% if(tasks.length) { %>
             <% for(let i = 0; i < tasks.length; ++i) { %>
-                <section>
+                <section data-id="<%=tasks[i]._id%>">
                     <h2><%= tasks[i].name %></h2>
                     <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
                     <span><%= tasks[i].date %></span>
                     <% if(tasks[i].startTime)%> <span><%=tasks[i].startTime%></span>
                     <% if(tasks[i].endTime)%> <span><%=tasks[i].endTime%></span>
+
+                    <section class="options">
+                        <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
+                            <button type="submit">Delete this task</button>
+                        </form>
+                    </section>
+
                 </section>
             <% } %>
         <% } %>

@@ -28,6 +28,7 @@
             <% for(let i = 0; i < tasks.length; ++i) { %>
                 <section data-id="<%=tasks[i]._id%>">
                     <h2><%= tasks[i].name %></h2>
+                    <p>Complete: <%=tasks[i].completed%></p>
                     <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
                     <span><%= tasks[i].date %></span>
                     <% if(tasks[i].startTime)%> <span><%=tasks[i].startTime%></span>

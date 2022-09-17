@@ -89,7 +89,30 @@ module.exports = {
         }
     },
     mark_complete: (req,res,next) => {
+        const taskID = req.params.id;
+        try {
+            await Task.findByIdAndUpdate(taskID, {completed: true}, {upsert:false});
 
+            req.flash("success", "Task updated successfully");
+            res.redirect("/tasks");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
+    },
+    mark_incomplete: (req,res,next) => {
+        const taskID = req.params.id;
+        try {
+            await Task.findByIdAndUpdate(taskID, {completed: false}, {upsert:false});
+
+            req.flash("success", "Task updated successfully");
+            res.redirect("/tasks");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
     delete_task: async (req,res,next) => {
         const taskID = req.params.id;

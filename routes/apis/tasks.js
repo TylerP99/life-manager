@@ -15,6 +15,9 @@ router.put("/update/:id", TaskController.update_task);
 // Mark task as complete
 router.put("/markComplete/:id", TaskController.mark_complete);
 
+// Mark task as incomplete
+router.put("/markIncomplete/:id", TaskController.mark_incomplete);
+
 // Delete task
 router.delete("/delete/:id", TaskController.delete_task);
 

@@ -4,143 +4,161 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tasks</title>
+
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
     <section>
+        <header>
+            <%- include("./partials/navbar") %>
+            <div class="open-nav menu nav-btn">
+                <div class="icon-circle">
+                    <div class="icon"></div>
+                </div>
+            </div>
+            <h1>Tasks</h1>
+        </header>
+
         <section>
-            <% if(locals.messages.errors) { %>
-                <% for(let i = 0; i < locals.messages.errors.length; ++i) { %>
-                    <p><%=locals.messages.errors[i]%></p>
+            <section>
+                <% if(locals.messages.errors) { %>
+                    <% for(let i = 0; i < locals.messages.errors.length; ++i) { %>
+                        <p><%=locals.messages.errors[i]%></p>
+                    <% } %>
                 <% } %>
-            <% } %>
+            </section>
+            <section>
+                <% if(locals.messages.success) { %>
+                    <p><%=locals.messages.success%></p>
+                <% } %>
+            </section>
         </section>
-        <section>
-            <% if(locals.messages.success) { %>
-                <p><%=locals.messages.success%></p>
-            <% } %>
-        </section>
-    </section>
 
-    <section id="task-display">
-        <% if(tasks.length) { %>
-            <% for(let i = 0; i < tasks.length; ++i) { %>
-                <section data-id="<%=tasks[i]._id%>">
-                    <h2><%= tasks[i].name %></h2>
-                    <p>Complete: <%=tasks[i].completed%></p>
-                    <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
+        <main>
+            <section id="task-display" class="card-display">
+                <% if(tasks.length) { %>
+                    <% for(let i = 0; i < tasks.length; ++i) { %>
+                        <section class="card" data-id="<%=tasks[i]._id%>">
+                            <h2><%= tasks[i].name %></h2>
+                            <p>Complete: <%=tasks[i].completed%></p>
+                            <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
+                            <section>
+                                <span><%= tasks[i].date.toDateString() %></span>
+                                <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &mdash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
+                            </section>
+
+                            <section class="options">
+                                <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
+                                    <button type="submit">Delete this task</button>
+                                </form>
+                                <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                                    <button type="submit">Mark Complete</button>
+                                </form>
+                                <form action="/api/task/markIncomplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                                    <button type="submit">Mark Incomplete</button>
+                                </form>
+                                <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                                    <section>
+                                        <label for="name">Name</label>
+                                        <input id=""
+                                        name="name"
+                                        type="text"
+                                        maxlength="50"
+                                        placeholder="Enter name here"
+                                        value="<%=tasks[i].name%>"
+                                        >
+                                    </section>
+                                    <section>
+                                        <label for="description">Description</label>
+                                        <textarea id="description"
+                                        name="description"
+                                        maxlength = "250"
+                                        placeholder = "Enter description here"
+                                        spellcheck = "true"><%if(tasks[i].description) %><%=tasks[i].description%></textarea>
+                                    </section>
+                                    <section>
+                                        <label for="date">Date</label>
+                                        <input id="date"
+                                        name="date"
+                                        type="date"
+                                        value="<%=tasks[i].date%>"
+                                        >
+                                    </section>
+                                    <section>
+                                        <label for="startTime">Start Time</label>
+                                        <input id="startTime"
+                                        name="startTime"
+                                        type="time">
+                                    </section>
+                                    <section>
+                                        <label for="endTime">End Time</label>
+                                        <input id="endTime"
+                                        name="endTime"
+                                        type="time">
+                                    </section>
+                                    <section>
+                                        <button type="submit">Update Task</button>
+                                    </section>
+                                </form>
+                            </section>
+
+                        </section>
+                    <% } %>
+                <% } %>
+            </section>
+
+            <section id="create-task">
+                <h2>Create new task</h2>
+                <form action="/api/task/create" method="POST">
                     <section>
-                        <span><%= tasks[i].date.toDateString() %></span>
-                        <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &mdash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
+                        <label for="name">Name</label>
+                        <input id=""
+                        name="name"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Enter name here"
+                        required>
                     </section>
-
-                    <section class="options">
-                        <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
-                            <button type="submit">Delete this task</button>
-                        </form>
-                        <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                            <button type="submit">Mark Complete</button>
-                        </form>
-                        <form action="/api/task/markIncomplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                            <button type="submit">Mark Incomplete</button>
-                        </form>
-                        <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                            <section>
-                                <label for="name">Name</label>
-                                <input id=""
-                                 name="name"
-                                 type="text"
-                                 maxlength="50"
-                                 placeholder="Enter name here"
-                                 value="<%=tasks[i].name%>"
-                                 >
-                            </section>
-                            <section>
-                                <label for="description">Description</label>
-                                <textarea id="description"
-                                 name="description"
-                                 maxlength = "250"
-                                 placeholder = "Enter description here"
-                                 spellcheck = "true"><%if(tasks[i].description) %><%=tasks[i].description%></textarea>
-                            </section>
-                            <section>
-                                <label for="date">Date</label>
-                                <input id="date"
-                                 name="date"
-                                 type="date"
-                                 value="<%=tasks[i].date%>"
-                                 >
-                            </section>
-                            <section>
-                                <label for="startTime">Start Time</label>
-                                <input id="startTime"
-                                 name="startTime"
-                                 type="time">
-                            </section>
-                            <section>
-                                <label for="endTime">End Time</label>
-                                <input id="endTime"
-                                 name="endTime"
-                                 type="time">
-                            </section>
-                            <section>
-                                <button type="submit">Update Task</button>
-                            </section>
-                        </form>
+                    <section>
+                        <label for="description">Description</label>
+                        <textarea id="description"
+                        name="description"
+                        maxlength = "250"
+                        placeholder = "Enter description here"
+                        spellcheck = "true"
+                        >
+                        </textarea>
                     </section>
+                    <section>
+                        <label for="date">Date</label>
+                        <input id="date"
+                        name="date"
+                        type="date"
+                        required>
+                    </section>
+                    <section>
+                        <label for="startTime">Start Time</label>
+                        <input id="startTime"
+                        name="startTime"
+                        type="time">
+                    </section>
+                    <section>
+                        <label for="endTime">End Time</label>
+                        <input id="endTime"
+                        name="endTime"
+                        type="time">
+                    </section>
+                    <section>
+                        <button type="submit">Create Task</button>
+                    </section>
+                </form>
+            </section>
 
-                </section>
-            <% } %>
-        <% } %>
+        </main>
     </section>
 
-    <section id="create-task">
-        <h2>Create new task</h2>
-        <form action="/api/task/create" method="POST">
-            <section>
-                <label for="name">Name</label>
-                <input id=""
-                 name="name"
-                 type="text"
-                 maxlength="50"
-                 placeholder="Enter name here"
-                 required>
-            </section>
-            <section>
-                <label for="description">Description</label>
-                <textarea id="description"
-                 name="description"
-                 maxlength = "250"
-                 placeholder = "Enter description here"
-                 spellcheck = "true"
-                >
-                </textarea>
-            </section>
-            <section>
-                <label for="date">Date</label>
-                <input id="date"
-                 name="date"
-                 type="date"
-                 required>
-            </section>
-            <section>
-                <label for="startTime">Start Time</label>
-                <input id="startTime"
-                 name="startTime"
-                 type="time">
-            </section>
-            <section>
-                <label for="endTime">End Time</label>
-                <input id="endTime"
-                 name="endTime"
-                 type="time">
-            </section>
-            <section>
-                <button type="submit">Create Task</button>
-            </section>
-        </form>
-    </section>
-    
+<script src="/js/main.js"></script>
 </body>
 </html>

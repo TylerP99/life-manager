@@ -10,24 +10,27 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static("public"));
 
+// DB Connect
+const mongoose = require("mongoose");
+const connectDB = require("./config/database.js");
+connectDB();
+
 // Logger
 const morgan = require("morgan");
 app.use(morgan("dev"));
-
-// DB Connect
-const connectDB = require("./config/database.js");
-connectDB();
 
 // User Auth and Sessions
 const passport = require("passport");
 const session = require("express-session");
 const flash = require("express-flash");
+const MongoStore = require("connect-mongo");
 
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
         resave: true,
-        saveUninitialized: true
+        saveUninitialized: true,
+        store: new MongoStore({ mongoUrl: process.env.DB_STRING })
     })
 );
 

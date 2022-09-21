@@ -4,17 +4,98 @@
 
 html {
     font-size: 62.5%;
+
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-#task-display {
+/*
+    COLOR PALETTE
+    Yellow: #fbe7c6
+    Mint: #b4f8c8
+    Tiffany Blue: #a0e7e5
+    Hot Pink: #ffaebc
+*/
+
+header {
+    position: relative;
+    padding: 1rem 2rem;
+}
+
+body {
 
 }
 
-.card {
+body, main {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    align-items: center;
+
+    width: 100%;
+}
+
+main {
+    width: 100%;
+}
+
+main > * {
+    width: 100%;
+}
+
+/* Main header */
+h1 {
+    font-size: 10rem;
+    font-weight: bold;
+    border-bottom: 3px solid;
+    margin-bottom: 2rem;
+}
+
+/* Sub-main header */
+h2 {
+
+}
+
+/* Error header */
+h4 {
+
+}
+
+/* Card/Small header */
+h5 {
+    font-size: 2rem;
+    border-bottom: 3px solid;
+
+    margin-bottom: 1rem;
+}
+
+p, span {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+}
+span {
+    display: inline-block;
+}
+
+#options {
+    width: 100%;
+    
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#alerts {
+
+}
+
+/*
+    Card Display
+*/
+.card {
+    display: flex;
+    justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap;
 
     padding: 1rem 2rem;
     border: 3px solid;
@@ -24,12 +105,25 @@ html {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+
+    padding: 1rem;
 }
 
-header {
-    position: relative;
-
-    border: 1px solid;
+.info{
+    width: 60%;
+}
+.options {
+    width: 30%;
+}
+.options form, .options > button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+.options form button {
+    width: 100%;
+}
+.card > form {
+    width: 90%;
 }
 
 /*
@@ -65,7 +159,7 @@ header {
 }
 .nav-section ul li {
     width: 100%;
-    border: 1px solid;
+    margin-bottom: 1rem;
 }
 .nav-section ul li a {
     font-size: 2rem;
@@ -75,19 +169,14 @@ header {
     text-decoration: none;
     color: inherit;
 
-    --c: #1095c1;
-    line-height: 1.2em;
-    background:
-      conic-gradient(from -135deg at 100%  50%, var(--c) 90deg, #0000 0) 
-        0  var(--p, 0%) / var(--s, 0%) 200% no-repeat,
-      conic-gradient(from -135deg at 1.2em 50%, #0000 90deg, var(--c) 0) 
-        100% var(--p, 0%) / var(--s, 0%) 200% no-repeat;
-    transition: .4s, background-position 0s;
-  }
-  .nav-section ul li a:hover {
-    --p: 100%;
-    --s: calc(50% + .6em);
-  }
+    background-image: linear-gradient(#1095c1,#1095c1);
+    background-size: 0 100%;
+    background-repeat: no-repeat;
+    transition: .4s;
+}
+.nav-section ul li a:hover {
+    background-size: 100% 100%;
+}
 
 .nav-btn {
     position: fixed;
@@ -162,4 +251,8 @@ header {
 }
 .nav-btn:hover {
     cursor: pointer;
+}
+
+.hidden {
+    display: none;
 }

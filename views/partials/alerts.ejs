@@ -1,0 +1,18 @@
+<section id="alerts">
+    <% if(locals.messages.errors) { %>
+        <ul>
+        <% for(let i = 0; i < locals.messages.errors[i]; ++i) { %>
+            <li>
+                <span><%=locals.messages.errors[i]%></span>
+            </li>
+        <% } %>
+        </ul>
+    <% } %>
+    <% if(locals.messages.success) { %>
+        <ul>
+            <li>
+                <span><%=locals.messages.success%></span>
+            </li>
+        </ul>
+    <% } %>
+</section>

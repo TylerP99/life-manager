@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    background-image: url("/assets/vasilina-sirotina-GgMwpnuAHIY-unsplash.jpg");
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+
+}
+
+.card {
+    background: #eee;
+    box-shadow: 0 4px 2px -2px gray;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    padding: 2rem 4rem;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+form section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+}
+
+input {
+    padding: 1rem;
+}
+
+h1 {
+    font-size: 3rem;
+    border-bottom: 5px solid;
+    margin-bottom: 2rem;
+}

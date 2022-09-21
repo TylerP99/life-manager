@@ -1,0 +1,81 @@
+* {
+    box-sizing: border-box;
+    color: #333;
+}
+
+html{
+    font-size: 62.5%;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background-image: url("/assets/landing-bronwyn-Iq7olfnRu9A-unsplash.jpg");
+    background-size: cover;
+    height: 100vh;
+}
+
+main {
+    height: 80vh;
+    width: fit-content;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0 auto;
+    padding: 2rem;
+
+    background: rgb(100,100,100);
+    background: linear-gradient(180deg, rgba(100,100,100,1) 0%, rgba(200,200,200,0) 100%); 
+}
+
+h1 {
+    font-size: 12rem;
+    font-family: 'Spectral', Arial, Helvetica, sans-serif;
+    border-bottom: 10px solid;
+    color: #eee;
+}
+
+h2 {
+    font-size: 3rem;
+
+    margin-bottom: 2rem;
+}
+
+p {
+    font-size: 3rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+a {
+    font-size: 2rem;
+    border: 2px solid;
+    border-radius: 10px;
+    padding: 2rem 3rem;
+    display: inline-block;
+    text-decoration: none;
+
+    transition: background 0.5s;
+}
+
+a:hover {
+    background: rgba(240, 240, 240, 0.4);
+    text-decoration: underline;
+}
+
+strong {
+    font-weight: bold;
+    border-bottom: 5px solid;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+li {
+    margin-bottom: 2rem;
+}

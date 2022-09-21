@@ -5,20 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/sign.css">
 </head>
 <body>
-    
-    <h1>Sign in</h1>
 
-    <a href="/dashboard">Log In</a>
-
-    <a href="/users/signup">Sign Up</a>
-
-    <a href="/users/forgotUsername">Forgot Username</a>
-
-    <a href="/users/forgotPassword">Forgot Password</a>
-
-    <section>
+    <section class="card">
         <h1>Sign In</h1>
         <section>
             <% if (locals.messages.errors) { %>
@@ -58,17 +50,16 @@
                 <button type="submit">Sign In</button>
             </section>
         </form>
-    </section>
-
-    <section>
-        <section>
-            <p>Forget your password?</p>
-            <a href="/users/forgotPassword">Change password here</a>
-        </section>
-        <section>
-            <p>Don't have an account?</p>
-            <a href="/users/signup">Sign up here</a>
-        </section>
+        <ul>
+            <li>
+                <p>Forget your password?</p>
+                <a href="/users/forgotPassword">Change password here</a>
+            </li>
+            <li>
+                <p>Don't have an account?</p>
+                <a href="/users/signup">Sign up here</a>
+            </li>
+        </ul>
     </section>
 
 </body>

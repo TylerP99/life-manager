@@ -5,10 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/sign.css">
 </head>
 <body>
 
-    <section>
+    <section class="card">
         <h1>Sign Up</h1>
         <form action="/users/create" method="POST">
 
@@ -57,11 +59,10 @@
                 <button type="submit">Create Account</button>
             </section>
         </form>
-    </section>
-    
-    <section>
-        <p>Already have an account?</p>
-        <a href="/users/signin">Sign In</a>
+        <section>
+            <p>Already have an account?</p>
+            <a href="/users/signin">Sign In</a>
+        </section>
     </section>
 
 </body>

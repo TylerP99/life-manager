@@ -104,12 +104,28 @@ module.exports = {
         }
     },
     // Update existing Habit
-    update_habit: (req, res, next) => {
+    update_habit: async (req, res, next) => {
 
     },
     // Delete existing Habit
-    delete_habit: (req, res, next) => {
+    delete_habit: async (req, res, next) => {
+        try{
+            // Get habit to delete from db
+            const habit = await Habit.findById(req.params.id);
 
+            // Delete all associated tasks
+            await Task.deleteMany({_id: {$in: habit.children}});
+
+            // Delete habit
+            await Habit.findByIdAndDelete(req.params.id);
+
+            req.flash("success", "Successfully deleted!");
+            res.redirect("/habits");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 }
 

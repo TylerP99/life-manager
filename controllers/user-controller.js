@@ -29,6 +29,8 @@ module.exports = {
 
             // If there are errors, reload signup with flash info
             if(errors.length) {
+                console.log("Errors");
+                console.log(errors);
                 req.flash("errors", errors);
                 return res.redirect("/users/signup");
             }
@@ -70,7 +72,7 @@ module.exports = {
         passport.authenticate("local", (err, user, info) => {
             if(err) return next(err);
             if(!user) {
-                req.flash("errors", info);
+                req.flash("errors", [errors]);
                 return res.redirect("/users/signin");
             }
             req.logIn(user, (err) => {
@@ -105,13 +107,8 @@ module.exports = {
         // Use the logout function and destroy the session
         req.logout((err) => {
             if(err) return next(err);
-        });
-
-        req.session.destroy((err) => {
-            if(err) console.error("Failed to destroy session", err);
-            req.user = null;
             res.redirect("/users/signin");
-        })
+        });
     },
     get_settings_page: (req, res, next) => {
         res.render("users/settings.ejs");

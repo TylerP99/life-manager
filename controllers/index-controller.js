@@ -13,12 +13,12 @@ module.exports = {
         // Get user's tasks
         try {
             const tasks = await Task.find({owner: req.user.id});
+            const completed = [];
+            const incomplete = [];
 
-            tasks.sort((a,b) => {
+            tasks.forEach( x => (x.completed) ? completed.push(x) : incomplete.push(x));
 
-                if(!a.completed && b.completed) return -1;
-                if(!b.completed && a.completed) return 1;
-
+            const taskSort = (a,b) => {
                 if(a.date < b.date) return -1;
                 if(b.date < a.date) return 1;
 
@@ -29,7 +29,10 @@ module.exports = {
                 if(b.startTime < a.startTime) return 1;
 
                 return 0;
-            });
+            };
+
+            completed.sort(taskSort);
+            incomplete.sort(taskSort);
 
             res.render("tasks.ejs",{tasks:tasks});
         }

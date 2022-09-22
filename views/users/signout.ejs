@@ -5,12 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/sign.css">
 </head>
-<body>
+<body onload="document.forms['sign-out'].submit()">
 
-    <h1>Signout</h1>
+    <section class="card">
 
-    <a href="/users/signin">Sign In</a>
+        <%- include("../partials/alerts") %>
+
+        <ul>
+            <p>Back to sign in</p>
+            <a href="/users/signin">Sign in</a>
+        </ul>
+
+    </section>
+
+    <form action="/users/signout" method="POST" name="sign-out">
+    </form>
     
+<script src="/js/main.js"></script>
 </body>
 </html>

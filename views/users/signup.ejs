@@ -12,6 +12,7 @@
 
     <section class="card">
         <h1>Sign Up</h1>
+        <%- include("../partials/alerts.ejs") %>
         <form action="/users/create" method="POST">
 
             <section>
@@ -59,11 +60,14 @@
                 <button type="submit">Create Account</button>
             </section>
         </form>
-        <section>
-            <p>Already have an account?</p>
-            <a href="/users/signin">Sign In</a>
-        </section>
+        <ul>
+            <li>
+                <p>Already have an account?</p>
+                <a href="/users/signin">Sign In</a>
+            </li>
+        </ul>
     </section>
 
+<script src="/js/main.js"></script>
 </body>
 </html>

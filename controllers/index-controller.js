@@ -1,6 +1,7 @@
 // Index controller
 
 const Task = require("../models/Task");
+const Habit = require("../models/Habit");
 
 module.exports = {
     get_landing_page: (req, res) => {
@@ -40,5 +41,16 @@ module.exports = {
             console.error(e);
             next(e);
         }
-    }
+    },
+    get_habits_page: async (req, res, next) => {
+        try{
+            const habits = await Habit.find({owner: req.user.id});
+
+            res.render("habits.ejs", {habits:habits});
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
+    },
 };

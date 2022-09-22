@@ -12,7 +12,12 @@
         <% if(habits.length) { %>
             <% for(let i = 0; i < habits.length; ++i) { %>
                 <section>
-                    <span><%=habits.name%></span>
+                    <span><%=habits[i].name%></span>
+                    <form action="/api/habit/update/<%=habits[i]._id%>?_method=PUT" method="PUT">       
+                    </form>
+                    <form action="/api/habit/delete/<%=habits[i]._id%>?_method=DELETE" method="POST">
+                        <button type="submit">Delete Habit</button>
+                    </form>
                 </section>
             <% } %>
         <% }else{%>
@@ -24,7 +29,7 @@
         <h2>Create new habit</h2>
         <section>
             <label for="name">Name</label>
-            <input id=""
+            <input id="name"
             name="name"
             type="text"
             maxlength="50"

@@ -1,9 +1,10 @@
 <section id="alerts">
     <% if(locals.messages.errors) { %>
         <ul>
-        <% for(let i = 0; i < locals.messages.errors[i]; ++i) { %>
+        <% for(let i = 0; i < locals.messages.errors.length; ++i) { %>
             <li>
-                <span><%=locals.messages.errors[i]%></span>
+                <span><%=locals.messages.errors[i].msg%></span>
+                <button class="close-button" type="button">x</button>
             </li>
         <% } %>
         </ul>
@@ -12,6 +13,7 @@
         <ul>
             <li>
                 <span><%=locals.messages.success%></span>
+                <button class="close-button" type="button">x</button>
             </li>
         </ul>
     <% } %>

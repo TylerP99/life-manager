@@ -135,11 +135,11 @@ function validate_task(task) {
     const today = new Date(Date.now());
     // Check name
     // Verify name is at most 50 characters
-    if(task.name && task.name.length > 50) errors.push("Name can't be more than 50 characters long.");
+    if(task.name && task.name.length > 50) errors.push({msg: "Name can't be more than 50 characters long."});
 
     // Check description
     // Verify description is at most 250 characters
-    if(task.description && task.description.length > 250) errors.push("Description can't be more than 250 characters long.");
+    if(task.description && task.description.length > 250) errors.push({msg: "Description can't be more than 250 characters long."});
 
     // Check date
     // Verify date is on or after today
@@ -147,14 +147,14 @@ function validate_task(task) {
     if( task.date && ( task.date.getFullYear() < today.getFullYear() || // Year is before current year
     (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() < today.getMonth()) || // Year is current year, but month is before current month
     (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() == today.getMonth() && task.date.getDate() < today.getDate()) ) ) { // Year is current year, month is current month, date is before current date
-        errors.push("Date must be on or after the current date.");
+        errors.push({msg: "Date must be on or after the current date."});
     }
     // Check startTime
     // Check endTime
     // Verify startTime is before endTime
     if( (task.startTime && task.endTime) && (task.startTime.getHours() > task.endTime.getHours() ||
     (task.startTime.getHours() == task.endTime.getHours() && task.startTime.getMinutes() > task.endTime.getMinutes() ) ) ) {
-        errors.push("Start time must be before end time.");
+        errors.push({msg: "Start time must be before end time."});
     }
 
     return errors;

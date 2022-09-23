@@ -19,6 +19,7 @@ html {
 header {
     position: relative;
     padding: 1rem 2rem;
+    width: 100%;
 }
 
 body {
@@ -42,7 +43,7 @@ main > * {
     width: 100%;
 }
 
-/* Main header */
+/* Main Header */
 h1 {
     font-size: 10rem;
     font-weight: bold;
@@ -50,17 +51,18 @@ h1 {
     margin-bottom: 2rem;
 }
 
-/* Sub-main header */
+/* Sub-main Header */
 h2 {
 
 }
 
-/* Error header */
+
+/* Error Header */
 h4 {
 
 }
 
-/* Card/Small header */
+/* Form/Element Header */
 h5 {
     font-size: 2rem;
     border-bottom: 3px solid;
@@ -76,16 +78,70 @@ span {
     display: inline-block;
 }
 
+form {
+    background: #eee;
+    border-radius: 10px;
+
+    padding: 1rem 2rem;
+    width: 90%;
+}
+form section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+}
+.button-form {
+    background: none;
+    padding: none;
+    width: auto;
+}
+
+input {
+    padding: 1rem;
+}
+
+label {
+    margin-bottom: 0.5rem;
+}
+
+button {
+    padding: 1rem 2rem;
+}
+button:hover {
+    cursor: pointer;
+}
+
 #options {
-    width: 100%;
+    width: 90%;
     
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
     align-items: center;
+}
+#options li {
+    margin-left: 1rem;
 }
 
 #alerts {
 
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    background: rgba(240, 240, 240, 0.7);
+
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 99;
 }
 
 /*

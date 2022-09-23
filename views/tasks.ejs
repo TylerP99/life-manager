@@ -22,57 +22,61 @@
     </header>
 
     <main>
-        <section id="options">
-            <button type="button" id="open-create-new-task">Create New Task</button>
-            <button type="button" id="view-complete">View Complete Tasks</button>
-        </section>
-
-        <section id="create-task" class="hidden">
-            <h2>Create new task</h2>
-            <form action="/api/task/create" method="POST">
-                <section>
-                    <label for="name">Name</label>
-                    <input id=""
-                    name="name"
-                    type="text"
-                    maxlength="50"
-                    placeholder="Enter name here"
-                    required>
+        <ul id="options">
+            <li>
+                <button type="button" class="open-button">Create New Task</button>
+                <section class="overlay hidden">
+                    <form action="/api/task/create" method="POST">
+                        <h5>Create new task</h5>
+                        <button type="button" class="close-form-button">x</button>
+                        <section>
+                            <label for="name">Name</label>
+                            <input id=""
+                            name="name"
+                            type="text"
+                            maxlength="50"
+                            placeholder="Enter name here"
+                            required>
+                        </section>
+                        <section>
+                            <label for="description">Description</label>
+                            <textarea id="description"
+                            name="description"
+                            maxlength = "250"
+                            placeholder = "Enter description here"
+                            spellcheck = "true"
+                            >
+                            </textarea>
+                        </section>
+                        <section>
+                            <label for="date">Date</label>
+                            <input id="date"
+                            name="date"
+                            type="date"
+                            required>
+                        </section>
+                        <section>
+                            <label for="startTime">Start Time</label>
+                            <input id="startTime"
+                            name="startTime"
+                            type="time">
+                        </section>
+                        <section>
+                            <label for="endTime">End Time</label>
+                            <input id="endTime"
+                            name="endTime"
+                            type="time">
+                        </section>
+                        <section>
+                            <button type="submit">Create Task</button>
+                        </section>
+                    </form>
                 </section>
-                <section>
-                    <label for="description">Description</label>
-                    <textarea id="description"
-                    name="description"
-                    maxlength = "250"
-                    placeholder = "Enter description here"
-                    spellcheck = "true"
-                    >
-                    </textarea>
-                </section>
-                <section>
-                    <label for="date">Date</label>
-                    <input id="date"
-                    name="date"
-                    type="date"
-                    required>
-                </section>
-                <section>
-                    <label for="startTime">Start Time</label>
-                    <input id="startTime"
-                    name="startTime"
-                    type="time">
-                </section>
-                <section>
-                    <label for="endTime">End Time</label>
-                    <input id="endTime"
-                    name="endTime"
-                    type="time">
-                </section>
-                <section>
-                    <button type="submit">Create Task</button>
-                </section>
-            </form>
-        </section>
+            </li>
+            <li>
+                <button type="button" id="view-complete">View Complete Tasks</button>
+            </li>
+        </ul>
 
         <%- include("./partials/alerts.ejs") %>
         <section id="upcoming-task-display" class="card-display">
@@ -151,7 +155,7 @@
                     </section>
                 <% } %>
             <% }else{ %>
-                <h2>No tasks to display</h2>
+                <h5>No tasks to display</h5>
             <% } %>
         </section>
 
@@ -225,7 +229,7 @@
                     </section>
                 <% } %>
             <% }else{ %>
-                <h2>No tasks to display</h2>
+                <h5>No tasks to display</h5>
             <% } %>
         </section>
 

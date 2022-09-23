@@ -20,12 +20,12 @@ module.exports = {
             owner: req.user.id
         };
 
-        if(req.body.description) habit.description = req.body.description;
-        if(req.body.startTime) {
+        if(req.body.description.length) habit.description = req.body.description;
+        if(req.body.startTime.length) {
             req.body.startTime = req.body.startTime.split(":");
             habit.startTime = new Date(0, 0, 0, req.body.startTime[0], req.body.startTime[1] );
         }
-        if(req.body.endTime) {
+        if(req.body.endTime.length) {
             req.body.endTime = req.body.endTime.split(":");
             habit.endTime = new Date(0, 0, 0, req.body.endTime[0], req.body.endTime[1] );
         }
@@ -47,8 +47,8 @@ module.exports = {
                 return newTask;
             };
 
-            let date = habit.startDate;
-            let endDate = habit.endDate;
+            let date = new Date(habit.startDate);
+            let endDate = new Date(habit.endDate);
             let tasks = [];
             // Use habit in a loop to create tasks on desired dates, store in array
             while(date <= endDate) {
@@ -74,7 +74,7 @@ module.exports = {
                         date.setMonth(date.getMonth() + habit.howOften.step*1);
                         break;
                     case "year":
-                        date.setDate(date.getDate() + habit.howOften.step*365);
+                        date.setFullYear(date.getFullYear() + habit.howOften.step*1);
                         break;
                     default:
                         console.error("Invalid unit");
@@ -105,7 +105,133 @@ module.exports = {
     },
     // Update existing Habit
     update_habit: async (req, res, next) => {
+        // Form habit object
+        const updatedHabit = {};
 
+        console.log(req.body);
+
+        if(req.body.name.length) updatedHabit.name = req.body.name; 
+        if(req.body.description.length) updatedHabit.description = req.body.description; 
+        if(req.body.startDate.length) {
+            req.body.startDate = req.body.startDate.split("-");
+            updatedHabit.startDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]); 
+        }
+        if(req.body.endDate.length) {
+            req.body.endDate = req.body.endDate.split("-");
+            updatedHabit.endDate = new Date(req.body.endDate[0], req.body.endDate[1]-1, req.body.endDate[2]);
+        }
+        if(req.body.step.length) {
+            updatedHabit.howOften = {};
+            updatedHabit.howOften.step = req.body.step; 
+        }
+        if(req.body.timeUnit.length) {
+            if(!updatedHabit.howOften) updatedHabit.howOften = {};
+            updatedHabit.howOften.timeUnit = req.body.timeUnit; 
+        }
+        if(req.body.startTime.length) {
+            req.body.startTime = req.body.startTime.split(":");
+            updatedHabit.startTime = new Date(0, 0, 0, req.body.startTime[0], req.body.startTime[1] );
+        }
+        if(req.body.endTime.length) {
+            req.body.endTime = req.body.endTime.split(":");
+            updatedHabit.endTime = new Date(0, 0, 0, req.body.endTime[0], req.body.endTime[1] );
+        }
+
+        console.log(updatedHabit)
+
+        // Validate habit object
+        const errors = validate_habit(updatedHabit);
+
+        if(errors.length) {
+            req.flash("errors", errors);
+            return res.render("/habits");
+        }
+
+        try {
+            // Get old habit from db
+            const oldHabit = await Habit.findById(req.params.id);
+
+            // Get all associated tasks from db
+            let tasks = await Task.find({_id: {$in: oldHabit.children}});
+            
+            // Filter out completed tasks
+            tasks = tasks.reduce((filtered, x) => {
+                if(!x.completed) filtered.push(x._id);
+                return filtered;
+            },[]);
+
+            const taskTemplate = _ => {
+                return {
+                    name: updatedHabit.name || oldHabit.name,
+                    description: updatedHabit.description || oldHabit.description || undefined,
+                    startTime: updatedHabit.startTime || oldHabit.startTime || undefined,
+                    endTime: updatedHabit.endTime || oldHabit.endTime || undefined,
+                    owner: req.user.id
+                };
+            };
+
+            // IF user wants to change occurence
+            if(updatedHabit.startDate || updatedHabit.endDate || updatedHabit.howOften) {
+                if(!updatedHabit.howOften) updatedHabit.howOften = oldHabit.howOften;
+                if(!updatedHabit.howOften.step) updatedHabit.howOften.step = oldHabit.howOften.step;
+                if(!updatedHabit.howOften.timeUnit) updatedHabit.howOften.timeUnit = oldHabit.howOften.timeUnit;
+
+                // Delete all incomplete tasks
+                await Task.deleteMany({_id: {$in: tasks}});
+
+                // Make new tasks with updated habit
+                let date = new Date(updatedHabit.startDate || oldHabit.startDate);
+                const endDate = new Date(updatedHabit.endDate || oldHabit.endDate);
+                let today = new Date(Date.now());
+                let todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+                let newTasks = [];
+                console.log(date,endDate,todayMidnight);
+                while(date < endDate) {
+                    if(date >= todayMidnight) {
+                        const newTask = taskTemplate();
+                        newTask.date = new Date(date);
+                        newTasks.push(newTask);
+                    }
+
+                    switch(updatedHabit.howOften.timeUnit) {
+                        case "day":
+                            date.setDate(date.getDate() + updatedHabit.howOften.step*1);
+                            break;
+                        case "week":
+                            date.setDate(date.getDate() + updatedHabit.howOften.step*7);
+                            break;
+                        case "month":
+                            date.setMonth(date.getMonth() + updatedHabit.howOften.step*1);
+                            break;
+                        case "year":
+                            date.setFullYear(date.getFullYear() + updatedHabit.howOften.step*1);
+                            break;
+                        default:
+                            console.error("Invalid unit");
+                            return res.render("/habits");
+                    }
+                }
+                if(newTasks.length) newTasks = await Task.insertMany(newTasks);
+                newTasks = newTasks.map( x => x._id);
+                updatedHabit.children = newTasks;
+            }
+            else{
+                // Otherwise, adjust all tasks with new properties only
+                const updatedTask = taskTemplate();
+
+                await Task.updateMany({_id: {$in: tasks}}, {$set:updatedTask}, {upsert:false});
+            }
+
+            await Habit.findByIdAndUpdate(req.params.id, {$set:updatedHabit}, {upsert:false});
+
+            // Respond
+            req.flash("success", "Successfully updated");
+            res.redirect("/habits");
+        }
+        catch(e){
+            console.error(e);
+            next(e);
+        }
     },
     // Delete existing Habit
     delete_habit: async (req, res, next) => {

@@ -13,7 +13,71 @@
             <% for(let i = 0; i < habits.length; ++i) { %>
                 <section>
                     <span><%=habits[i].name%></span>
-                    <form action="/api/habit/update/<%=habits[i]._id%>?_method=PUT" method="PUT">       
+                    <form action="/api/habit/update/<%=habits[i]._id%>?_method=PUT" method="POST">  
+                        <h2>Create new habit</h2>
+                        <section>
+                            <label for="name">Name</label>
+                            <input id="name"
+                            name="name"
+                            type="text"
+                            maxlength="50"
+                            placeholder="Enter name here"
+                            >
+                        </section>
+                        <section>
+                            <label for="description">Description</label>
+                            <textarea id="description"
+                            name="description"
+                            maxlength = "250"
+                            placeholder = "Enter description here"
+                            spellcheck = "true"
+                            ></textarea>
+                        </section>
+                        <section>
+                            <label for="startDate">Starting Date</label>
+                            <input id="startDate"
+                            name="startDate"
+                            type="date"
+                            >
+                        </section>
+                        <section>
+                            <label for="endDate">Ending Date</label>
+                            <input id="endDate"
+                            name="endDate"
+                            type="date"
+                            >
+                        </section>
+                        <section>
+                            <label for="step">Every:</label>
+                            <input id="step"
+                            name="step"
+                            type="number"
+                            min="1"
+                            max="100"
+                            >
+                            <select name="timeUnit">
+                                <option value="">Choose time unit</option>
+                                <option value="day">Day</option>
+                                <option value="week">Week</option>
+                                <option value="month">Month</option>
+                                <option value="year">Year</option>
+                            </select>
+                        </section>
+                        <section>
+                            <label for="startTime">Start Time</label>
+                            <input id="startTime"
+                            name="startTime"
+                            type="time">
+                        </section>
+                        <section>
+                            <label for="endTime">End Time</label>
+                            <input id="endTime"
+                            name="endTime"
+                            type="time">
+                        </section>
+                        <section>
+                            <button type="submit">Create Task</button>
+                        </section>     
                     </form>
                     <form action="/api/habit/delete/<%=habits[i]._id%>?_method=DELETE" method="POST">
                         <button type="submit">Delete Habit</button>
@@ -43,8 +107,7 @@
             maxlength = "250"
             placeholder = "Enter description here"
             spellcheck = "true"
-            >
-            </textarea>
+            ></textarea>
         </section>
         <section>
             <label for="startDate">Starting Date</label>
@@ -69,6 +132,7 @@
             max="100"
             required>
             <select name="timeUnit" required>
+                <option value="">Choose time unit</option>
                 <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>

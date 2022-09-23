@@ -20,12 +20,12 @@ module.exports = {
             owner: req.user.id
         };
 
-        if(req.body.description) task.description = req.body.description;
-        if(req.body.startTime) {
+        if(req.body.description.length) task.description = req.body.description;
+        if(req.body.startTime.length) {
             req.body.startTime = req.body.startTime.split(":");
             task.startTime = new Date( task.date.getFullYear(), task.date.getMonth(), task.date.getDate(), req.body.startTime[0], req.body.startTime[1] );
         }
-        if(req.body.endTime) {
+        if(req.body.endTime.length) {
             req.body.endTime = req.body.endTime.split(":");
             task.endTime = new Date( task.date.getFullYear(), task.date.getMonth(), task.date.getDate(), req.body.endTime[0], req.body.endTime[1] );
         }
@@ -60,14 +60,14 @@ module.exports = {
             // Want date for start and end time if user didnt adjust it
             const task = await Task.findById(taskID);
 
-            if(req.body.name) updatedTask.name = req.body.name;
-            if(req.body.description) updatedTask.description = req.body.description;
+            if(req.body.name.length) updatedTask.name = req.body.name;
+            if(req.body.description.length) updatedTask.description = req.body.description;
             (req.body.date) ? updatedTask.date = new Date(req.body.date[0], req.body.date[1]-1, req.body.date[2]) : updatedTask.date = task.date;
-            if(req.body.startTime) {
+            if(req.body.startTime.length) {
                 req.body.startTime = req.body.startTime.split(":");
                 updatedTask.startTime = new Date( updatedTask.date.getFullYear(), updatedTask.date.getMonth(), updatedTask.date.getDate(), req.body.startTime[0], req.body.startTime[1] );
             }
-            if(req.body.endTime) {
+            if(req.body.endTime.length) {
                 req.body.endTime = req.body.endTime.split(":");
                 updatedTask.endTime = new Date( updatedTask.date.getFullYear(), updatedTask.date.getMonth(), updatedTask.date.getDate(), req.body.endTime[0], req.body.endTime[1] );
             }

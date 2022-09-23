@@ -5,18 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-    <h1>Dashboard</h1>
+    <header>
+        <%- include("./partials/navbar") %>
+        <div class="open-nav menu nav-btn">
+            <div class="icon-circle">
+                <div class="icon"></div>
+            </div>
+        </div>
+        <h1>Dashboard</h1>
+    </header>
 
-    <nav>
-        <ul>
-            <li><a href="/tasks">Tasks</a></li>
-            <li><a href="/users/settings">Settings</a></li>
-            <li><a href="/users/signout">Sign Out</a></li>
-        </ul>
-    </nav>
+    <section id="upcoming-tasks">
+        <span>Displays five (or all with scroll) upcoming tasks</span>
+    </section>
+
+    <section id="my-habits">
+        <span>Displays three to five (or all with scroll) user habits</span>
+    </section>
+
+    <section id="my-goals">
+        <span>Displays three to five (or all with scroll) user goals</span>
+    </section>
     
+<script src="/js/main.js"></script>
 </body>
 </html>

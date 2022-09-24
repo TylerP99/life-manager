@@ -1,0 +1,331 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    height: 100%;
+}
+
+/* Fall color palette */
+/*
+    mustard:   #e1ad01
+    roufus:    #a81c07 
+    coffee:    #d47a22
+    rust:      #b6400e
+    chocolate: #8f4216
+*/
+
+/* ========================================== */
+/*  App Page Styling (Dashboard, Tasks, etc)  */
+/* ========================================== */
+
+.app-body {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+
+    height: 100%;
+}
+
+.app-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+}
+
+.app-header {
+    padding: 1rem 3rem;
+    height: 10%;
+    width: 100%;
+}
+.app-header h1 {
+    border-bottom: 5px solid #8f4216;
+}
+
+.app-content {
+    height: 90%;
+    width: 100%;
+}
+
+.app-options {
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    padding: 1rem;
+
+    width: 100%;
+}
+.app-options li {
+    margin-left: 2rem;
+}
+
+.card-display {
+    background: #eee;
+
+    padding: 1rem;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 300px);
+    justify-content: center;
+    gap: 1rem;
+}
+.card {
+    background: #fff;
+    box-shadow: 0 4px 2px -2px gray;
+
+    padding: 1rem 2rem;
+
+    height: 250px;
+
+    display: flex;
+    flex-direction: column;
+    
+}
+.card-info {
+    width: 100%;
+}
+.card-options {
+    width: 100%;
+}
+.card-options > * {
+    width: 100%;
+}
+.card-options li {
+    margin-bottom: 1rem;
+}
+.card-options > li > button{
+    width: 100%;
+}
+.card p {
+    height: 50px;
+    overflow-y: scroll;
+    padding-right: 1rem;
+}
+.card h5 {
+    border-bottom: 3px solid #a81c07;
+}
+
+/* ====================================== */
+/*  General Element Styling (h1, p, etc)  */
+/* ====================================== */
+h1 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+    font-size: 5rem;
+    
+    margin-bottom: 2rem;
+}
+
+h5 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+p, span, button, input, label {
+    font-size: 1.6rem;
+}
+p {
+    margin-bottom: 1rem;
+}
+
+button {
+    background: inherit;
+    border: 2px solid;
+    border-radius: 10px;
+    color: #e1ad01;
+
+    padding: 0.5rem 1rem;
+}
+button:hover {
+    cursor: pointer;
+    background: #eee;
+    text-decoration: underline;
+}
+
+
+.nav-section {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-200%);
+    transition: transform 250ms ease-in-out;
+    z-index: 98;
+
+    background: #eee;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-open {
+    transform: translateX(0);
+}
+.nav-section ul {
+    width: 100%;
+    list-style-type: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.nav-section ul li {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+.nav-section ul li a {
+    font-size: 2rem;
+    padding: 1rem 3rem;
+    width: 100%;
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+
+    background-image: linear-gradient(#1095c1,#1095c1);
+    background-size: 0 100%;
+    background-repeat: no-repeat;
+    transition: .4s;
+    overflow: none;
+}
+.nav-section ul li a:hover {
+    background-size: 100% 100%;
+}
+
+.nav-btn {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    transition-duration: 0.5s;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.nav-btn .icon-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    transition-duration: 0.5s;
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    top: 2px;
+    border-radius: 100%;
+    background: #eee;
+    border: 4px solid black;
+}
+.nav-btn .icon-circle:hover {
+    background: #fff;
+}
+.nav-btn .icon {
+    transition-duration: 0.5s;
+    position: absolute;
+    height: 4px;
+    width: 30px;
+    background-color: #212121;
+    border-radius: 4px;
+}
+.nav-btn .icon:before {
+    transition-duration: 0.5s;
+    position: absolute;
+    width: 30px;
+    height: 4px;
+    background-color: #212121;
+    content: "";
+    top: -10px;
+    border-radius: 4px;
+}
+.nav-btn .icon:after {
+    transition-duration: 0.5s;
+    position: absolute;
+    width: 30px;
+    height: 4px;
+    background-color: #212121;
+    content: "";
+    top: 10px;
+    border-radius: 4px;
+}
+.nav-btn.open .icon-circle {
+    background: #fff;
+}
+.nav-btn.open .icon {
+    transition-duration: 0.5s;
+    background: transparent;
+}
+.nav-btn.open .icon:before {
+    transform: rotateZ(45deg) scaleX(1.25) translate(6.5px, 6.5px);
+}
+.nav-btn.open .icon:after {
+    transform: rotateZ(-45deg) scaleX(1.25) translate(6px, -6px);
+}
+.nav-btn:hover {
+    cursor: pointer;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    background: rgba(240, 240, 240, 0.7);
+
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 99;
+}
+
+form {
+    background: #fff;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (min-width:1200px) {
+    .app-body {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    .nav-container {
+        width: 10%;
+    }
+    .nav-section {
+        width: 100%;
+        position: static;
+        transition: none;
+        transform: none;
+    }
+    .nav-section ul {
+        width: 100%;
+    }
+    .app-section {
+        width: 90%;
+    }
+    .nav-btn {
+        display: none;
+    }
+}

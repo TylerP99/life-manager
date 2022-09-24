@@ -201,6 +201,7 @@ button:hover {
     justify-content: space-between;
     align-items: center;
 }
+
 .nav-open {
     transform: translateX(0);
 }

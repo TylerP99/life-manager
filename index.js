@@ -30,7 +30,7 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: true,
         saveUninitialized: true,
-        store: new MongoStore({ mongoUrl: process.env.DB_STRING })
+        store: MongoStore.create({ mongoUrl: process.env.DB_STRING })
     })
 );
 

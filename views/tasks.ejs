@@ -7,108 +7,26 @@
     <title>Tasks</title>
 
     <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <%- include("./partials/navbar") %>
-        <div class="open-nav menu nav-btn">
-            <div class="icon-circle">
-                <div class="icon"></div>
-            </div>
-        </div>
-        <h1>Tasks</h1>
-    </header>
+    <%- include("./partials/navbar.ejs") %>
 
-    <main>
-        <ul id="options">
-            <li>
-                <button type="button" class="open-button">Create New Task</button>
-                <section class="overlay hidden">
-                    <form action="/api/task/create" method="POST">
-                        <h5>Create new task</h5>
-                        <button type="button" class="close-form-button">x</button>
-                        <section>
-                            <label for="name">Name</label>
-                            <input id=""
-                            name="name"
-                            type="text"
-                            maxlength="50"
-                            placeholder="Enter name here"
-                            required>
-                        </section>
-                        <section>
-                            <label for="description">Description</label>
-                            <textarea id="description"
-                            name="description"
-                            maxlength = "250"
-                            placeholder = "Enter description here"
-                            spellcheck = "true"
-                            >
-                            </textarea>
-                        </section>
-                        <section>
-                            <label for="date">Date</label>
-                            <input id="date"
-                            name="date"
-                            type="date"
-                            required>
-                        </section>
-                        <section>
-                            <label for="startTime">Start Time</label>
-                            <input id="startTime"
-                            name="startTime"
-                            type="time">
-                        </section>
-                        <section>
-                            <label for="endTime">End Time</label>
-                            <input id="endTime"
-                            name="endTime"
-                            type="time">
-                        </section>
-                        <section>
-                            <button type="submit">Create Task</button>
-                        </section>
-                    </form>
-                </section>
-            </li>
-            <li>
-                <button type="button" id="view-complete">View Complete Tasks</button>
-            </li>
-        </ul>
+    <section class="app-section">
 
-        <%- include("./partials/alerts.ejs") %>
-        <section id="upcoming-task-display" class="card-display">
+        <header class="app-header">
+            <h1>Tasks</h1>
+        </header>
 
-            <% if(tasks.length) { %>
-                <% for(let i = 0; i < tasks.length; ++i) { %>
-                    <section class="card" data-id="<%=tasks[i]._id%>">
-                        <section class="info">
-                            <h5><%= tasks[i].name %></h5>
-                            <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
-                            <section>
-                                <span><%= tasks[i].date.toDateString() %></span>
-                                <p>
-                                    <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
-                                </p>
-                            </section>
-                        </section>
-
-                        <section class="options">
-                            <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                                <button type="submit">Mark Complete</button>
-                            </form>
-                            <form action="/api/task/markIncomplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                                <button type="submit">Mark Incomplete</button>
-                            </form>
-                            <button type="button" id="open-edit-task">Edit Task</button>
-                            <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
-                                <button type="submit">Delete this task</button>
-                            </form>
-                        </section>
-
-                        <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST" id="edit-task-form" class="hidden">
+        <main class="app-content">
+            <ul class="app-options">
+                <li>
+                    <button type="button" class="open-button">Create New Task</button>
+                    <section class="overlay hidden">
+                        <form action="/api/task/create" method="POST">
+                            <h5>Create new task</h5>
+                            <button type="button" class="close-form-button">x</button>
                             <section>
                                 <label for="name">Name</label>
                                 <input id=""
@@ -116,8 +34,7 @@
                                 type="text"
                                 maxlength="50"
                                 placeholder="Enter name here"
-                                value="<%=tasks[i].name%>"
-                                >
+                                required>
                             </section>
                             <section>
                                 <label for="description">Description</label>
@@ -125,15 +42,16 @@
                                 name="description"
                                 maxlength = "250"
                                 placeholder = "Enter description here"
-                                spellcheck = "true"><%if(tasks[i].description) %><%=tasks[i].description%></textarea>
+                                spellcheck = "true"
+                                >
+                                </textarea>
                             </section>
                             <section>
                                 <label for="date">Date</label>
                                 <input id="date"
                                 name="date"
                                 type="date"
-                                value="<%=tasks[i].date%>"
-                                >
+                                required>
                             </section>
                             <section>
                                 <label for="startTime">Start Time</label>
@@ -148,40 +66,48 @@
                                 type="time">
                             </section>
                             <section>
-                                <button type="submit">Update Task</button>
+                                <button type="submit">Create Task</button>
                             </section>
                         </form>
-
                     </section>
-                <% } %>
-            <% }else{ %>
-                <h5>No tasks to display</h5>
-            <% } %>
-        </section>
+                </li>
+                <li>
+                    <button type="button" id="view-complete">View Complete Tasks</button>
+                </li>
+            </ul>
 
-        <section id="complete-task-display" class="hidden">
-            <% if(tasks.length) { %>
-                <% for(let i = 0; i < tasks.length; ++i) { %>
-                    <section class="card" data-id="<%=tasks[i]._id%>">
-                        <h5><%= tasks[i].name %></h5>
-                        <p>Complete: <%=tasks[i].completed%></p>
-                        <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
-                        <section>
-                            <span><%= tasks[i].date.toDateString() %></span>
-                            <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &mdash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
-                        </section>
+            <%- include("./partials/alerts.ejs") %>
 
-                        <section class="options">
-                            <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
-                                <button type="submit">Delete this task</button>
-                            </form>
-                            <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                                <button type="submit">Mark Complete</button>
-                            </form>
-                            <form action="/api/task/markIncomplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                                <button type="submit">Mark Incomplete</button>
-                            </form>
-                            <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST">
+            <section class="card-display">
+
+                <% if(tasks.length) { %>
+                    <% for(let i = 0; i < tasks.length; ++i) { %>
+                        <section class="card" data-id="<%=tasks[i]._id%>">
+                            <section class="card-info">
+                                <h5><%= tasks[i].name %></h5>
+                                <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
+                                <section>
+                                    <span><%= tasks[i].date.toDateString() %></span>
+                                    <p>
+                                        <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
+                                    </p>
+                                </section>
+                            </section>
+
+                            <section class="card-options">
+                                <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                                    <button type="submit">Mark Complete</button>
+                                </form>
+                                <form action="/api/task/markIncomplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
+                                    <button type="submit">Mark Incomplete</button>
+                                </form>
+                                <button type="button" id="open-edit-task">Edit Task</button>
+                                <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
+                                    <button type="submit">Delete this task</button>
+                                </form>
+                            </section>
+
+                            <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST" id="edit-task-form" class="hidden">
                                 <section>
                                     <label for="name">Name</label>
                                     <input id=""
@@ -224,16 +150,27 @@
                                     <button type="submit">Update Task</button>
                                 </section>
                             </form>
+
                         </section>
-
-                    </section>
+                    <% } %>
+                <% }else{ %>
+                    <h5>No tasks to display</h5>
                 <% } %>
-            <% }else{ %>
-                <h5>No tasks to display</h5>
-            <% } %>
-        </section>
+            </section>
 
-    </main>
+            <section id="complete-task-display" class="hidden">
+                <% if(tasks.length) { %>
+                    <% for(let i = 0; i < tasks.length; ++i) { %>
+                        
+                    <% } %>
+                <% }else{ %>
+                    <h5>No tasks to display</h5>
+                <% } %>
+            </section>
+
+        </main>
+
+    </section>
 
 <script src="/js/main.js"></script>
 </body>

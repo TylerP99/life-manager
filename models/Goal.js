@@ -27,11 +27,7 @@ const GoalSchema = new mongoose.Schema({
     parent: {
         type: mongoose.Types.ObjectId
     },
-    subGoals: {
-        type: Array,
-        default: []
-    },
-    tasks: {
+    children: {
         type: Array,
         default: []
     },

@@ -13,7 +13,14 @@ router.get("/dashboard", ensureAuthenticated, IndexController.get_dashboard);
 // Tasks
 router.get("/tasks", ensureAuthenticated, IndexController.get_tasks_page);
 
+// Habits Page
 router.get("/habits", ensureAuthenticated, IndexController.get_habits_page);
+
+// Routines Page
+router.get("/routines", ensureAuthenticated, IndexController.get_routines_page);
+
+// Goals Page
+router.get("/goals", ensureAuthenticated, IndexController.get_goals_page);
 
 // Users
 router.use("/users", require("./users.js"));

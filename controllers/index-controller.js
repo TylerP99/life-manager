@@ -2,6 +2,8 @@
 
 const Task = require("../models/Task");
 const Habit = require("../models/Habit");
+const Routine = require("../models/Routine");
+const Goal = require("../models/Goal");
 
 module.exports = {
     get_landing_page: (req, res) => {
@@ -53,4 +55,27 @@ module.exports = {
             next(e);
         }
     },
+    get_routines_page: async (req, res, next) => {
+        try{
+            const routines = await Routine.find({owner: req.user.id});
+
+            res.render("routines.ejs", {routines:routines});
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
+    },
+    get_goals_page: async (req, res, next) => {
+        try{
+            const goals = await Goal.find({owner: req.user.id});
+
+            res.render("goals.ejs", {goals:goals});
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
+    },
+
 };

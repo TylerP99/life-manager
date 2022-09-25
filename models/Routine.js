@@ -19,3 +19,7 @@ const RoutineSchema = new mongoose.Schema({
         required: true
     }
 }, {timestamps: true});
+
+const Routine = mongoose.model("Routine", RoutineSchema);
+
+module.exports = Routine;

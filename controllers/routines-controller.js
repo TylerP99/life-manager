@@ -3,28 +3,30 @@ const Task = require("../models/Task");
 
 module.exports = {
 
-    create_new_routine: (req, res, next) => {
+    create_new_routine: async (req, res, next) => {
         const routine = {
             name: req.body.routineName,
             tasks: [],
             children: [],
             owner: req.user.id,
         };
-        let startDate = req.body.startDate = req.body.startDate.split("-");
-        startDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]);
+        let startingDate = req.body.startDate = req.body.startDate.split("-");
+        startingDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]);
         const errors = [];
-        if(req.body.description.length) routine.description = req.body.description;
+        if(req.body.routineDescription.length) routine.description = req.body.routineDescription;
 
         for(let i = 0; i < req.body.name.length; ++i) {
+            req.body.startTime[i] = req.body.startTime[i].split(":");
+            req.body.endTime[i] = req.body.endTime[i].split(":");
             const task = {
                 name: req.body.name[i],
-                startTime: req.body.startTime[i],
-                endTime: req.body.endTime[i],
+                startTime: new Date(0, 0, 0, req.body.startTime[0], req.body.startTime[1]),
+                endTime: new Date(0, 0, 0, req.body.endTime[0], req.body.endTime[1]),
                 owner: req.user.id,
             }
             if(req.body.description[i].length) task.description = req.body.description[i];
 
-            errors = validate_task(task);
+            errors.push(...validate_task(task));
             if(errors.length) break;
 
             routine.tasks.push(task);
@@ -38,18 +40,24 @@ module.exports = {
         }
 
         // For each task in the routine, make 50 tasks and push to array
+        console.log(routine.tasks);
 
-        routine.tasks.forEach(x => {
-            const startDate = new Date(startDate);
-            for(let i = 0; i < 50; i++) {
-                const date = new Date(req.body.startDate);
-                const task = Object.create(x);
+        for(let i = 0; i < routine.tasks.length; ++i) {
+
+            const startDate = new Date(startingDate);
+            for(let j = 0; j < 50; j++) {
+                const date = new Date(startDate);
+
+                const task = JSON.parse(JSON.stringify(routine.tasks[i])); // Deep object copy
+
                 task.date = date;
                 routine.children.push(task);
 
                 startDate.setDate(startDate.getDate() + 1);
             }
-        });
+        }
+
+        console.log(routine.children);
 
         try{
             // Add tasks to database
@@ -72,11 +80,40 @@ module.exports = {
 
     },
 
-    update_routine: (req, res, next) => {
+    update_routine: async (req, res, next) => {
 
     },
 
-    delete_routine: (req, res, next) => {
+    delete_routine: async (req, res, next) => {
+        // Get routine id from params
+        const routineID = req.params.id;
+        try {
+            // Get routine from db
+            const routine = await Routine.findById(routineID);
 
+            // Delete all child tasks
+            await Task.deleteMany({_id: {$in: routine.children}});
+            
+            // Delete routine
+            await Routine.findByIdAndDelete(routineID);
+
+            // Respond
+            req.flash("success", "Routine successfully deleted!");
+            res.redirect("/routines");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
+}
+
+function validate_routine(routine) {
+    const errors = [];
+    return errors;
+}
+
+function validate_task(routine) {
+    const errors = [];
+    return errors;
 }

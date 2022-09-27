@@ -4,6 +4,7 @@ const Task = require("../models/Task");
 module.exports = {
 
     create_new_routine: async (req, res, next) => {
+        console.log(req.body);
         const routine = {
             name: req.body.routineName,
             tasks: [],
@@ -15,13 +16,20 @@ module.exports = {
         const errors = [];
         if(req.body.routineDescription.length) routine.description = req.body.routineDescription;
 
+        if(!Array.isArray(req.body.name)) {
+            req.body.name = [req.body.name];
+            req.body.description = [req.body.description];
+            req.body.startTime = [req.body.startTime];
+            req.body.endTime = [req.body.endTime];
+        }
+
         for(let i = 0; i < req.body.name.length; ++i) {
             req.body.startTime[i] = req.body.startTime[i].split(":");
             req.body.endTime[i] = req.body.endTime[i].split(":");
             const task = {
                 name: req.body.name[i],
-                startTime: new Date(0, 0, 0, req.body.startTime[0], req.body.startTime[1]),
-                endTime: new Date(0, 0, 0, req.body.endTime[0], req.body.endTime[1]),
+                startTime: new Date(0, 0, 0, req.body.startTime[i][0], req.body.startTime[i][1]),
+                endTime: new Date(0, 0, 0, req.body.endTime[i][0], req.body.endTime[i][1]),
                 owner: req.user.id,
             }
             if(req.body.description[i].length) task.description = req.body.description[i];
@@ -40,7 +48,6 @@ module.exports = {
         }
 
         // For each task in the routine, make 50 tasks and push to array
-        console.log(routine.tasks);
 
         for(let i = 0; i < routine.tasks.length; ++i) {
 
@@ -55,6 +62,7 @@ module.exports = {
 
                 startDate.setDate(startDate.getDate() + 1);
             }
+            routine.lastDate = new Date(startDate);
         }
 
         console.log(routine.children);

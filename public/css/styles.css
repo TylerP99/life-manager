@@ -325,6 +325,26 @@ form {
     background: #fff;
     max-height: 80vh;
     overflow: scroll;
+
+    padding: 1rem 2rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
+
+}
+form > * {
+    margin-bottom: 1rem;
+}
+form .input-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+label {
+    margin-bottom: 0.5rem;
 }
 
 .hidden {

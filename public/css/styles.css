@@ -77,7 +77,11 @@ html {
     display: grid;
     grid-template-columns: repeat(auto-fit, 300px);
     justify-content: center;
-    gap: 1rem;
+    gap: 2rem;
+
+    height: 100%;
+
+    overflow-y: scroll;
 }
 .card {
     background: #fff;
@@ -123,8 +127,6 @@ h1 {
     font-family: Georgia, 'Times New Roman', Times, serif;
 
     font-size: 5rem;
-    
-    margin-bottom: 2rem;
 }
 
 h5 {
@@ -159,11 +161,16 @@ button:hover {
     position: fixed;
     top: 0;
     left: 0;
-    transform: translateX(-200%);
+    transform: translateX(-100%);
     transition: transform 250ms ease-in-out;
     z-index: 98;
 
-    background: #eee;
+    background: #fff;
+
+    border: 3px solid;
+    border-left: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 
     display: flex;
     flex-direction: column;
@@ -173,6 +180,9 @@ button:hover {
 
 .nav-open {
     transform: translateX(0);
+}
+.nav-section nav {
+    width: 100%;
 }
 .nav-section ul {
     width: 100%;
@@ -185,24 +195,38 @@ button:hover {
 }
 .nav-section ul li {
     width: 100%;
-    margin-bottom: 1rem;
 }
 .nav-section ul li a {
     font-size: 2rem;
-    padding: 1rem 3rem;
+    padding: 2rem 3rem;
     width: 100%;
     display: inline-block;
     text-decoration: none;
     color: inherit;
 
-    background-image: linear-gradient(#1095c1,#1095c1);
+    background-image: linear-gradient(#e1ad01,#e1ad01);
     background-size: 0 100%;
     background-repeat: no-repeat;
+    border-bottom: solid 3px #a81c07;
+    border-top: solid 3px #a81c07;
     transition: .4s;
     overflow: none;
 }
+.nav-section ul li:first-child a {
+    border-top: none;
+}
+.nav-section ul li:last-child a {
+    border-bottom: none;
+}
 .nav-section ul li a:hover {
     background-size: 100% 100%;
+}
+.nav-section footer {
+    background-color: #d47a22;
+    color: #fff;
+    font-size: 1.6rem;
+    width: 100%;
+    padding: 1rem;
 }
 
 .nav-btn {
@@ -305,14 +329,14 @@ form {
     display: none;
 }
 
-@media (min-width:1200px) {
+@media (min-width:1400px) {
     .app-body {
         display: flex;
         justify-content: space-evenly;
         align-items: center;
     }
     .nav-container {
-        width: 10%;
+        width: 15%;
     }
     .nav-section {
         width: 100%;

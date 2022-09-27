@@ -20,12 +20,121 @@
 
         <main class="app-content">
             <!--Options-->
-            <!--<ul class="app-options">-->
-            <!--</ul>-->
+            <ul class="app-options">
+                <li>
+                    <button class="open-button" type="menu">Create New Routine</button>
+                    <section class="overlay hidden">
+                        <form action="/api/routine/create" method="POST">
+                            <h5>Create New Routine</h5>
+                            <button type="button" class="close-form-button">x</button>
+                            <section>
+                                <label for="routineName">Routine Name</label>
+                                <input id="routineName"
+                                name="routineName"
+                                type="text"
+                                maxlength="50"
+                                placeholder="Enter routine name here"
+                                required>
+                            </section>
+                            <section>
+                                <label for="routineDescription">Routine Description</label>
+                                <textarea id="routineDescription"
+                                name="routineDescription"
+                                maxlength = "250"
+                                placeholder = "Enter routine description here"
+                                spellcheck = "true"
+                                ></textarea>
+                            </section>
+                            <section>
+                                <label for="startDate">Starting Date</label>
+                                <input id="startDate"
+                                name="startDate"
+                                type="date"
+                                required>
+                            </section>
+                            <section id="new-task-form-container">
+                                <section class="task-form">
+                                    <h5>Create new task</h5>
+                                    <section>
+                                        <label for="name">Name</label>
+                                        <input id=""
+                                        name="name"
+                                        type="text"
+                                        maxlength="50"
+                                        placeholder="Enter name here"
+                                        required>
+                                    </section>
+                                    <section>
+                                        <label for="description">Description</label>
+                                        <textarea id="description"
+                                        name="description"
+                                        maxlength = "250"
+                                        placeholder = "Enter description here"
+                                        spellcheck = "true"></textarea>
+                                    </section>
+                                    <section>
+                                        <label for="startTime">Start Time</label>
+                                        <input id="startTime"
+                                        name="startTime"
+                                        type="time"
+                                        required>
+                                    </section>
+                                    <section>
+                                        <label for="endTime">End Time</label>
+                                        <input id="endTime"
+                                        name="endTime"
+                                        type="time"
+                                        required>
+                                    </section>
+                                </section>
+                            </section>
+                            <button id="add-new-task-button" type="button">Add A Task</button>
+                            <section>
+                                <button type="submit">Create Routine</button>
+                            </section>
+                        </form>
+                    </section>
+                </li>
+            </ul>
 
             <%- include("./partials/alerts.ejs") %>
 
             <!--App Functionality-->
+            <section>
+                <% if(routines.length) { %>
+                    <section class="card-display">
+                        <% for(let i = 0; i < routines.length; ++i) { %>
+                            <section class="card">
+                                <section class="card-info">
+                                    <h5><%=routines[i].name%></h5>
+                                </section>
+                                <ul class="card-options">
+                                    <li>
+                                        <button type="button" class="open-button">Update Routine</button>
+                                        <section class="overlay hidden">
+                                            <form>
+
+                                            </form>
+                                        </section>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="open-button">Delete Routine</button>
+                                        <section class="overlay hidden">
+                                            <form action="/api/routine/delete/<%=routines[i]._id%>?_method=DELETE" method="POST">
+                                                <h5>Are you sure you want to delete this routine and all of its associated tasks? (WARNING: This cannot be undone!)</h5>
+                                                <button type="submit">Delete Routine</button>
+                                            </form>
+                                        </section>
+                                    </li>
+                                </ul>
+                            </section>
+                        <% } %>
+                    </section>
+                <%}else{ %>
+                    <p>No routines to display.</p>
+                <% } %>
+            </section>
+            
 
         </main>
 

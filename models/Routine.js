@@ -10,7 +10,7 @@ const RoutineSchema = new mongoose.Schema({
         type: String,
         maxLength: 250
     },
-    children: {
+    children: { // ID of each task
         type: Array,
         default: []
     },

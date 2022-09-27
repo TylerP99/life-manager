@@ -99,3 +99,101 @@ function close_form(event) {
     console.log(event.target);
     event.target.parentElement.parentElement.classList.toggle("hidden");
 }
+
+
+/*=================================================*/
+/*           Routines Page Controller              */
+/*=================================================*/
+
+// Add new task to new routine form
+const newTaskFormContainer = document.querySelector("#new-task-form-container");
+const addNewTaskButton = document.querySelector("#add-new-task-button");
+
+addNewTaskButton.addEventListener("click", add_new_task_to_form);
+
+function add_new_task_to_form(e) {
+    e.preventDefault();
+    console.log("Add")
+
+    newTaskFormContainer.appendChild(make_new_task_form());
+}
+
+function delete_new_task_form(e) {
+    e.preventDefault();
+
+    e.target.parentElement.remove();
+}
+
+function make_new_task_form() {
+    const container = document.createElement("section");
+    container.classList.add("task-form");
+
+    const header = document.createElement("h5");
+    header.innerText = "Add New Task";
+    container.appendChild(header);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.innerText = "x";
+    deleteButton.type = "button";
+    deleteButton.addEventListener("click", delete_new_task_form);
+    container.appendChild(deleteButton);
+
+    const nameSection = document.createElement("section");
+    const nameLabel = document.createElement("label");
+    nameLabel.for = "name";
+    nameLabel.innerText = "Name:";
+    nameSection.appendChild(nameLabel);
+    const nameInput = document.createElement("input");
+    nameInput.id = "name";
+    nameInput.name = "name";
+    nameInput.type = "text";
+    nameInput.maxLength = 50;
+    nameInput.placeholder = "Enter task name here";
+    nameInput.required = true;
+    nameSection.appendChild(nameInput);
+    container.appendChild(nameSection);
+
+    const descriptionSection = document.createElement("section");
+    const descriptionLabel = document.createElement("label");
+    descriptionLabel.for = "description";
+    descriptionLabel.innerText = "Description:";
+    descriptionSection.appendChild(descriptionLabel);
+    const descriptionInput = document.createElement("textarea");
+    descriptionInput.id = "description";
+    descriptionInput.name = "description";
+    descriptionInput.type = "text";
+    descriptionInput.maxLength = 250;
+    descriptionInput.placeholder = "Enter task description here";
+    descriptionSection.appendChild(descriptionInput);
+    container.appendChild(descriptionSection);
+
+    const startTimeSection = document.createElement("section");
+    const startTimeLabel = document.createElement("label");
+    startTimeLabel.for = "startTime";
+    startTimeLabel.innerText = "Start Time:";
+    startTimeSection.appendChild(startTimeLabel);
+    const startTimeInput = document.createElement("input");
+    startTimeInput.id = "startTime";
+    startTimeInput.name = "startTime";
+    startTimeInput.type = "time";
+    startTimeInput.placeholder = "Enter task start time here";
+    startTimeInput.required = true;
+    startTimeSection.appendChild(startTimeInput);
+    container.appendChild(startTimeSection);
+
+    const endTimeSection = document.createElement("section");
+    const endTimeLabel = document.createElement("label");
+    endTimeLabel.for = "endTime";
+    endTimeLabel.innerText = "End Time:";
+    endTimeSection.appendChild(endTimeLabel);
+    const endTimeInput = document.createElement("input");
+    endTimeInput.id = "endTime";
+    endTimeInput.name = "endTime";
+    endTimeInput.type = "time";
+    endTimeInput.placeholder = "Enter task end time here";
+    endTimeInput.required = true;
+    endTimeSection.appendChild(endTimeInput);
+    container.appendChild(endTimeSection);
+
+    return container;
+}

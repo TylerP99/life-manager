@@ -139,6 +139,7 @@ function make_new_task_form() {
     container.appendChild(deleteButton);
 
     const nameSection = document.createElement("section");
+    nameSection.classList.add("input-section");
     const nameLabel = document.createElement("label");
     nameLabel.for = "name";
     nameLabel.innerText = "Name:";
@@ -154,6 +155,7 @@ function make_new_task_form() {
     container.appendChild(nameSection);
 
     const descriptionSection = document.createElement("section");
+    descriptionSection.classList.add("input-section");
     const descriptionLabel = document.createElement("label");
     descriptionLabel.for = "description";
     descriptionLabel.innerText = "Description:";
@@ -168,6 +170,7 @@ function make_new_task_form() {
     container.appendChild(descriptionSection);
 
     const startTimeSection = document.createElement("section");
+    startTimeSection.classList.add("input-section");
     const startTimeLabel = document.createElement("label");
     startTimeLabel.for = "startTime";
     startTimeLabel.innerText = "Start Time:";
@@ -182,6 +185,7 @@ function make_new_task_form() {
     container.appendChild(startTimeSection);
 
     const endTimeSection = document.createElement("section");
+    endTimeSection.classList.add("input-section");
     const endTimeLabel = document.createElement("label");
     endTimeLabel.for = "endTime";
     endTimeLabel.innerText = "End Time:";

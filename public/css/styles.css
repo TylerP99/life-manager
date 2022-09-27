@@ -323,6 +323,8 @@ button:hover {
 
 form {
     background: #fff;
+    max-height: 80vh;
+    overflow: scroll;
 }
 
 .hidden {

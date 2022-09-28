@@ -14,10 +14,6 @@ const RoutineSchema = new mongoose.Schema({
         type: Array,
         default:[]
     },
-    children: {
-        type: Array,
-        default: []
-    },
     lastDate: {
         type: Date,
         required: true,

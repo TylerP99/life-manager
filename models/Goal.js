@@ -10,10 +10,10 @@ const GoalSchema = new mongoose.Schema({
         type: String,
         maxLength: 250
     },
-    who: {
+    participants: {
         type: Array
     },
-    where: {
+    location: {
         type: String
     },
     startDate: {
@@ -26,6 +26,10 @@ const GoalSchema = new mongoose.Schema({
     },
     parent: {
         type: mongoose.Types.ObjectId
+    },
+    constructors: {
+        type: Array,
+        default: []
     },
     children: {
         type: Array,

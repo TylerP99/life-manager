@@ -6,26 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body class="app-body">
 
     <%- include("./partials/navbar") %>
 
-    <header>
-        <h1>Dashboard</h1>
-    </header>
+    <section class="app-section">
+        <header class="app-header">
+            <h1>Dashboard</h1>
+        </header>
 
-    <section id="upcoming-tasks">
-        <span>Displays five (or all with scroll) upcoming tasks</span>
-    </section>
+        <main class="app-content">
+            <section id="upcoming-tasks">
+                <span>Displays five (or all with scroll) upcoming tasks</span>
+            </section>
 
-    <section id="my-habits">
-        <span>Displays three to five (or all with scroll) user habits</span>
-    </section>
+            <section id="my-habits">
+                <span>Displays three to five (or all with scroll) user habits</span>
+            </section>
 
-    <section id="my-goals">
-        <span>Displays three to five (or all with scroll) user goals</span>
+            <section id="my-goals">
+                <span>Displays three to five (or all with scroll) user goals</span>
+            </section>
+        </main>
     </section>
     
 <script src="/js/main.js"></script>

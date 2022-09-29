@@ -37,7 +37,7 @@ module.exports = {
             completed.sort(taskSort);
             incomplete.sort(taskSort);
 
-            res.render("tasks.ejs",{tasks:tasks});
+            res.render("tasks.ejs",{tasks:incomplete, complete:completed});
         }
         catch(e) {
             console.error(e);

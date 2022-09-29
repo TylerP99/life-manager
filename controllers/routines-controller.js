@@ -143,7 +143,25 @@ module.exports = {
         const taskID = req.params.taskID;
 
         try{
+            const routine = await Routine.findById(routineID);
+            const tasks = routine.tasks.find(x => x._id == taskID);
 
+            await Task.deleteMany({_id: {$in: tasks.children}});
+
+            await Routine.findByIdAndUpdate(routineID,
+                {
+                    $pull: {
+                        tasks: tasks[target],
+                    }
+                },
+                { 
+                    upsert: false,
+                    arrayFilters: [{"target._id": taskID}]
+                }
+            );
+
+            req.flash("success", "Task successfully deleted!");
+            res.redirect("/routines");
         }
         catch(e) {
             console.error(e);

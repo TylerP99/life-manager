@@ -12,4 +12,8 @@ router.put("/update/:id", RoutineController.update_routine);
 
 router.delete("/delete/:id", RoutineController.delete_routine);
 
+router.put("/updateTask/:id/:taskID", RoutineController.update_routine_task);
+
+router.put("/deleteTask/:id/:taskID", RoutineController.delete_task);
+
 module.exports = router;

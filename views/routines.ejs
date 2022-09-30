@@ -107,6 +107,32 @@
                             <section class="card">
                                 <section class="card-info">
                                     <h5><%=routines[i].name%></h5>
+                                    <% if(routines[i].description?.length) { %> <p><%=routines[i].description%> <% } %>
+                                    <% if(routines[i].tasks.length) { %>
+                                        <ul>
+                                            <% routines[i].tasks.forEach(x => { %>
+                                                <li>    
+                                                    <h5><%=x.task.name%></h5>
+                                                    <% if(x.task.description) { %> <p><%=x.task.description%></p> <% } %>
+                                                    <p><span><%=x.task.startTime.toLocaleTimeString()%></span> <span>&ndash;</span> <span><%=x.task.endTime.toLocaleTimeString()%></span></p>
+                                                    <ul>
+                                                        <li></li>
+                                                        <li>
+                                                            <button class="open-button" type="button">Delete Task</button>
+                                                            <section class="overlay hidden">
+                                                                <form action="/api/routine/deleteTask/<%=routines[i]._id%>/<%=x._id%>?_method=PUT" method="POST">
+                                                                    <h5>Are you sure you want to delete this task from your routine? (WARNING: This cannot be undone!)</h5>
+                                                                    <button type="submit">Delete Task</button>
+                                                                </form>
+                                                            </section>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            <% }) %>
+                                        </ul>
+                                    <% }else{ %>
+                                        <p>No tasks to display</p>
+                                    <% } %>
                                 </section>
                                 <ul class="card-options">
                                     <li>

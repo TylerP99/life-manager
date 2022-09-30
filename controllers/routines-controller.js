@@ -98,7 +98,30 @@ module.exports = {
     },
 
     update_routine: async (req, res, next) => {
+        const routineID = req.params.id;
 
+        const updatedRoutine = {
+            name: req.body.name,
+            description: req.body.description
+        };
+
+        const errors = validate_routine(updatedRoutine);
+
+        if(errors.length) {
+            req.flash("errors", errors);
+            return res.redirect("/routines");
+        }
+
+        try {
+            await Routine.findByIdAndUpdate(routineID, updatedRoutine);
+
+            req.flash("success", "Routine successfully updated!");
+            res.redirect("/routines");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 
     update_routine_task: async (req, res, next) => {
@@ -120,6 +143,11 @@ module.exports = {
         }
 
         try {
+            const routine = await Routine.findById(routineID);
+            const tasks = routine.tasks.find(x => x._id == taskID);
+
+            await Task.updateMany({_id: {$in:tasks.children}, completed:false},updatedTask);
+
             await Routine.findByIdAndUpdate(routineID,
                 {
                     $set: {
@@ -131,6 +159,9 @@ module.exports = {
                     arrayFilters: [{"target._id": taskID}]
                 }
             )
+
+            req.flash("success", "Task successfully updated!");
+            res.redirect("/routines");
         }
         catch(e) {
             console.error(e);

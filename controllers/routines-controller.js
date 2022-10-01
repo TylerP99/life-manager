@@ -182,7 +182,9 @@ module.exports = {
             await Routine.findByIdAndUpdate(routineID,
                 {
                     $pull: {
-                        tasks: tasks[target],
+                        tasks: {
+                            _id: new mongoose.mongo.ObjectId(taskID)
+                        },
                     }
                 },
                 { 

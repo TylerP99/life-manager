@@ -117,6 +117,48 @@
                                                     <p><span><%=x.task.startTime.toLocaleTimeString()%></span> <span>&ndash;</span> <span><%=x.task.endTime.toLocaleTimeString()%></span></p>
                                                     <ul>
                                                         <li>
+                                                            <button class="open-button" type="button">Update Task</button>
+                                                            <section class="overlay hidden">
+                                                                <form action="/api/routine/updateTask/<%=routines[i]._id%>/<%=x._id%>?_method=PUT" method="POST">
+                                                                    <h5>Update Task</h5>
+                                                                    <section class="input-section">
+                                                                        <label for="name">Name</label>
+                                                                        <input id=""
+                                                                        name="name"
+                                                                        type="text"
+                                                                        maxlength="50"
+                                                                        placeholder="Enter name here"
+                                                                        value="<%=x.task.name%>">
+                                                                    </section>
+                                                                    <section class="input-section">
+                                                                        <label for="description">Description</label>
+                                                                        <textarea id="description"
+                                                                        name="description"
+                                                                        maxlength = "250"
+                                                                        placeholder = "Enter description here"
+                                                                        spellcheck = "true"><%=x.task.description%></textarea>
+                                                                    </section>
+                                                                    <section class="input-section">
+                                                                        <label for="startTime">Start Time</label>
+                                                                        <input id="startTime"
+                                                                        name="startTime"
+                                                                        type="time"
+                                                                        value="<%=x.task.startTime%>">
+                                                                    </section>
+                                                                    <section class="input-section">
+                                                                        <label for="endTime">End Time</label>
+                                                                        <input id="endTime"
+                                                                        name="endTime"
+                                                                        type="time"
+                                                                        value="<%=x.task.endTime%>">
+                                                                    </section>
+                                                                    <section>
+                                                                        <button type="submit">Update Task</button>
+                                                                    </section>
+                                                                </form>
+                                                            </section>
+                                                        </li>
+                                                        <li>
                                                             <button class="open-button" type="button">Delete Task</button>
                                                             <section class="overlay hidden">
                                                                 <form action="/api/routine/deleteTask/<%=routines[i]._id%>/<%=x._id%>?_method=PUT" method="POST">
@@ -181,8 +223,28 @@
                                     <li>
                                         <button type="button" class="open-button">Update Routine</button>
                                         <section class="overlay hidden">
-                                            <form>
-
+                                            <form action="/api/routine/update/<%=routines[i]._id%>?_method=PUT" method="POST">
+                                                <section class="input-section">
+                                                    <label for="routineName">Routine Name</label>
+                                                    <input id="routineName"
+                                                    name="name"
+                                                    type="text"
+                                                    maxlength="50"
+                                                    placeholder="Enter routine name here"
+                                                    value="<%=routines[i].name%>">
+                                                </section>
+                                                <section class="input-section">
+                                                    <label for="routineDescription">Routine Description</label>
+                                                    <textarea id="routineDescription"
+                                                    name="description"
+                                                    maxlength = "250"
+                                                    placeholder = "Enter routine description here"
+                                                    spellcheck = "true"
+                                                    ><%=routines[i].description%></textarea>
+                                                </section>
+                                                <section>
+                                                    <button type="submit">Update Routine</button>
+                                                </section>
                                             </form>
                                         </section>
                                     </li>

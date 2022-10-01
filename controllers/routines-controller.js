@@ -127,8 +127,6 @@ module.exports = {
     add_routine_task: async (req, res, next) => {
         const routineID = req.params.id;
 
-        console.log("\n\n\n\n\n\n\nSTART DATE:");
-        console.log(req.body.startDate)
         req.body.startTime = req.body.startTime.split(":");
         req.body.endTime = req.body.endTime.split(":");
         const taskConstructor = _ => {
@@ -194,8 +192,14 @@ module.exports = {
 
         if(req.body.name) updatedTask.name = req.body.name;
         if(req.body.description) updatedTask.description = req.body.description;
-        if(req.body.startTime) updatedTask.startTime = req.body.startTime;
-        if(req.body.endTime) updatedTask.endTime = req.body.endTime;
+        if(req.body.startTime) {
+            req.body.startTime = req.body.startTime.split(":");
+            updatedTask.startTime = new Date(0,0,0, req.body.startTime[0], req.body.startTime[1]);
+        }
+        if(req.body.endTime) { 
+            req.body.endTime = req.body.endTime.split(":");
+            updatedTask.endTime = new Date(0,0,0, req.body.endTime[0], req.body.endTime[1]);
+        }
 
         const errors = validate_task(updatedTask);
 
@@ -212,13 +216,11 @@ module.exports = {
 
             await Routine.findByIdAndUpdate(routineID,
                 {
-                    $set: {
-                        "tasks[target]": updatedTask
-                    }
+                    "tasks.$[target].task": updatedTask
                 },
                 { 
                     upsert: false,
-                    arrayFilters: [{"target._id": taskID}]
+                    arrayFilters: [{"target._id": new mongoose.mongo.ObjectId(taskID)}]
                 }
             )
 

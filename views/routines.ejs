@@ -116,7 +116,6 @@
                                                     <% if(x.task.description) { %> <p><%=x.task.description%></p> <% } %>
                                                     <p><span><%=x.task.startTime.toLocaleTimeString()%></span> <span>&ndash;</span> <span><%=x.task.endTime.toLocaleTimeString()%></span></p>
                                                     <ul>
-                                                        <li></li>
                                                         <li>
                                                             <button class="open-button" type="button">Delete Task</button>
                                                             <section class="overlay hidden">
@@ -135,6 +134,50 @@
                                     <% } %>
                                 </section>
                                 <ul class="card-options">
+                                    <li>
+                                        <button type="button" class="open-button">Add New Task</button>
+                                        <section class="overlay hidden">
+                                            <form action="/api/routine/addTask/<%=routines[i]._id%>?_method=PUT" method="POST">
+                                                <h5>Add new task</h5>
+                                                <section class="input-section">
+                                                    <label for="name">Name</label>
+                                                    <input id=""
+                                                    name="name"
+                                                    type="text"
+                                                    maxlength="50"
+                                                    placeholder="Enter name here"
+                                                    required>
+                                                </section>
+                                                <section class="input-section">
+                                                    <label for="description">Description</label>
+                                                    <textarea id="description"
+                                                    name="description"
+                                                    maxlength = "250"
+                                                    placeholder = "Enter description here"
+                                                    spellcheck = "true"></textarea>
+                                                </section>
+                                                <section class="input-section">
+                                                    <label for="startTime">Start Time</label>
+                                                    <input id="startTime"
+                                                    name="startTime"
+                                                    type="time"
+                                                    required>
+                                                </section>
+                                                <section class="input-section">
+                                                    <label for="endTime">End Time</label>
+                                                    <input id="endTime"
+                                                    name="endTime"
+                                                    type="time"
+                                                    required>
+                                                </section>
+                                                <input class="hidden" name="startDate" type="date" value="<%=(new Date()).toISOString().slice(0,10)%>">
+                                                <% console.log((new Date()).toISOString()) %>
+                                                <section>
+                                                    <button type="submit">Add new task</button>
+                                                </section>
+                                            </form>
+                                        </section>
+                                    </li>
                                     <li>
                                         <button type="button" class="open-button">Update Routine</button>
                                         <section class="overlay hidden">

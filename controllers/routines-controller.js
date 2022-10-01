@@ -124,6 +124,68 @@ module.exports = {
         }
     },
 
+    add_routine_task: async (req, res, next) => {
+        const routineID = req.params.id;
+
+        console.log("\n\n\n\n\n\n\nSTART DATE:");
+        console.log(req.body.startDate)
+        req.body.startTime = req.body.startTime.split(":");
+        req.body.endTime = req.body.endTime.split(":");
+        const taskConstructor = _ => {
+            return {
+                name: req.body.name,
+                description: (req.body.description.length) ? req.body.description : undefined,
+                startTime: new Date(0, 0, 0, req.body.startTime[0], req.body.startTime[1]),
+                endTime: new Date(0, 0, 0, req.body.endTime[0], req.body.startTime[1]),
+                owner:  req.user.id,
+            };
+        };
+        const task = {
+            _id: new mongoose.Types.ObjectId(),
+            task: taskConstructor(),
+            children: []
+        }
+
+        const errors = validate_task(task);
+
+        if(errors.length) {
+            req.flash("errors", errors);
+            return res.redirect("/routines");
+        }
+
+        const startDate = new Date(req.body.startDate);
+        for(let j = 0; j < 50; j++) {
+            const date = new Date(startDate);
+
+            const newTask = taskConstructor();
+            newTask.date = date;
+            task.children.push(newTask);
+
+            startDate.setDate(startDate.getDate() + 1);
+        }
+
+        try{
+            const tasks = await Task.insertMany(task.children);
+            task.children = tasks.map(x => x._id);
+
+            await Routine.findByIdAndUpdate(routineID,
+                {
+                    $push: {
+                        tasks: task
+                    }
+                },
+                { upsert:false }
+            )
+
+            req.flash("success", "Task added successfully");
+            res.redirect("/routines");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
+    },
+
     update_routine_task: async (req, res, next) => {
         const routineID = req.params.id;
         const taskID = req.params.taskID;
@@ -187,10 +249,7 @@ module.exports = {
                         },
                     }
                 },
-                { 
-                    upsert: false,
-                    arrayFilters: [{"target._id": taskID}]
-                }
+                {upsert: false}
             );
 
             req.flash("success", "Task successfully deleted!");

@@ -27,11 +27,7 @@ const GoalSchema = new mongoose.Schema({
     parent: {
         type: mongoose.Types.ObjectId
     },
-    constructors: {
-        type: Array,
-        default: []
-    },
-    children: {
+    measurables: {
         type: Array,
         default: []
     },

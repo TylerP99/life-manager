@@ -77,5 +77,8 @@ module.exports = {
             next(e);
         }
     },
+    get_goal_creation_page: async (req, res, next) => {
+        res.render("create-goal.ejs");
+    },
 
 };

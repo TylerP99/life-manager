@@ -21,11 +21,23 @@
         <main class="app-content">
             <!--Options-->
             <ul class="app-options">
+                <li>
+                    <a href="/createGoal">Create a new goal</a>
+                </li>
             </ul>
 
             <%- include("./partials/alerts.ejs") %>
 
             <!--App Functionality-->
+            <% if(goals.length) { %>
+                <section class="card-display">
+                    <% for(let i = 0; i < goals.length; ++i) { %>
+                        <%- include("./partials/goal-card.ejs", {goal: goals[i]}) %>
+                    <% } %>
+                </section>
+            <%}else{%>
+                <p>No goals to display</p>
+            <%}%>
 
         </main>
 

@@ -78,7 +78,7 @@ const formOverlays = document.querySelectorAll(".overlay");
 formOverlays.forEach(x => x.addEventListener("click", click_off_form));
 
 function click_off_form(event) {
-    if(!event.target.closest("form")) {
+    if(!event.target.closest("form") && !event.target.closest(".overlay-child")) {
         console.log("click off close")
         event.target.classList.toggle("hidden");
     }
@@ -109,7 +109,7 @@ function close_form(event) {
 const newTaskFormContainer = document.querySelector("#new-task-form-container");
 const addNewTaskButton = document.querySelector("#add-new-task-button");
 
-addNewTaskButton.addEventListener("click", add_new_task_to_form);
+if(addNewTaskButton) addNewTaskButton.addEventListener("click", add_new_task_to_form);
 
 function add_new_task_to_form(e) {
     e.preventDefault();
@@ -200,4 +200,41 @@ function make_new_task_form() {
     container.appendChild(endTimeSection);
 
     return container;
+}
+
+
+/*=================================================*/
+/*             Goals Page Controller               */
+/*=================================================*/
+
+// Add to goal form selection
+const selectors = document.querySelectorAll("#goal-form-selector");
+if(selectors) selectors.forEach(x => x.addEventListener("change", change_add_to_goal_form));
+
+function change_add_to_goal_form(e) {
+    const selected = e.target.value;
+    const parentForm = e.target.parentElement;
+    console.log(parentForm);
+    const taskForm = parentForm.querySelector("#task-form");
+    const habitForm = parentForm.querySelector("#habit-form");
+    const routineForm = parentForm.querySelector("#routine-form");
+    console.log(taskForm);
+
+    switch(selected) {
+        case "task":
+            taskForm.classList.remove("hidden");
+            habitForm.classList.add("hidden");
+            routineForm.classList.add("hidden");
+            break;
+        case "habit":
+            taskForm.classList.add("hidden");
+            habitForm.classList.remove("hidden");
+            routineForm.classList.add("hidden");
+            break;
+        case "routine":
+            taskForm.classList.add("hidden");
+            habitForm.classList.add("hidden");
+            routineForm.classList.remove("hidden");
+            break;
+    }
 }

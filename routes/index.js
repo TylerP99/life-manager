@@ -22,6 +22,8 @@ router.get("/routines", ensureAuthenticated, IndexController.get_routines_page);
 // Goals Page
 router.get("/goals", ensureAuthenticated, IndexController.get_goals_page);
 
+router.get("/createGoal", ensureAuthenticated, IndexController.get_goal_creation_page);
+
 // Users
 router.use("/users", require("./users.js"));
 

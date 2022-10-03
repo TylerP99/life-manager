@@ -19,7 +19,7 @@ module.exports = {
             owner: req.user.id,
         };
 
-        const errors = []//validate_goal(goal);
+        const errors = [] //validate_goal(goal);
 
         if(errors.length) {
             req.flash("errors", errors);
@@ -39,31 +39,91 @@ module.exports = {
     },
 
     add_new_task: async (req, res, next) => {
+        // Get task from body
 
+        // Validate task
+
+        // If errors, return
+
+        // Add task to db
+
+        // Add task to goal children
+
+        // Respond
     },
 
     add_new_habit_goal: async (req, res, next) => {
+        // Get habit from body
 
+        // Validate habit
+
+        // If errors, return
+
+        // Create up to 50 tasks from start to end dates
+
+        // Add tasks to db, get ids
+
+        // Add ids to habits
+
+        // Add template task to habits
+
+        // Add habit to db
+
+        // Connect habit id to goal
+
+        // Respond
     },
 
     add_new_routine_goal: async (req, res, next) => {
+        // Get routine info from req
 
+        // Validate routine info
+
+        // Make task ctors from req info
+
+        // For each task ctor, make 50 tasks with that ctor
     },
 
     update_goal: async (req, res, next) => {
+        // Get new goal items from req, make goal obj
 
+        // Validate goal obj
+
+        // If errors, return
+
+        // Update goal object in db
+
+        // Respond
     },
 
     update_task: async (req, res, next) => {
+        // Create and validate task object from req body
 
+        // If errors, return
+        
+        // Find task and update
+
+        // Respond
     },
 
     update_habit: async (req, res, next) => {
+        // Create and validate habit from req body
 
+        // If errors, return
+
+        // Find all child tasks and update
+
+        // Update habit
+
+        // Respond
     },
 
     update_routine: async (req, res, next) => {
+        // Create and validate routine from req body
 
+        // If errors return
+
+        //
     },
 
     delete_goal: async (req, res, next) => {

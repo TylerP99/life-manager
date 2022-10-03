@@ -72,7 +72,7 @@ module.exports = {
         passport.authenticate("local", (err, user, info) => {
             if(err) return next(err);
             if(!user) {
-                req.flash("errors", [errors]);
+                req.flash("errors", [info]);
                 return res.redirect("/users/signin");
             }
             req.logIn(user, (err) => {

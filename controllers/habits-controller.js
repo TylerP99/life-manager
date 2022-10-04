@@ -7,11 +7,12 @@ const Task = require("../models/Task");
 module.exports = {
     // Create new Habit
     create_new_habit: async (req, res, next) => {
+        // Date comes in YYYY-MM-DD format, need to split for Date constructor
         req.body.startDate = req.body.startDate.split("-");
         req.body.endDate = req.body.endDate.split("-");
         const habit = {
             name: req.body.name,
-            startDate: new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]),
+            startDate: new Date(req.body.startDate[0], req.body.startDate[1]-1 /* Months are zero indexed */, req.body.startDate[2]),
             endDate: new Date(req.body.endDate[0], req.body.endDate[1]-1, req.body.endDate[2]),
             howOften: {
                 timeUnit: req.body.timeUnit,

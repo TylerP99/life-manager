@@ -49,8 +49,42 @@ module.exports = {
         }
     },
 
+    /*
+        Handles habit update route. Recieves new habit in request (fields are prefilled).
+        Sends habit object to update function. If there are errors, respond with error flash.
+        Otherwise sends success flash.
+    */
     update_habit_handler: async (req, res, next) => {
+        const updatedHabit = {
+            name: req.body.name,
+            description: req.body.description,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate,
+            startTime: req.body.startTime,
+            endTime: req.body.endTime,
+            howOften: {
+                step: req.body.step,
+                unit: req.body.timeUnit,
+            },
+            owner: req.user.id,
+        };
 
+        try {
+            const errors = await this.update_habit(updatedHabit, req.params.id);
+
+            if(errors.length) {
+                req.flash("errors", errors);
+            }
+            else {
+                req.flash("success", "Habit successfully updated");
+            }
+
+            res.redirect("/habits");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 
     /*
@@ -80,8 +114,29 @@ module.exports = {
     */
     create_habit: async (habit) => {
         const MAX_TASKS = 50;
-        // Format date/time from form
 
+        // Format date/time from form
+        if(habit.startDate) {
+            habit.startDate = habit.startDate.split("-");
+            habit.startDate = new Date(habit.startDate[0], habit.startDate[1]-1, habit.startDate[2]);
+        }
+        if(habit.endDate) {
+            habit.endDate = habit.endDate.split("-");
+            habit.endDate = new Date(habit.endDate[0], habit.endDate[1]-1, habit.endDate[2]);
+        }
+        if(habit.startTime) {
+            habit.startTime = habit.startTime.split(":");
+            habit.startTime = new Date(habit.startDate.getFullYear(), habit.startDate.getMonth(), habit.startDate.getDate(), habit.startTime[0], habit.startTime[1]);
+        }
+        if(habit.endTime) {
+            habit.endTime = habit.endTime.split(":");
+            habit.endTime = new Date(habit.startDate.getFullYear(), habit.startDate.getMonth(), habit.startDate.getDate(), habit.endTime[0], habit.endTime[1]);
+        }
+
+        if(habit.endDate == undefined) {
+            habit.endDate = new Date(habit.startDate);
+            habit.endDate.setFullYear(habit.endDate.getFullYear() + 100); // If no end date is provided, set to 100 years after startDate.
+        }
 
         // Validate passed habit
         const errors = validate_habit(habit);
@@ -95,7 +150,8 @@ module.exports = {
                 name: habit.name,
                 description: habit.description,
                 startTime: habit.startTime,
-                endTime: habit.endTime
+                endTime: habit.endTime,
+                owner: req.user.id,
             };
         };
 
@@ -147,23 +203,101 @@ module.exports = {
     },
 
     update_habit: async (updatedHabit, habitID) => {
-        // Format updatedHabit dates and times
+        // Format date/time from form
+        if(updatedHabit.startDate) {
+            updatedHabit.startDate = updatedHabit.startDate.split("-");
+            updatedHabit.startDate = new Date(updatedHabit.startDate[0], updatedHabit.startDate[1]-1, updatedHabit.startDate[2]);
+        }
+        if(updatedHabit.endDate) {
+            updatedHabit.endDate = updatedHabit.endDate.split("-");
+            updatedHabit.endDate = new Date(updatedHabit.endDate[0], updatedHabit.endDate[1]-1, updatedHabit.endDate[2]);
+        }
+        if(updatedHabit.startTime) {
+            updatedHabit.startTime = updatedHabit.startTime.split(":");
+            updatedHabit.startTime = new Date(updatedHabit.startDate.getFullYear(), updatedHabit.startDate.getMonth(), updatedHabit.startDate.getDate(), updatedHabit.startTime[0], updatedHabit.startTime[1]);
+        }
+        if(updatedHabit.endTime) {
+            updatedHabit.endTime = updatedHabit.endTime.split(":");
+            updatedHabit.endTime = new Date(updatedHabit.startDate.getFullYear(), updatedHabit.startDate.getMonth(), updatedHabit.startDate.getDate(), updatedHabit.endTime[0], updatedHabit.endTime[1]);
+        }
 
         // Validate updatedHabit
+        const errors = this.validate_habit(updatedHabit);
+
+        // If there is no endDate, set it to 100 years in the future so it appears to be a never ending habit
+        if(updatedHabit.endDate == undefined) {
+            updatedHabit.endDate = new Date(updatedHabit.startDate);
+            updatedHabit.endDate.setFullYear(updatedHabit.endDate.getFullYear() + 100);
+        }
 
         // Get habit from database
+        const habit = await Habit.findById(habitID);
+
+        // New task constructor for use in either scenario below
+        const updatedTask = _ => {
+            return {
+                name: updatedHabit.name,
+                description: updatedHabit.description,
+                startTime: updatedHabit.startTime,
+                endTime: updatedHabit.endTime
+            };
+        };
 
         // If howOften was changed:
-        // Need to delete child tasks
-        // Need to create new set of tasks with new unit/step
-        // Need to save new tasks into db
-        // Need to save ids in habit object
+        if(updatedHabit.howOften.step != habit.howOften.step || updatedHabit.howOften.timeUnit != habit.howOften.timeUnit) {
+            // Need to delete child tasks
+            await Task.deleteMany({_id: {$in: habit.children}});
 
+            // Need to create new set of tasks with new unit/step
+            const today = new Date(); // Set to client side date grab?
+            const currentDate = (updatedHabit.startDate < today) ? today : new Date(updatedHabit.startDate);
+            const tasks = [];
+            for(let i = 0; i < 50 && currentDate <= updatedHabit.endDate; ++i) {
+                const newTask = updatedTask();
+                newTask.date = new Date(currentDate);
+
+                tasks.push(newTask);
+
+                // Increment current date using step data
+                switch(updatedHabit.timeUnit) {
+                    case "minute":
+                        currentDate.setMinutes(currentDate.getMinutes() + updatedHabit.step);
+                        break;
+                    case "hour":
+                        currentDate.setHours(currentDate.getHours() + updatedHabit.step);
+                        break;
+                    case "day":
+                        currentDate.setDate(currentDate.getDate() + updatedHabit.step);
+                        break;
+                    case "week":
+                        currentDate.setDate(currentDate.getDate() + 7*updatedHabit.step);
+                        break;
+                    case "month":
+                        currentDate.setMonth(currentDate.getMonth() + updatedHabit.step);
+                        break;
+                    case "year":
+                        currentDate.setFullYear(currentDate.getFullYear() + updatedHabit.step);
+                        break;
+                }
+            }
+
+            // Need to save new tasks into db
+            tasks = await Tasks.insertMany(tasks);
+            tasks = tasks.map(x => x._id);
+            updatedHabit.children = tasks;
+        }
         // Otherwise:
-        // Edit all created child tasks
+        else {
+            // Edit all created child tasks
+            await Task.updateMany({_id: {$in: habit.children}}, updatedTask());
+        }
+
         // Update habit document
+        await Habit.findByIdAndUpdate(habitID, updatedHabit);
 
         // Respond
+        req.flash("success", "Habit successfully updated!");
+        res.redirect("/habits");
 
     },
 
@@ -209,17 +343,17 @@ module.exports = {
             errors.push({msg: `Habit description cannot exceed ${LONG_MAX} characters`});
         }
 
-        // StartDate - Cannot start before current day
-
+        // StartDate
         // EndDate - Cannot end before startDate
-
-        // howOften - IDK
-        // Step
-
-        // Time unit
+        if(habit.endDate <= habit.startDate) {
+            errors.push({msg: "Habit ending date must come after starting date."});
+        }
 
         // startTime
         // endTime - Cannot end before startTime
+        if(habit.endTime <= habit.startTime) {
+            errors.push({msg: "Habit ending time must come after starting time."});
+        }
 
         return errors;
     },

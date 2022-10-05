@@ -10,7 +10,15 @@ const RoutineSchema = new mongoose.Schema({
         type: String,
         maxLength: 250
     },
-    tasks: {
+    startDate: {
+        type: Date,
+        required: true,
+    },
+    howOften: {
+        type: Object,
+        required: true,
+    },
+    habits: {
         type: Array,
         default:[]
     },

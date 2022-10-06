@@ -8,7 +8,7 @@ const Task = require("../models/Task.js");
 
 const HabitController = require("../controllers/routines-controller.js");
 
-module.exports = {
+const RoutineController = {
 
     /*
         Route handler for routine creation. Gets and formats routine information. Creates habit objects and sends to habit creation controller. Adds habit ids to routine document. Responds to request
@@ -53,7 +53,7 @@ module.exports = {
 
         try {
             // Send routine info to creation function, which will validate the routine, create the routine habits, and store all info in db
-            const errors = await this.create_routine(routine);
+            const errors = await RoutineController.create_routine(routine);
 
             // If there are errors, store in flash
             if(errors.length) {
@@ -88,7 +88,7 @@ module.exports = {
         routine.startDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]);
 
         try {
-            const errors = await this.update_routine(routine, req.body.id);
+            const errors = await RoutineController.update_routine(routine, req.body.id);
 
             if(errors) {
                 req.flash("errors", errors);
@@ -107,7 +107,7 @@ module.exports = {
 
     delete_routine_handler: async (req, res, next) => {
         try {
-            await this.delete_routine(req.body.id);
+            await RoutineController.delete_routine(req.body.id);
 
             req.flash("success", "Routine successfully deleted!");
             res.redirect("/routines");
@@ -141,7 +141,7 @@ module.exports = {
 
         try {
             // Send habit over to add function
-            const errors = await this.add_routine_task(habit, req.body.id);
+            const errors = await RoutineController.add_routine_task(habit, req.body.id);
             if(errors) {
                 req.flash("errors", errors);
             }
@@ -176,7 +176,7 @@ module.exports = {
         }
 
         try {
-            const errors = await this.update_routine_task(habit, req.body.id);
+            const errors = await RoutineController.update_routine_task(habit, req.body.id);
             if(errors) {
                 req.flash("errors", errors);
             }
@@ -194,7 +194,7 @@ module.exports = {
 
     delete_routine_task_handler: async (req, res, next) => {
         try {
-            await this.delete_routine_task(req.params.habitID, req.params.id);
+            await RoutineController.delete_routine_task(req.params.habitID, req.params.id);
             res.redirect("/routines");
         }
         catch(e) {
@@ -205,7 +205,7 @@ module.exports = {
 
     create_routine: async (routine) => {
         // Validate routine info
-        const errors = this.validate_routine(routine);
+        const errors = RoutineController.validate_routine(routine);
 
         // If errors in validation, return
         if(errors) {
@@ -219,7 +219,7 @@ module.exports = {
 
         // For each habit in the routine, add it to the routine (this will handle habit creation and task creation and scheduling)
         for(let i = 0; i < habits.length; ++i) {
-            await this.add_routine_task(habits[i], dbRoutine._id);
+            await RoutineController.add_routine_task(habits[i], dbRoutine._id);
         }
 
         return undefined;
@@ -252,7 +252,7 @@ module.exports = {
                     endTime: habit.endTime,
                 };
 
-                const errors = await this.update_routine_task(newHabit, oldRoutine.habits[i]);
+                const errors = await RoutineController.update_routine_task(newHabit, oldRoutine.habits[i]);
                 if(errors) {
                     return errors;
                 }
@@ -329,3 +329,5 @@ module.exports = {
     },
 
 };
+
+module.exports = RoutineController;

@@ -9,7 +9,7 @@
 const Task = require("../models/Task");
 const Habit = require("../models/Habit");
 
-module.exports = {
+const HabitController = {
 
     /*
         Handles the habit creation route. Receives a request with habit information, 
@@ -32,7 +32,7 @@ module.exports = {
         };
 
         try {
-            const errors = await this.create_habit(habit);
+            const errors = await HabitController.create_habit(habit);
 
             if(errors.length) {
                 req.flash("errors", errors);
@@ -70,7 +70,7 @@ module.exports = {
         };
 
         try {
-            const errors = await this.update_habit(updatedHabit, req.params.id);
+            const errors = await HabitController.update_habit(updatedHabit, req.params.id);
 
             if(errors.length) {
                 req.flash("errors", errors);
@@ -94,7 +94,7 @@ module.exports = {
     */
     delete_habit_handler: async (req, res, next) => {
         try{
-            await this.delete_habit(req.params.id);
+            await HabitController.delete_habit(req.params.id);
             req.flash("success", "Habit successfully deleted");
             res.redirect("/habits");
         }
@@ -139,7 +139,7 @@ module.exports = {
         }
 
         // Validate passed habit
-        const errors = validate_habit(habit);
+        const errors = HabitController.validate_habit(habit);
 
         // If there are errors, return them
         if(errors.length) return errors;
@@ -228,7 +228,7 @@ module.exports = {
         }
 
         // Validate updatedHabit
-        const errors = this.validate_habit(updatedHabit);
+        const errors = HabitController.validate_habit(updatedHabit);
 
         if(errors.length) {
             return errors;
@@ -360,3 +360,5 @@ module.exports = {
     },
 
 }
+
+module.exports = HabitController;

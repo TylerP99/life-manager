@@ -9,25 +9,18 @@ A full stack web application for goal setting and task tracking. Use the applica
 
 **Tech used:** HTML, CSS, JavaScript, NodeJS, ExpressJS, MongoDB, PassportJS, EJS
 
-The frontend of this application was made using EJS for templating, along with CSS and Javascript for client side functionality. 
+The frontend of this application was made using EJS for templating, along with CSS and Javascript for client side functionality. This may be updated to React.
 
 ## Optimizations
-*(optional)*
-
-You don't have to include this section but interviewers *love* that you can not only deliver a final product that looks great but also functions efficiently. Did you write something then refactor it later and the result was 5x faster than the original implementation? Did you cache your assets? Things that you write in this section are **GREAT** to bring up in interviews and you can use this section as reference when studying for technical interviews!
+This project has parts that build off of eachother. Tasks are the smallest building block of the project, being the core of habits, routines, and, by extension, goals. A habit is a single, repeating task. A goal is a set of tasks, habits and routines. This optimization comes from routines. A routine appears to be a set of recurring tasks, and this is how I programmed it my first run through. A routine got individual task information and made them repeat. This implementation ended up repeating quite a bit of code. In particular, I found myself repeating habit code over again for the recurring tasks. So, I modified my controllers for habits to have route independant habit modification functions. I then updated routines to take advantage of habits for repeating the tasks, rather than redoing it within routines. This also lowered the source of bugs to habits rather than both.
 
 ## Lessons Learned:
+This project allowed me to compund on skills I already had.
 
-No matter what your experience level, being an engineer means continuously learning. Every time you build something you always have those *whoa this is awesome* or *fuck yeah I did it!* moments. This is where you should share those moments! Recruiters and interviewers love to see that you're self-aware and passionate about growing.
+I was allowed to practice MVC architecture again in this project. It is a great way of keeping code organized and separated. 
 
 ## Examples:
-Take a look at these couple examples that I have in my own portfolio:
-
-**Palettable:** https://github.com/alecortega/palettable
-
-**Twitter Battle:** https://github.com/alecortega/twitter-battle
-
-**Patch Panel:** https://github.com/alecortega/patch-panel
+Coming Soon
 
 
 Credits:

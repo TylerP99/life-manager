@@ -17,22 +17,34 @@ const HabitController = {
         creation request. 
     */
     create_habit_handler: async (req, res, next) => {
+        console.log(req.body.userDate);
+        const userDate = new Date(req.body.userDate);
+        console.log(userDate);
         const habit = {
             name: req.body.name,
             description: req.body.description,
-            startDate: req.body.startDate,
             endDate: req.body.endDate,
             startTime: req.body.startTime,
             endTime: req.body.endTime,
             howOften: {
                 step: req.body.step,
-                unit: req.body.timeUnit,
+                timeUnit: req.body.timeUnit,
             },
             owner: req.user.id,
         };
 
+        if(req.body.startDate.length) {
+            req.body.startDate.split("-");
+            habit.startDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]);
+            console.log("Start date provided");
+        }
+        else {
+            habit.startDate = userDate;
+            console.log("Start date not provided");
+        }
+
         try {
-            const errors = await HabitController.create_habit(habit);
+            const errors = await HabitController.create_habit(habit, req.user);
 
             if(errors.length) {
                 req.flash("errors", errors);
@@ -64,7 +76,7 @@ const HabitController = {
             endTime: req.body.endTime,
             howOften: {
                 step: req.body.step,
-                unit: req.body.timeUnit,
+                timeUnit: req.body.timeUnit,
             },
             owner: req.user.id,
         };
@@ -112,28 +124,24 @@ const HabitController = {
         create a new task when the first task is set to expire.) Stores all tasks in database,
         stores these ids in the habit document, saves habit to db, and returns empty error array.
     */
-    create_habit: async (habit) => {
+    create_habit: async (habit, user) => {
         const MAX_TASKS = 50;
 
         // Format date/time from form
-        if(habit.startDate) {
-            habit.startDate = habit.startDate.split("-");
-            habit.startDate = new Date(habit.startDate[0], habit.startDate[1]-1, habit.startDate[2]);
-        }
-        if(habit.endDate) {
+        if(habit.endDate.length) {
             habit.endDate = habit.endDate.split("-");
             habit.endDate = new Date(habit.endDate[0], habit.endDate[1]-1, habit.endDate[2]);
         }
-        if(habit.startTime) {
+        if(habit.startTime.length) {
             habit.startTime = habit.startTime.split(":");
             habit.startTime = new Date(habit.startDate.getFullYear(), habit.startDate.getMonth(), habit.startDate.getDate(), habit.startTime[0], habit.startTime[1]);
         }
-        if(habit.endTime) {
+        if(habit.endTime.length) {
             habit.endTime = habit.endTime.split(":");
             habit.endTime = new Date(habit.startDate.getFullYear(), habit.startDate.getMonth(), habit.startDate.getDate(), habit.endTime[0], habit.endTime[1]);
         }
 
-        if(habit.endDate == undefined) {
+        if(habit.endDate == undefined || !habit.endDate.length) {
             habit.endDate = new Date(habit.startDate);
             habit.endDate.setFullYear(habit.endDate.getFullYear() + 100); // If no end date is provided, set to 100 years after startDate.
         }
@@ -151,12 +159,12 @@ const HabitController = {
                 description: habit.description,
                 startTime: habit.startTime,
                 endTime: habit.endTime,
-                owner: req.user.id,
+                owner: user.id,
             };
         };
 
         const currentDate = new Date(habit.startDate);
-        const tasks = [];
+        let tasks = [];
 
         for(let i = 0; i < MAX_TASKS && currentDate <= habit.endDate; ++i) {
             const newTask = taskConstructor();
@@ -164,25 +172,30 @@ const HabitController = {
 
             tasks.push(newTask);
 
+            console.log(currentDate);
+
             // Increment current date using step data
-            switch(habit.timeUnit) {
+            switch(habit.howOften.timeUnit) {
                 case "minute":
-                    currentDate.setMinutes(currentDate.getMinutes() + habit.step);
+                    currentDate.setMinutes(currentDate.getMinutes() + 1*habit.howOften.step);
                     break;
                 case "hour":
-                    currentDate.setHours(currentDate.getHours() + habit.step);
+                    currentDate.setHours(currentDate.getHours() + 1*habit.howOften.step);
                     break;
                 case "day":
-                    currentDate.setDate(currentDate.getDate() + habit.step);
+                    currentDate.setDate(currentDate.getDate() + 1*habit.howOften.step);
                     break;
                 case "week":
-                    currentDate.setDate(currentDate.getDate() + 7*habit.step);
+                    currentDate.setDate(currentDate.getDate() + 7*habit.howOften.step);
                     break;
                 case "month":
-                    currentDate.setMonth(currentDate.getMonth() + habit.step);
+                    currentDate.setMonth(currentDate.getMonth() + 1*habit.howOften.step);
                     break;
                 case "year":
-                    currentDate.setFullYear(currentDate.getFullYear() + habit.step);
+                    currentDate.setFullYear(currentDate.getFullYear() + 1*habit.howOften.step);
+                    break;
+                default:
+                    console.log("Fuck you");
                     break;
             }
         }
@@ -194,6 +207,8 @@ const HabitController = {
 
         // Add ids to children
         habit.children = tasks;
+
+        console.log(habit);
 
         // Add habit to database
         const storedHabit = await Habit.create(habit);
@@ -265,22 +280,25 @@ const HabitController = {
                 // Increment current date using step data
                 switch(updatedHabit.timeUnit) {
                     case "minute":
-                        currentDate.setMinutes(currentDate.getMinutes() + updatedHabit.step);
+                        currentDate.setMinutes(currentDate.getMinutes() + updated.HabithowOften.step);
                         break;
                     case "hour":
-                        currentDate.setHours(currentDate.getHours() + updatedHabit.step);
+                        currentDate.setHours(currentDate.getHours() + updated.HabithowOften.step);
                         break;
                     case "day":
-                        currentDate.setDate(currentDate.getDate() + updatedHabit.step);
+                        currentDate.setDate(currentDate.getDate() + updated.HabithowOften.step);
                         break;
                     case "week":
-                        currentDate.setDate(currentDate.getDate() + 7*updatedHabit.step);
+                        currentDate.setDate(currentDate.getDate() + 7*updated.HabithowOften.step);
                         break;
                     case "month":
-                        currentDate.setMonth(currentDate.getMonth() + updatedHabit.step);
+                        currentDate.setMonth(currentDate.getMonth() + updated.HabithowOften.step);
                         break;
                     case "year":
-                        currentDate.setFullYear(currentDate.getFullYear() + updatedHabit.step);
+                        currentDate.setFullYear(currentDate.getFullYear() + updatedHabit.howOften.step);
+                        break;
+                    default:
+                        console.log("fuck you");
                         break;
                 }
             }
@@ -346,13 +364,13 @@ const HabitController = {
 
         // StartDate
         // EndDate - Cannot end before startDate
-        if(habit.endDate <= habit.startDate) {
+        if((habit.startDate && habit.endDate) && (habit.endDate <= habit.startDate)) {
             errors.push({msg: "Habit ending date must come after starting date."});
         }
 
         // startTime
         // endTime - Cannot end before startTime
-        if(habit.endTime <= habit.startTime) {
+        if((habit.endTime && habit.startTime) && (habit.endTime <= habit.startTime)) {
             errors.push({msg: "Habit ending time must come after starting time."});
         }
 

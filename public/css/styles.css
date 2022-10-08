@@ -72,6 +72,9 @@ html {
 .app-options li {
     margin-left: 2rem;
 }
+.app-display{
+    height: 100%;
+}
 
 .card-display {
     background: url("/assets/marion-botella-rII0mAgBHpY-unsplash.jpg");

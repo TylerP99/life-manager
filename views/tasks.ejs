@@ -63,6 +63,9 @@
                                 name="endTime"
                                 type="time">
                             </section>
+                            <section class="hidden">
+                                <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
+                            </section>
                             <section>
                                 <button type="submit">Create Task</button>
                             </section>
@@ -76,9 +79,9 @@
 
             <%- include("./partials/alerts.ejs") %>
 
-            <section class="card-display">
-
+            <section>
                 <% if(tasks.length) { %>
+                    <section class="card-display">
                     <% for(let i = 0; i < tasks.length; ++i) { %>
                         <section class="card" data-id="<%=tasks[i]._id%>">
                             <section class="card-info">
@@ -99,7 +102,7 @@
                                     </form>
                                 </li>
                                 <li>
-                                    <button type="button" id="open-button">Edit Task</button>
+                                    <button type="button" class="open-button">Edit Task</button>
                                     <section class="overlay hidden">
                                         <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST" id="edit-task-form">
                                             <section>
@@ -110,7 +113,7 @@
                                                 maxlength="50"
                                                 placeholder="Enter name here"
                                                 value="<%=tasks[i].name%>"
-                                                >
+                                                required>
                                             </section>
                                             <section>
                                                 <label for="description">Description</label>
@@ -125,20 +128,23 @@
                                                 <input id="date"
                                                 name="date"
                                                 type="date"
-                                                value="<%=tasks[i].date%>"
-                                                >
+                                                value="<%=tasks[i].date.toISOString().slice(0,10)%>"
+                                                required>
                                             </section>
+                                            <%console.log(`${tasks[i].date.getFullYear()}-${tasks[i].date.getMonth()+1}-${tasks[i].date.getDate()}`)%>
                                             <section>
                                                 <label for="startTime">Start Time</label>
                                                 <input id="startTime"
                                                 name="startTime"
-                                                type="time">
+                                                type="time"
+                                                <%if(tasks[i].startTime){%>value="<%=tasks[i].startTime.toISOString().slice(11,16)%>"<%}%>>
                                             </section>
                                             <section>
                                                 <label for="endTime">End Time</label>
                                                 <input id="endTime"
                                                 name="endTime"
-                                                type="time">
+                                                type="time"
+                                                <%if(tasks[i].endTime){%>value="<%=tasks[i].endTime.toISOString().slice(11,16)%>"<%}%>>
                                             </section>
                                             <section>
                                                 <button type="submit">Update Task</button>
@@ -158,13 +164,15 @@
 
                         </section>
                     <% } %>
+                    </section>
                 <% }else{ %>
                     <h5>No tasks to display</h5>
                 <% } %>
             </section>
 
-            <section id="complete-tasks" class="card-display hidden">
+            <section>
                 <% if(complete.length) { %>
+                    <section class="card-display">
                     <% for(let i = 0; i < complete.length; ++i) { %>
                         <section class="card" data-id="<%=complete[i]._id%>">
                             <section class="card-info">
@@ -196,6 +204,7 @@
 
                         </section>
                     <% } %>
+                    </section>
                 <% }else{ %>
                     <h5>No tasks to display</h5>
                 <% } %>

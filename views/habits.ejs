@@ -91,7 +91,9 @@
                                 name="endTime"
                                 type="time">
                             </section>
-                            <input name="userDate" type="string" value="<%=(new Date()).toISOString()%>">
+                            <section class="hidden">
+                                <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
+                            </section>
                             <section>
                                 <button type="submit">Create Habit</button>
                             </section>
@@ -104,7 +106,7 @@
             <%- include("./partials/alerts.ejs") %>
             
             <!--Display-->
-            <section>
+            <section class="app-display">
                 <% if(habits.length) { %>
                 <section class="card-display">
                 <% for(let i = 0; i < habits.length; ++i) { %>
@@ -138,7 +140,8 @@
                                             type="text"
                                             maxlength="50"
                                             placeholder="Enter name here"
-                                            value="<%=habits[i].name%>">
+                                            value="<%=habits[i].name%>"
+                                            required>
                                         </section>
                                         <section>
                                             <label for="description">Description</label>
@@ -167,9 +170,8 @@
                                             name="step"
                                             type="number"
                                             min="1"
-                                            max="100"
-                                            >
-                                            <select name="timeUnit">
+                                            required>
+                                            <select name="timeUnit" required>
                                                 <option value="">Choose time unit</option>
                                                 <option value="day">Day</option>
                                                 <option value="week">Week</option>
@@ -181,13 +183,18 @@
                                             <label for="startTime">Start Time</label>
                                             <input id="startTime"
                                             name="startTime"
-                                            type="time">
+                                            type="time"
+                                            <%if(habits[i].startTime){%>value="<%=habits[i].startTime.toISOString().slice(11,16)%>"<%}%>>
                                         </section>
                                         <section>
                                             <label for="endTime">End Time</label>
                                             <input id="endTime"
                                             name="endTime"
-                                            type="time">
+                                            type="time"
+                                            <%if(habits[i].endTime){%>value="<%=habits[i].endTime.toISOString().slice(11,16)%>"<%}%>>
+                                        </section>
+                                        <section class="hidden">
+                                            <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
                                         </section>
                                         <section>
                                             <button type="submit">Update Habit</button>
@@ -210,8 +217,8 @@
                         </ul>
 
                     </section>
-                </section>
                 <% } %>
+                </section>
             <% }else{%>
                 <h5>No habits</h5>
             <% } %>

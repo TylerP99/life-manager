@@ -17,31 +17,7 @@ const HabitController = {
         creation request. 
     */
     create_habit_handler: async (req, res, next) => {
-        console.log(req.body.userDate);
-        const userDate = new Date(req.body.userDate);
-        console.log(userDate);
-        const habit = {
-            name: req.body.name,
-            description: req.body.description,
-            endDate: req.body.endDate,
-            startTime: req.body.startTime,
-            endTime: req.body.endTime,
-            howOften: {
-                step: req.body.step,
-                timeUnit: req.body.timeUnit,
-            },
-            owner: req.user.id,
-        };
-
-        if(req.body.startDate.length) {
-            req.body.startDate.split("-");
-            habit.startDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]);
-            console.log("Start date provided");
-        }
-        else {
-            habit.startDate = userDate;
-            console.log("Start date not provided");
-        }
+        const habit = HabitController.format_habit_request_form(req.body, req.user);
 
         try {
             const errors = await HabitController.create_habit(habit, req.user);
@@ -67,24 +43,12 @@ const HabitController = {
         Otherwise sends success flash.
     */
     update_habit_handler: async (req, res, next) => {
-        const updatedHabit = {
-            name: req.body.name,
-            description: req.body.description,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate,
-            startTime: req.body.startTime,
-            endTime: req.body.endTime,
-            howOften: {
-                step: req.body.step,
-                timeUnit: req.body.timeUnit,
-            },
-            owner: req.user.id,
-        };
+        const updatedHabit = HabitController.format_habit_request_form(req.body, req.user);
 
         try {
             const errors = await HabitController.update_habit(updatedHabit, req.params.id);
 
-            if(errors.length) {
+            if(errors) {
                 req.flash("errors", errors);
             }
             else {
@@ -123,28 +87,14 @@ const HabitController = {
         the end date, up to 50 tasks ahead of time. (Coming soon: Sets a scheduled call to 
         create a new task when the first task is set to expire.) Stores all tasks in database,
         stores these ids in the habit document, saves habit to db, and returns empty error array.
+
+        @parameters:
+            - habit: A formatted habit object following habit schema
+        @returns:
+            - Undefined upon successful creation, or an array of errors if that habit failed validation.
     */
-    create_habit: async (habit, user) => {
+    create_habit: async (habit) => {
         const MAX_TASKS = 50;
-
-        // Format date/time from form
-        if(habit.endDate.length) {
-            habit.endDate = habit.endDate.split("-");
-            habit.endDate = new Date(habit.endDate[0], habit.endDate[1]-1, habit.endDate[2]);
-        }
-        if(habit.startTime.length) {
-            habit.startTime = habit.startTime.split(":");
-            habit.startTime = new Date(habit.startDate.getFullYear(), habit.startDate.getMonth(), habit.startDate.getDate(), habit.startTime[0], habit.startTime[1]);
-        }
-        if(habit.endTime.length) {
-            habit.endTime = habit.endTime.split(":");
-            habit.endTime = new Date(habit.startDate.getFullYear(), habit.startDate.getMonth(), habit.startDate.getDate(), habit.endTime[0], habit.endTime[1]);
-        }
-
-        if(habit.endDate == undefined || !habit.endDate.length) {
-            habit.endDate = new Date(habit.startDate);
-            habit.endDate.setFullYear(habit.endDate.getFullYear() + 100); // If no end date is provided, set to 100 years after startDate.
-        }
 
         // Validate passed habit
         const errors = HabitController.validate_habit(habit);
@@ -159,7 +109,7 @@ const HabitController = {
                 description: habit.description,
                 startTime: habit.startTime,
                 endTime: habit.endTime,
-                owner: user.id,
+                owner: habit.owner,
             };
         };
 
@@ -171,8 +121,6 @@ const HabitController = {
             newTask.date = new Date(currentDate);
 
             tasks.push(newTask);
-
-            console.log(currentDate);
 
             // Increment current date using step data
             switch(habit.howOften.timeUnit) {
@@ -208,8 +156,6 @@ const HabitController = {
         // Add ids to children
         habit.children = tasks;
 
-        console.log(habit);
-
         // Add habit to database
         const storedHabit = await Habit.create(habit);
 
@@ -217,31 +163,16 @@ const HabitController = {
         return storedHabit;
     },
 
+    /*
+        Takes a habit object and a habit's id to update.
+
+        @parameters:
+            - updatedHabit: A formatted habit object containing the minimum items required based on the habit schema.
+            - habitID: A unqiue ID of a habit stored in the database.
+        @returns:
+            - Undefined upon successful update, or an array of errors if the habit failed validation
+    */
     update_habit: async (updatedHabit, habitID) => {
-        // Format date/time from form
-        if(updatedHabit.startDate) {
-            updatedHabit.startDate = updatedHabit.startDate.split("-");
-            updatedHabit.startDate = new Date(updatedHabit.startDate[0], updatedHabit.startDate[1]-1, updatedHabit.startDate[2]);
-        }
-        if(updatedHabit.endDate) {
-            updatedHabit.endDate = updatedHabit.endDate.split("-");
-            updatedHabit.endDate = new Date(updatedHabit.endDate[0], updatedHabit.endDate[1]-1, updatedHabit.endDate[2]);
-        }
-        if(updatedHabit.startTime) {
-            updatedHabit.startTime = updatedHabit.startTime.split(":");
-            updatedHabit.startTime = new Date(updatedHabit.startDate.getFullYear(), updatedHabit.startDate.getMonth(), updatedHabit.startDate.getDate(), updatedHabit.startTime[0], updatedHabit.startTime[1]);
-        }
-        if(updatedHabit.endTime) {
-            updatedHabit.endTime = updatedHabit.endTime.split(":");
-            updatedHabit.endTime = new Date(updatedHabit.startDate.getFullYear(), updatedHabit.startDate.getMonth(), updatedHabit.startDate.getDate(), updatedHabit.endTime[0], updatedHabit.endTime[1]);
-        }
-
-        // If there is no endDate, set it to 100 years in the future so it appears to be a never ending habit
-        if(updatedHabit.endDate == undefined) {
-            updatedHabit.endDate = new Date(updatedHabit.startDate);
-            updatedHabit.endDate.setFullYear(updatedHabit.endDate.getFullYear() + 100);
-        }
-
         // Validate updatedHabit
         const errors = HabitController.validate_habit(updatedHabit);
 
@@ -258,7 +189,8 @@ const HabitController = {
                 name: updatedHabit.name,
                 description: updatedHabit.description,
                 startTime: updatedHabit.startTime,
-                endTime: updatedHabit.endTime
+                endTime: updatedHabit.endTime,
+                owner: updatedHabit.owner,
             };
         };
 
@@ -270,7 +202,7 @@ const HabitController = {
             // Need to create new set of tasks with new unit/step
             const today = new Date(); // Set to client side date grab?
             const currentDate = (updatedHabit.startDate < today) ? today : new Date(updatedHabit.startDate);
-            const tasks = [];
+            let tasks = [];
             for(let i = 0; i < 50 && currentDate <= updatedHabit.endDate; ++i) {
                 const newTask = updatedTask();
                 newTask.date = new Date(currentDate);
@@ -278,24 +210,24 @@ const HabitController = {
                 tasks.push(newTask);
 
                 // Increment current date using step data
-                switch(updatedHabit.timeUnit) {
+                switch(updatedHabit.howOften.timeUnit) {
                     case "minute":
-                        currentDate.setMinutes(currentDate.getMinutes() + updated.HabithowOften.step);
+                        currentDate.setMinutes(currentDate.getMinutes() + 1*updatedHabit.howOften.step);
                         break;
                     case "hour":
-                        currentDate.setHours(currentDate.getHours() + updated.HabithowOften.step);
+                        currentDate.setHours(currentDate.getHours() + 1*updatedHabit.howOften.step);
                         break;
                     case "day":
-                        currentDate.setDate(currentDate.getDate() + updated.HabithowOften.step);
+                        currentDate.setDate(currentDate.getDate() + 1*updatedHabit.howOften.step);
                         break;
                     case "week":
-                        currentDate.setDate(currentDate.getDate() + 7*updated.HabithowOften.step);
+                        currentDate.setDate(currentDate.getDate() + 7*updatedHabit.howOften.step);
                         break;
                     case "month":
-                        currentDate.setMonth(currentDate.getMonth() + updated.HabithowOften.step);
+                        currentDate.setMonth(currentDate.getMonth() + 1*updatedHabit.howOften.step);
                         break;
                     case "year":
-                        currentDate.setFullYear(currentDate.getFullYear() + updatedHabit.howOften.step);
+                        currentDate.setFullYear(currentDate.getFullYear() + 1*updatedHabit.howOften.step);
                         break;
                     default:
                         console.log("fuck you");
@@ -304,7 +236,7 @@ const HabitController = {
             }
 
             // Need to save new tasks into db
-            tasks = await Tasks.insertMany(tasks);
+            tasks = await Task.insertMany(tasks);
             tasks = tasks.map(x => x._id);
             updatedHabit.children = tasks;
         }
@@ -324,6 +256,11 @@ const HabitController = {
         Handles the process of habit deletion. Gets the habit from the database,
         deletes all child tasks, then deletes the parent habit. (Depending on how
         job scheduling works, may also need to delete scheduled jobs here.)
+
+        @parameters:
+            - habitID: A MongoDB unique ID tied to the specific habit to delete.
+        @returns:
+            - Undefined upon successful deletion (Mongoose will throw an error if there is a mongoose issue)
     */
     delete_habit: async (habitID) => {
         // Get habit from the database
@@ -343,6 +280,11 @@ const HabitController = {
         Checks each habit property and makes sure it follows requirements. 
         Returns back an error array with messages describing errors for the
         user.
+
+        @parameters:
+            - habit: A formatted habit object
+        @returns:
+            - An error array containing issues with input habit, or an empty array if there are none.
     */
     validate_habit: (habit) => {
         const SHORT_MAX = 50;
@@ -375,6 +317,79 @@ const HabitController = {
         }
 
         return errors;
+    },
+
+    /*
+        Takes in request information from client side form entry, returns a formatted habit object ready for validation
+        Used during habit creation and updates
+        @parameters:
+            - requestBody: the body object from the request, containing form info from client
+            - requestUser: the user object tied to incoming request, need for user's id
+        @returns:
+            - habit: A formatted habit object, with name, howOften, owner, startDate, and endDate set to user entered information, or default information. Also includes a start and end time and description if the user entered these.
+    */
+    format_habit_request_form: (requestBody, requestUser) => {
+        // Populate habit object with required fields first
+        const habit = {
+            name: requestBody.name,
+            howOften: {
+                timeUnit: requestBody.timeUnit,
+                step: requestBody.step,
+            },
+            owner: requestUser.id,
+        };
+
+        const userDate = new Date(requestBody.userDate);
+
+        // If the user entered a description, add it
+        if(requestBody.description.length) {
+            habit.description = requestBody.description;
+        }
+
+        // Format starting date
+        habit.startDate = new Date(userDate);
+        habit.startDate.setHours(0);
+        habit.startDate.setMinutes(0);
+        habit.startDate.setSeconds(0);
+        if(requestBody.startDate.length) { // If a startDate was provided, set startDate to that
+            requestBody.startDate = requestBody.startDate.split("-");
+            habit.startDate.setFullYear(requestBody.startDate[0]);
+            habit.startDate.setMonth(requestBody.startDate[1]-1);
+            habit.startDate.setDate(requestBody.startDate[2]);
+        }
+
+        // Format ending date
+        habit.endDate = new Date(userDate);
+        habit.endDate.setHours(0);
+        habit.endDate.setMinutes(0);
+        habit.endDate.setSeconds(0);
+        if(requestBody.endDate.length) {
+            requestBody.endDate = requestBody.endDate.split("-");
+            habit.endDate.setFullYear(requestBody.endDate[0]);
+            habit.endDate.setMonth(requestBody.endDate[1]-1);
+            habit.endDate.setDate(requestBody.endDate[2]);
+        }
+        else {
+            habit.endDate.setFullYear(habit.endDate.getFullYear() + 100);
+        }
+
+        // Format starting date
+        if(requestBody.startTime.length) {
+            requestBody.startTime = requestBody.startTime.split(":");
+            habit.startTime = new Date(habit.startDate);
+            habit.startTime.setHours(requestBody.startTime[0]);
+            habit.startTime.setMinutes(requestBody.startTime[1]);
+        }
+
+        // Format ending time
+        if(requestBody.endTime.length) {
+            requestBody.endTime = requestBody.endTime.split(":");
+            habit.endTime = new Date(habit.startDate);
+            habit.endTime.setHours(requestBody.endTime[0]);
+            habit.endTime.setMinutes(requestBody.endTime[1]);
+        }
+
+        return habit;
     },
 
 }

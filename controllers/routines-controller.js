@@ -6,7 +6,9 @@ const Routine = require("../models/Routine.js");
 const Habit = require("../models/Habit.js");
 const Task = require("../models/Task.js");
 
-const HabitController = require("../controllers/routines-controller.js");
+const mongoose = require("mongoose");
+
+const HabitController = require("../controllers/habits-controller.js");
 
 const RoutineController = {
 
@@ -14,49 +16,14 @@ const RoutineController = {
         Route handler for routine creation. Gets and formats routine information. Creates habit objects and sends to habit creation controller. Adds habit ids to routine document. Responds to request
     */
     create_routine_handler: async (req, res, next) => {
-        const userDate = new Date(req.body.userDate); // With client side js, grab user's current date/time, change to iso string, send in req.
-        // Get routine data from req
-        const routine = {
-            name: req.body.name,
-            description: (req.body.description.length) ? req.body.description : undefined,
-            startDate: (req.body.startDate.length) ? req.body.startDate : new Date(userDate),
-            howOften: {
-                step: req.body.step,
-                timeUnit: req.body.timeUnit,
-            },
-            habits: [],
-            owner: req.user.id,
-        };
-
-        if(typeof routine.startDate == "string") {
-            routine.startDate = routine.startDate.split("-");
-            routine.startDate = new Date(routine.startDate[0], routine.startDate[1]-1, routine.startDate[2]);
-        }
-
-        for(let i = 0; i < req.body.taskName.length; ++i) {
-            const habit = {
-                name: req.body.taskName[i],
-                description: (req.body.taskDescription[i].length) ? req.body.taskDescription[i] : undefined,
-                startDate: routine.startDate,
-                howOften: routine.howOften,
-            }
-
-            if(req.body.startTime[i].length) {
-                habit.startTime = req.body.startTime[i];
-            }
-            if(req.body.endTime[i].length) {
-                habit.endTime = req.body.endTime[i];
-            }
-
-            routine.habits.push(habit);
-        }
+        const routine = RoutineController.format_routine_request_form(req.body, req.user);
 
         try {
             // Send routine info to creation function, which will validate the routine, create the routine habits, and store all info in db
             const errors = await RoutineController.create_routine(routine);
-
+            console.log(errors);
             // If there are errors, store in flash
-            if(errors.length) {
+            if(errors) {
                 req.flash("errors", errors);
             }
             // Otherwise store success
@@ -74,21 +41,29 @@ const RoutineController = {
     },
 
     update_routine_handler: async (req, res, next) => {
-        // Format routine object from request body
         const routine = {
             name: req.body.name,
-            description: (req.body.description.length) ? req.body.description : undefined,
             howOften: {
                 step: req.body.step,
                 timeUnit: req.body.timeUnit,
             },
         };
-        // Set start date to entered date
+        const userDate = new Date(req.body.userDate);
+        routine.startDate = new Date(userDate);
         req.body.startDate = req.body.startDate.split("-");
-        routine.startDate = new Date(req.body.startDate[0], req.body.startDate[1]-1, req.body.startDate[2]);
+        routine.startDate.setFullYear(req.body.startDate[0]);
+        routine.startDate.setMonth(req.body.startDate[1]-1);
+        routine.startDate.setDate(req.body.startDate[2]);
+        routine.startDate.setHours(0);
+        routine.startDate.setMinutes(0);
+        routine.startDate.setSeconds(0);
+
+        if(req.body.description.length) {
+            routine.description = req.body.description;
+        }
 
         try {
-            const errors = await RoutineController.update_routine(routine, req.body.id);
+            const errors = await RoutineController.update_routine(routine, req.params.id);
 
             if(errors) {
                 req.flash("errors", errors);
@@ -107,7 +82,7 @@ const RoutineController = {
 
     delete_routine_handler: async (req, res, next) => {
         try {
-            await RoutineController.delete_routine(req.body.id);
+            await RoutineController.delete_routine(req.params.id);
 
             req.flash("success", "Routine successfully deleted!");
             res.redirect("/routines");
@@ -119,29 +94,11 @@ const RoutineController = {
     },
 
     add_routine_task_handler: async (req, res, next) => {
-        const userDate = new Date(req.body.userDate);
-        // Get habit info from req body
-        const habit = {
-            name: req.body.name,
-            description: (req.body.description.length) ? req.body.description : undefined,
-            startDate: userDate,
-        }
-        if(req.body.startTime.length) {
-            req.body.startTime = req.body.startTime.split(":");
-            habit.startTime = new Date(userDate);
-            habit.startTime.setHours(req.body.startTime[0]);
-            habit.startTime.setMinutes(req.body.startTime[1]);
-        }
-        if(req.body.endTime.length) {
-            req.body.endTime = req.body.endTime.split(":");
-            habit.endTime = new Date(userDate);
-            habit.endTime.setHours(req.body.endTime[0]);
-            habit.endTime.setMinutes(req.body.endTime[1]);
-        }
+        const habit = HabitController.format_habit_request_form(req.body, req.user);
 
         try {
             // Send habit over to add function
-            const errors = await RoutineController.add_routine_task(habit, req.body.id);
+            const errors = await RoutineController.add_routine_task(habit, req.params.id);
             if(errors) {
                 req.flash("errors", errors);
             }
@@ -157,26 +114,10 @@ const RoutineController = {
     },
 
     update_routine_task_handler: async (req, res, next) => {
-        const habit = {
-            name: req.body.name,
-            description: (req.body.description.length) ? req.body.description : undefined,
-            startDate: userDate,
-        }
-        if(req.body.startTime.length) {
-            req.body.startTime = req.body.startTime.split(":");
-            habit.startTime = new Date(userDate);
-            habit.startTime.setHours(req.body.startTime[0]);
-            habit.startTime.setMinutes(req.body.startTime[1]);
-        }
-        if(req.body.endTime.length) {
-            req.body.endTime = req.body.endTime.split(":");
-            habit.endTime = new Date(userDate);
-            habit.endTime.setHours(req.body.endTime[0]);
-            habit.endTime.setMinutes(req.body.endTime[1]);
-        }
+        const habit = HabitController.format_habit_request_form(req.body, req.user);
 
         try {
-            const errors = await RoutineController.update_routine_task(habit, req.body.id);
+            const errors = await RoutineController.update_routine_task(habit, req.params.id);
             if(errors) {
                 req.flash("errors", errors);
             }
@@ -194,6 +135,8 @@ const RoutineController = {
 
     delete_routine_task_handler: async (req, res, next) => {
         try {
+            console.log(req.params.habitID);
+            console.log(req.params.id);
             await RoutineController.delete_routine_task(req.params.habitID, req.params.id);
             res.redirect("/routines");
         }
@@ -208,7 +151,7 @@ const RoutineController = {
         const errors = RoutineController.validate_routine(routine);
 
         // If errors in validation, return
-        if(errors) {
+        if(errors.length) {
             return errors;
         }
 
@@ -238,7 +181,7 @@ const RoutineController = {
         const oldRoutine = await Routine.findById(routineID);
 
         // If startDate or howOften is changed, need to update all associated habits.
-        if(routine.startDate != oldRoutine.startDate || routine.howOften != oldRoutine.howOften) {
+        if(routine.startDate != oldRoutine.startDate || routine.howOften.step != oldRoutine.howOften.step || routine.howOften.timeUnit != routine.howOften.timeUnit) {
             for(let i = 0; i < oldRoutine.habits.length; ++i) {
                 const habit = await Habit.findById(oldRoutine.habits[i]);
 
@@ -246,11 +189,14 @@ const RoutineController = {
                 const newHabit = {
                     name: habit.name,
                     description: habit.description,
-                    startDate: routine.startDate,
+                    startDate: new Date(routine.startDate),
                     howOften: routine.howOften,
                     startTime: habit.startTime,
                     endTime: habit.endTime,
+                    owner: habit.owner,
                 };
+                newHabit.endDate = new Date(newHabit.startDate);
+                newHabit.endDate.setFullYear(newHabit.endDate.getFullYear() + 100);
 
                 const errors = await RoutineController.update_routine_task(newHabit, oldRoutine.habits[i]);
                 if(errors) {
@@ -270,6 +216,9 @@ const RoutineController = {
         // Get routine from db
         const routine = await Routine.findById(routineID);
 
+        console.log(routineID);
+        console.log(routine);
+
         // Delete all children
         for(let i = 0; i < routine.habits.length; ++i) {
             await HabitController.delete_habit(routine.habits[i]); // Use habit controller delete over routine task delete, since we dont need to remove id from child array (less db calls, the better). Should delete habit and all associated tasks
@@ -280,11 +229,11 @@ const RoutineController = {
     },
 
     add_routine_task: async (habit, routineID) => {
-        // Get routine from db for some data
-        const routine = await Routine.findById(routineID);
-        habit.howOften = routine.howOften;
         // Create habit with habit controller (handles validation, formatting, and db creation)
         const info = await HabitController.create_habit(habit);
+
+        console.log("Habit controller return");
+        console.log(info._id);
 
         // If we get an array back, its an error array. Return error array
         if(Array.isArray(info)) {
@@ -299,7 +248,7 @@ const RoutineController = {
                 }
             }
         )
-
+        console.log("Pushed");
         return undefined;
     },
 
@@ -322,12 +271,96 @@ const RoutineController = {
         await Routine.findByIdAndUpdate(routineID,
             {
                 $pull: {
-                    habits: habitID
+                    habits: new mongoose.mongo.ObjectId(habitID)
                 }
             }
         )
     },
 
+    validate_routine: (routine) => {
+        const errors = [];
+
+        return errors;
+    },
+
+    format_routine_request_form: (requestBody, requestUser) => {
+        // This request body will contain routine information and habit information
+        const routine = {
+            name: requestBody.name,
+            howOften: {
+                timeUnit: requestBody.timeUnit,
+                step: requestBody.step
+            },
+            habits: [],
+            owner: requestUser.id,
+        }
+
+        const userDate = new Date(requestBody.userDate);
+
+        // Fill description if entered
+        if(requestBody.description.length) {
+            routine.description = requestBody.description;
+        }
+
+        // Fill startDate if entered, or use default date
+        routine.startDate = new Date(userDate);
+        routine.startDate.setHours(0);
+        routine.startDate.setMinutes(0);
+        routine.startDate.setSeconds(0);
+        if(requestBody.startDate.length) {
+            requestBody.startDate = requestBody.startDate.split("-");
+            routine.startDate.setFullYear(requestBody.startDate[0]);
+            routine.startDate.setMonth(requestBody.startDate[1]-1);
+            routine.startDate.setDate(requestBody.startDate[2]);
+        }
+
+        if(!Array.isArray(requestBody.habitName)) {
+            requestBody.habitName = [requestBody.habitName];
+            requestBody.habitDescription = [requestBody.habitDescription];
+            requestBody.startTime = [requestBody.startTime];
+            requestBody.endTime = [requestBody.endTime];
+        }
+
+        // Now, make the habits
+        for(let i = 0; i < requestBody.habitName.length; ++i) {
+            // Form a habit request body
+            const habit = {
+                name: requestBody.habitName[i],
+                startDate: new Date(routine.startDate),
+                endDate: new Date(routine.startDate),
+                howOften: {
+                    step: requestBody.step,
+                    timeUnit: requestBody.timeUnit
+                },
+                owner: requestUser.id,
+            }
+            // Description
+            if(requestBody.habitDescription[i].length) {
+                habit.description = requestBody.habitDescription[i];
+            }
+            
+            // EndDate
+            habit.endDate.setFullYear(habit.endDate.getFullYear() + 100);
+            // StartTime
+            if(requestBody.startTime[i].length) {
+                requestBody.startTime[i] = requestBody.startTime[i].split(":");
+                habit.startTime = new Date(habit.startDate);
+                habit.startTime.setHours(requestBody.startTime[i][0]);
+                habit.startTime.setMinutes(requestBody.startTime[i][1]);
+            }
+            // EndTime
+            if(requestBody.endTime[i].length) {
+                requestBody.endTime[i] = requestBody.endTime[i].split(":");
+                habit.endTime = new Date(habit.startDate);
+                habit.endTime.setHours(requestBody.endTime[i][0]);
+                habit.endTime.setMinutes(requestBody.endTime[i][1]);
+            }
+
+            routine.habits.push(habit);
+        }
+
+        return routine;
+    },
 };
 
 module.exports = RoutineController;

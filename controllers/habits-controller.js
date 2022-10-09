@@ -91,7 +91,7 @@ const HabitController = {
         @parameters:
             - habit: A formatted habit object following habit schema
         @returns:
-            - Undefined upon successful creation, or an array of errors if that habit failed validation.
+            - Habit upon successful creation, or an array of errors if that habit failed validation.
     */
     create_habit: async (habit) => {
         const MAX_TASKS = 50;
@@ -198,6 +198,7 @@ const HabitController = {
         if(updatedHabit.howOften.step != habit.howOften.step || updatedHabit.howOften.timeUnit != habit.howOften.timeUnit || updatedHabit.startDate != habit.startDate) {
             // Need to delete child tasks
             await Task.deleteMany({_id: {$in: habit.children}});
+            console.log("Tasks deleted");
 
             // Need to create new set of tasks with new unit/step
             const today = new Date(); // Set to client side date grab?
@@ -265,6 +266,8 @@ const HabitController = {
     delete_habit: async (habitID) => {
         // Get habit from the database
         const habit = await Habit.findById(habitID);
+
+        if(!habit) return;
 
         // Delete all child tasks
         await Task.deleteMany({_id: {$in: habit.children}});
@@ -363,7 +366,7 @@ const HabitController = {
         habit.endDate.setHours(0);
         habit.endDate.setMinutes(0);
         habit.endDate.setSeconds(0);
-        if(requestBody.endDate.length) {
+        if(requestBody.endDate?.length) {
             requestBody.endDate = requestBody.endDate.split("-");
             habit.endDate.setFullYear(requestBody.endDate[0]);
             habit.endDate.setMonth(requestBody.endDate[1]-1);

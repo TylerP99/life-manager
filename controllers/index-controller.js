@@ -58,6 +58,12 @@ module.exports = {
     get_routines_page: async (req, res, next) => {
         try{
             const routines = await Routine.find({owner: req.user.id});
+            
+            for(let i = 0; i < routines.length; ++i) {
+                routines[i].habits = await Habit.find({_id: {$in: routines[i].habits}});
+            }
+
+            console.log(routines);
 
             res.render("routines.ejs", {routines:routines});
         }

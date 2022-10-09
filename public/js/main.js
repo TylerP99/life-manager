@@ -146,7 +146,7 @@ function make_new_task_form() {
     nameSection.appendChild(nameLabel);
     const nameInput = document.createElement("input");
     nameInput.id = "name";
-    nameInput.name = "name";
+    nameInput.name = "habitName";
     nameInput.type = "text";
     nameInput.maxLength = 50;
     nameInput.placeholder = "Enter task name here";
@@ -162,7 +162,7 @@ function make_new_task_form() {
     descriptionSection.appendChild(descriptionLabel);
     const descriptionInput = document.createElement("textarea");
     descriptionInput.id = "description";
-    descriptionInput.name = "description";
+    descriptionInput.name = "habitDescription";
     descriptionInput.type = "text";
     descriptionInput.maxLength = 250;
     descriptionInput.placeholder = "Enter task description here";

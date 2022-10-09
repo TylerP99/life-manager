@@ -22,10 +22,6 @@ const RoutineSchema = new mongoose.Schema({
         type: Array,
         default:[]
     },
-    lastDate: {
-        type: Date,
-        required: true,
-    },
     owner: {
         type: mongoose.Types.ObjectId,
         required: true

@@ -162,10 +162,10 @@ const RoutineController = {
 
         // For each habit in the routine, add it to the routine (this will handle habit creation and task creation and scheduling)
         for(let i = 0; i < habits.length; ++i) {
-            await RoutineController.add_routine_task(habits[i], dbRoutine._id);
+            const newRoutine = await RoutineController.add_routine_task(habits[i], dbRoutine._id);
         }
 
-        return undefined;
+        return newRoutine;
     },
 
     /*

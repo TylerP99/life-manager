@@ -24,12 +24,24 @@ const GoalSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    parent: {
-        type: mongoose.Types.ObjectId
-    },
-    measurables: {
+    tasks: {
         type: Array,
         default: []
+    },
+    habits: {
+        type: Array,
+        default: []
+    },
+    routines: {
+        type: Array,
+        default: []
+    },
+    goals: {
+        type: Array,
+        default: []
+    },   
+    parent: { // Handles subgoal deletion
+        type: mongoose.Types.ObjectId,
     },
     owner: {
         type: mongoose.Types.ObjectId,

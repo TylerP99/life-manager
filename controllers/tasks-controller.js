@@ -132,9 +132,9 @@ const TaskController = {
         }
 
         // Add task to db
-        await Task.create(task);
+        const newTask = await Task.create(task);
 
-        return undefined; // Success
+        return newTask; // Success
     },
     /*
         Updates a target task in database

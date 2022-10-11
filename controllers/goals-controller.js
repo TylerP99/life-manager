@@ -21,7 +21,7 @@ const GoalController =  {
             const info = await GoalController.create_goal(goal);
 
             if(Array.isArray(info)) {
-                req.flash("errors", errors);
+                req.flash("errors", info);
             }
             else {
                 req.flash("success", "Goal successfully created!");
@@ -83,7 +83,15 @@ const GoalController =  {
         const routine = RoutineController.format_routine_request_form(req.body, req.user);
 
         try {
+            const errors = await GoalController.add_routine(routine, req.params.id);
 
+            if(errors) {
+                req.flash("errors", errors);
+            }
+            else {
+                req.flash("success", "Routine successfully added to goal.");
+            }
+            res.redirect("/goals");
         }
         catch(e) {
             console.error(e);
@@ -91,30 +99,70 @@ const GoalController =  {
         }
     },
     update_goal_handler: async (req, res, next) => {
-        // Get new goal items from req, make goal obj
+        const goal = GoalController.format_goal_request_form(req.body, req.user);
 
-        // Validate goal obj
+        try {
+            const errors = await GoalController.update_goal(goal, req.params.id);
 
-        // If errors, return
-
-        // Update goal object in db
-
-        // Respond
+            if(errors) {
+                req.flash("errors", errors);
+            }
+            else {
+                req.flash("success", "Goal successfully updated.");
+            }
+            res.redirect("/goals");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
     delete_goal_handler: async (req, res, next) => {
-
+        try {
+            await GoalController.delete_goal(req.params.id);
+            req.flash("success", "Goal successfully deleted.");
+            res.redirect("/goals");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 
     delete_task_handler: async (req, res, next) => {
-
+        try {
+            await GoalController.delete_task(req.params.taskID, req.params.id);
+            req.flash("success", "Task succesfully deleted.");
+            res.redirect("/goals");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 
     delete_habit_handler: async (req, res, next) => {
-
+        try {
+            await GoalController.delete_habit(req.params.habitID, req.params.id);
+            req.flash("success", "Habit successfully deleted.");
+            res.redirect("/goals");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 
     delete_routine_handler: async (req, res, next) => {
-
+        try {
+            await GoalController.delete_routine(req.params.routineID, req.params.id);
+            req.flash("success", "Routine successfully deleted.");
+            res.redirect("/goals");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
     },
 
     create_goal: async (goal) => {
@@ -240,11 +288,11 @@ const GoalController =  {
             errors.push({msg: "Name cannot exceed 50 characters in length."});
         }
 
-        if(goal.description?.length) {
+        if(goal.description?.length > 250) {
             errors.push({msg: "Description cannot exceed 250 characters in length."});
         }
 
-        if(goal.endDate > goal.startDate) {
+        if(goal.endDate < goal.startDate) {
             errors.push({msg: "Ending date must come after starting date."});
         }
 

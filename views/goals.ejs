@@ -76,8 +76,30 @@
                             </section>
 
                             <!--Other Goal Participants-->
+                            <section>
+                                <h6>If applicable, who else will participate in this goal?</h6>
+                                <label for="participant">Enter participant:</label>
+                                <input
+                                id="participant"
+                                name="participants"
+                                type="text"
+                                placeholder="Enter participant name here">
+                            </section>
 
                             <!--Goal Location-->
+                            <section>
+                                <h6>If applicable, where will this goal take place?</h6>
+                                <label for="location">Enter goal location:</label>
+                                <input
+                                id="location"
+                                name="location"
+                                type="text"
+                                placeholder="Enter goal location here">
+                            </section>
+
+                            <section class="hidden">
+                                <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
+                            </section>
 
                             <h6>In the next step, you will add subgoals, routines, habits, or tasks that are required to complete the goals.</h6>
 

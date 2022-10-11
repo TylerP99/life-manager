@@ -208,7 +208,82 @@
             <button class="open-button" type="button">Update This Goal</button>
             <section class="overlay hidden">
                 <form action="/api/goal/update/<%=goal._id%>?_method=PUT" method="POST">
+                    <!--Goal Name-->
+                    <section>
+                        <label for="name">Enter your goal:</label>
+                        <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Enter your goal here"
+                        value="<%=goal.name%>"
+                        required>
+                    </section>
 
+                    <!--Goal Description-->
+                    <section>
+                        <label for="description">Enter description:</label>
+                        <textarea
+                        id="description"
+                        name="description"
+                        maxlength="250"
+                        placeholder="Enter description here"><%if(goal.description){%><%=goal.description%><%}%></textarea>
+                    </section>
+
+                    <!--Starting Date-->
+                    <section>
+                        <label for="startDate">Enter start date:</label>
+                        <input
+                        id="startDate"
+                        name="startDate"
+                        type="date"
+                        placeholder="Enter starting date here"
+                        value="<%=`${goal.startDate.getFullYear()}-${goal.startDate.getMonth()}-${goal.startDate.getDate()}`%>"
+                        required>
+                    </section>
+
+                    <%console.log(`${goal.startDate.getFullYear()}-${(String(goal.startDate.getMonth()).length < 2) ? "0" + goal.startDate.getMonth() : goal.startDate.getMonth()}-${goal.startDate.getDate()}`)%>
+
+                    <!--Estimated End Date-->
+                    <section>
+                        <label for="endDate">Enter estimated end date:</label>
+                        <input
+                        id="endDate"
+                        name="endDate"
+                        type="date"
+                        placeholder="Enter ending date here"
+                        value="<%=goal.endDate%>"
+                        required>
+                    </section>
+
+                    <!--Other Goal Participants-->
+                    <section>
+                        <label for="participant">Enter participant:</label>
+                        <input
+                        id="participant"
+                        name="participants"
+                        type="text"
+                        placeholder="Enter participant name here">
+                    </section>
+
+                    <!--Goal Location-->
+                    <section>
+                        <label for="location">Enter goal location:</label>
+                        <input
+                        id="location"
+                        name="location"
+                        type="text"
+                        placeholder="Enter goal location here">
+                    </section>
+
+                    <section class="hidden">
+                        <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
+                    </section>
+
+                    <section>
+                        <button type="submit">Create Goal</button>
+                    </section>
                 </form>
             </section>
         </li>

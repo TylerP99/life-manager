@@ -1,5 +1,25 @@
 <section class="card">
 
+<%
+function format_date_for_date_input(date) {
+    const inputDate = new Date(date);
+    let year = String(inputDate.getFullYear());
+    let month = String(inputDate.getMonth() + 1);
+    let day = String(inputDate.getDate());
+
+    while(year.length < 4) {
+        year = "0" + year;
+    }
+    while(month.length < 2) {
+        month = "0" + month;
+    }
+    while(day.length < 2) {
+        day = "0" + day;
+    }
+
+    return `${year}-${month}-${day}`;
+}
+%>
     <section class="card-info">
         <h5><%=goal.name%></h5>
         <p><%=goal.description%></p>
@@ -239,11 +259,9 @@
                         name="startDate"
                         type="date"
                         placeholder="Enter starting date here"
-                        value="<%=`${goal.startDate.getFullYear()}-${goal.startDate.getMonth()}-${goal.startDate.getDate()}`%>"
+                        value="<%=format_date_for_date_input(goal.startDate)%>"
                         required>
                     </section>
-
-                    <%console.log(`${goal.startDate.getFullYear()}-${(String(goal.startDate.getMonth()).length < 2) ? "0" + goal.startDate.getMonth() : goal.startDate.getMonth()}-${goal.startDate.getDate()}`)%>
 
                     <!--Estimated End Date-->
                     <section>
@@ -253,7 +271,7 @@
                         name="endDate"
                         type="date"
                         placeholder="Enter ending date here"
-                        value="<%=goal.endDate%>"
+                        value="<%=format_date_for_date_input(goal.endDate)%>"
                         required>
                     </section>
 

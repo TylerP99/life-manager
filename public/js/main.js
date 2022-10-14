@@ -238,3 +238,24 @@ function change_add_to_goal_form(e) {
             break;
     }
 }
+
+
+// Format input date
+function format_date_for_date_input(date) {
+    const inputDate = new Date(date);
+    let year = String(inputDate.getFullYear());
+    let month = String(inputDate.getMonth() + 1);
+    let day = String(inputDate.getDate());
+
+    while(year.length < 4) {
+        year = "0" + year;
+    }
+    while(month.length < 2) {
+        month = "0" + month;
+    }
+    while(day.length < 2) {
+        day = "0" + day;
+    }
+
+    return `${year}-${month}-${day}`;
+}

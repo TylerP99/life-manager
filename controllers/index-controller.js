@@ -6,11 +6,14 @@ const Routine = require("../models/Routine");
 const Goal = require("../models/Goal");
 
 module.exports = {
-    get_landing_page: (req, res) => {
+    get_landing_page: async (req, res) => {
         res.render("landing.ejs");
     },
-    get_dashboard: (req, res) => {
-        res.render("dashboard.ejs");
+    get_dashboard: async (req, res) => {
+        // Get all the things
+        const goals = await Goal.find({owner: req.user.id});
+        const tasks = await Task.find({owner: req.user.id});
+        res.render("dashboard.ejs", {tasks: tasks, goals: goals});
     },
     get_tasks_page: async (req, res, next) => {
         // Get user's tasks

@@ -16,18 +16,18 @@
         <header class="app-header">
             <h1>Dashboard</h1>
         </header>
-
-        <main class="app-content">
-            <section id="upcoming-tasks">
-                <span>Displays five (or all with scroll) upcoming tasks</span>
-            </section>
-
-            <section id="my-habits">
-                <span>Displays three to five (or all with scroll) user habits</span>
-            </section>
-
-            <section id="my-goals">
-                <span>Displays three to five (or all with scroll) user goals</span>
+        
+            <% const todaysTasks = tasks.filter(x => x.date.getDate() == (new Date()).getDate()); %>
+            <section class="todays-tasks">
+                <% if(todaysTasks.length) { %>
+                    <% for(let i = 0; i < todaysTasks.length; ++i) { %>
+                        <section>
+                            <h5><%= todaysTasks[i].name %></h5>
+                        </section>
+                    <% } %>
+                <% }else{ %>
+                    <h5>No Tasks To Display</h5>
+                <% } %>
             </section>
         </main>
     </section>

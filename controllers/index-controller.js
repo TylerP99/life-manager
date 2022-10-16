@@ -78,7 +78,10 @@ module.exports = {
     get_goals_page: async (req, res, next) => {
         try{
             const goals = await Goal.find({owner: req.user.id});
-
+                
+            for(let i = 0; i < goals.length; ++i) {
+                goals[i].tasks = await Task.find({_id: {$in: goals[i].tasks}});
+            }
             res.render("goals.ejs", {goals:goals});
         }
         catch(e) {

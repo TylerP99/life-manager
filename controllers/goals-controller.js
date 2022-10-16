@@ -34,14 +34,13 @@ const GoalController =  {
             next(e);
         }
     },
-
     add_new_task_handler: async (req, res, next) => {
         // Get task from body
         const task = TaskController.format_task_request_form(req.body, req.user);
 
         try {
             // Create task and store in goal
-            const errors = await GoalController.add_new_task(task, req.params.id);
+            const errors = await GoalController.add_task(task, req.params.id);
 
             // If create tasks sends back an error array, store in flash
             if(errors) {
@@ -90,6 +89,25 @@ const GoalController =  {
             }
             else {
                 req.flash("success", "Routine successfully added to goal.");
+            }
+            res.redirect("/goals");
+        }
+        catch(e) {
+            console.error(e);
+            next(e);
+        }
+    },
+    add_new_goal_handler: async (req, res, next) => {
+        const goal = GoalController.format_goal_request_form(req.body, req.user);
+
+        try {
+            const errors = await GoalController.add_goal(goal, req.params.id);
+
+            if(errors) {
+                req.flash("errors", errors);
+            }
+            else {
+                req.flash("success", "Sub-goal successfully added.");
             }
             res.redirect("/goals");
         }

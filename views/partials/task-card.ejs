@@ -1,0 +1,99 @@
+<!-- Partial for rendering a full, detailed task card as seen on the tasks page -->
+<!-- Will be passed a single task object named task -->
+<section class="card">
+
+    <!-- Section for all relevent task details from database -->
+    <section class="card-info">
+        <h5><%= task.name %></h5>
+        <% if(task.description) { %> 
+        <p><%=task.description%></p>
+        <% } %>
+        <section>
+            <span><%= task.date.toDateString() %></span>
+            <p>
+                <% if(task.startTime){%><span><%=task.startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(task.endTime) {%><span><%=task.endTime.toLocaleTimeString()%></span><%}%>
+            </p>
+        </section>
+    </section>
+
+    <!-- List of all task database operations (update, mark complete/incomplete, delete)-->
+    <ul class="card-options">  
+        <!-- Mark complete/incomplete -->
+        <li>
+            <% if(task.complete) { %>
+            <form action="/api/task/markIncomplete/<%=complete[i]._id%>?_method=PUT" method="POST">
+                <button type="submit">Mark Incomplete</button>
+            </form>
+            <% }else{ %>
+            <form action="/api/task/markComplete/<%=task._id%>?_method=PUT" method="POST">
+                <button type="submit">Mark Complete</button>
+            </form>
+            <% } %>
+        </li>
+
+        <!-- Edit -->
+        <li>
+            <button type="button" class="open-button">Edit Task</button>
+            <section class="overlay hidden">
+                <form action="/api/task/update/<%=task._id%>?_method=PUT" method="POST" id="edit-task-form">
+                    <section>
+                        <label for="name">Name</label>
+                        <input id=""
+                        name="name"
+                        type="text"
+                        maxlength="50"
+                        placeholder="Enter name here"
+                        value="<%=task.name%>"
+                        required>
+                    </section>
+                    <section>
+                        <label for="description">Description</label>
+                        <textarea id="description"
+                        name="description"
+                        maxlength = "250"
+                        placeholder = "Enter description here"
+                        spellcheck = "true"><%if(task.description) %><%=task.description%></textarea>
+                    </section>
+                    <section>
+                        <label for="date">Date</label>
+                        <input id="date"
+                        name="date"
+                        type="date"
+                        value="<%=task.date.toISOString().slice(0,10)%>"
+                        required>
+                    </section>
+                    <%console.log(`${task.date.getFullYear()}-${task.date.getMonth()+1}-${task.date.getDate()}`)%>
+                    <section>
+                        <label for="startTime">Start Time</label>
+                        <input id="startTime"
+                        name="startTime"
+                        type="time"
+                        <%if(task.startTime){%>value="<%=task.startTime.toISOString().slice(11,16)%>"<%}%>>
+                    </section>
+                    <section>
+                        <label for="endTime">End Time</label>
+                        <input id="endTime"
+                        name="endTime"
+                        type="time"
+                        <%if(task.endTime){%>value="<%=task.endTime.toISOString().slice(11,16)%>"<%}%>>
+                    </section>
+                    <section>
+                        <button type="submit">Update Task</button>
+                    </section>
+                </form>
+            </section>
+        </li>
+
+        <!-- Delete -->
+        <li>
+            <button type="button" class="open-button">Delete Task</button>
+            <section class="overlay hidden">
+                <form action="/api/task/delete/<%=task._id%>?_method=DELETE" method="POST">
+                    <button type="submit">Delete this task</button>
+                </form>
+            </section>
+        </li>
+
+    </ul>
+
+</section>

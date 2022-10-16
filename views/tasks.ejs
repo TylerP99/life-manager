@@ -38,86 +38,7 @@
                 <% if(tasks.length) { %>
                     <section class="card-display">
                     <% for(let i = 0; i < tasks.length; ++i) { %>
-                        <section class="card" data-id="<%=tasks[i]._id%>">
-                            <section class="card-info">
-                                <h5><%= tasks[i].name %></h5>
-                                <% if(tasks[i].description)%> <p><%=tasks[i].description%></p>
-                                <section>
-                                    <span><%= tasks[i].date.toDateString() %></span>
-                                    <p>
-                                        <% if(tasks[i].startTime){%><span><%=tasks[i].startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(tasks[i].endTime) {%><span><%=tasks[i].endTime.toLocaleTimeString()%></span><%}%>
-                                    </p>
-                                </section>
-                            </section>
-
-                            <ul class="card-options">
-                                <li>
-                                    <form action="/api/task/markComplete/<%=tasks[i]._id%>?_method=PUT" method="POST">
-                                        <button type="submit">Mark Complete</button>
-                                    </form>
-                                </li>
-                                <li>
-                                    <button type="button" class="open-button">Edit Task</button>
-                                    <section class="overlay hidden">
-                                        <form action="/api/task/update/<%=tasks[i]._id%>?_method=PUT" method="POST" id="edit-task-form">
-                                            <section>
-                                                <label for="name">Name</label>
-                                                <input id=""
-                                                name="name"
-                                                type="text"
-                                                maxlength="50"
-                                                placeholder="Enter name here"
-                                                value="<%=tasks[i].name%>"
-                                                required>
-                                            </section>
-                                            <section>
-                                                <label for="description">Description</label>
-                                                <textarea id="description"
-                                                name="description"
-                                                maxlength = "250"
-                                                placeholder = "Enter description here"
-                                                spellcheck = "true"><%if(tasks[i].description) %><%=tasks[i].description%></textarea>
-                                            </section>
-                                            <section>
-                                                <label for="date">Date</label>
-                                                <input id="date"
-                                                name="date"
-                                                type="date"
-                                                value="<%=tasks[i].date.toISOString().slice(0,10)%>"
-                                                required>
-                                            </section>
-                                            <%console.log(`${tasks[i].date.getFullYear()}-${tasks[i].date.getMonth()+1}-${tasks[i].date.getDate()}`)%>
-                                            <section>
-                                                <label for="startTime">Start Time</label>
-                                                <input id="startTime"
-                                                name="startTime"
-                                                type="time"
-                                                <%if(tasks[i].startTime){%>value="<%=tasks[i].startTime.toISOString().slice(11,16)%>"<%}%>>
-                                            </section>
-                                            <section>
-                                                <label for="endTime">End Time</label>
-                                                <input id="endTime"
-                                                name="endTime"
-                                                type="time"
-                                                <%if(tasks[i].endTime){%>value="<%=tasks[i].endTime.toISOString().slice(11,16)%>"<%}%>>
-                                            </section>
-                                            <section>
-                                                <button type="submit">Update Task</button>
-                                            </section>
-                                        </form>
-                                    </section>
-                                </li>
-                                <li>
-                                    <button type="button" class="open-button">Delete Task</button>
-                                    <section class="overlay hidden">
-                                        <form action="/api/task/delete/<%=tasks[i]._id%>?_method=DELETE" method="POST">
-                                            <button type="submit">Delete this task</button>
-                                        </form>
-                                    </section>
-                                </li>
-                            </ul>
-
-                        </section>
+                        <%- include("./partials/task-card.ejs", {task: tasks[i]}) %>
                     <% } %>
                     </section>
                 <% }else{ %>
@@ -129,35 +50,7 @@
                 <% if(complete.length) { %>
                     <section class="card-display">
                     <% for(let i = 0; i < complete.length; ++i) { %>
-                        <section class="card" data-id="<%=complete[i]._id%>">
-                            <section class="card-info">
-                                <h5><%= complete[i].name %></h5>
-                                <% if(complete[i].description)%> <p><%=complete[i].description%></p>
-                                <section>
-                                    <span><%= complete[i].date.toDateString() %></span>
-                                    <p>
-                                        <% if(complete[i].startTime){%><span><%=complete[i].startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(complete[i].endTime) {%><span><%=complete[i].endTime.toLocaleTimeString()%></span><%}%>
-                                    </p>
-                                </section>
-                            </section>
-
-                            <ul class="card-options">
-                                <li>
-                                    <form action="/api/task/markIncomplete/<%=complete[i]._id%>?_method=PUT" method="POST">
-                                        <button type="submit">Mark Incomplete</button>
-                                    </form>
-                                </li>
-                                <li>
-                                    <button type="button" class="open-button">Delete Task</button>
-                                    <section class="overlay hidden">
-                                        <form action="/api/task/delete/<%=complete[i]._id%>?_method=DELETE" method="POST">
-                                            <button type="submit">Delete this task</button>
-                                        </form>
-                                    </section>
-                                </li>
-                            </ul>
-
-                        </section>
+                        <%- include("./partials/task-card.ejs", {task: complete[i]}) %>
                     <% } %>
                     </section>
                 <% }else{ %>

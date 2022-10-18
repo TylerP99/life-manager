@@ -32,9 +32,7 @@ function format_date_for_date_input(date) {
         <section>
             <%console.log(goal)%>
             <% for(let i = 0; i < goal.tasks.length; ++i) { %>
-                <section>
-                    <h5><%=goal.tasks[i].name%></h5>
-                </section>
+                <%-include("task-card.ejs", {task:goal.tasks[i]})%>
             <% } %>
         </section>
     </section>

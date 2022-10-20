@@ -1,7 +1,8 @@
 # Newid
 A full stack web application for goal setting and task tracking. Use the application to create and manage tasks, habits, routines, and goals to take more control of your productivity!
 
-**Link to project:** http://recruiters-love-seeing-live-demos.com/
+**Link to project:** https://newid.onrender.com
+Currently hosting on Render, unless I find a better platform. Render is a bit slow right now for me.
 
 ![alt tag](http://placecorgi.com/1200/650)
 

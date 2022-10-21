@@ -74,6 +74,8 @@ The controllers that handle task, habit, routine, and goal management all follow
 ## Optimizations
 This project has parts that build off of eachother. Tasks are the smallest building block of the project, being the core of habits, routines, and, by extension, goals. A habit is a single, repeating task. A goal is a set of tasks, habits and routines. This optimization comes from routines. A routine appears to be a set of recurring tasks, and this is how I programmed it my first run through. A routine got individual task information and made them repeat. This implementation ended up repeating quite a bit of code. In particular, I found myself repeating habit code over again for the recurring tasks. So, I modified my controllers for habits to have route independant habit modification functions. I then updated routines to take advantage of habits for repeating the tasks, rather than redoing it within routines. This also lowered the source of bugs to habits rather than both.
 
+I also do my best to limit database calls and use optimal algorithms when I can.
+
 ## Lessons Learned:
 This project allowed me to compound on skills I already had.
 

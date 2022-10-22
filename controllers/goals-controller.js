@@ -81,6 +81,9 @@ const GoalController =  {
     add_new_routine_handler: async (req, res, next) => {
         const routine = RoutineController.format_routine_request_form(req.body, req.user);
 
+        console.log("AA");
+        console.log(routine);
+
         try {
             const errors = await GoalController.add_routine(routine, req.params.id);
 

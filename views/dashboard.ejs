@@ -17,6 +17,7 @@
             <h1>Dashboard</h1>
         </header>
         
+        <main class="app-content">
             <% const todaysTasks = tasks.filter(x => x.date.getDate() == (new Date()).getDate()); %>
             <section class="todays-tasks">
                 <% if(todaysTasks.length) { %>

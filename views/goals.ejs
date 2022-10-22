@@ -24,7 +24,7 @@
                 <li>
                     <button class="open-button" type="button">Create New Goal</button>
                     <section class="overlay hidden">
-                        <%- include("./partials/create-goal-form.ejs") %>
+                        <%- include("./partials/create-goal-form.ejs", {id:"", action:"/api/goal/create"}) %>
                     </section>
                 </li>
             </ul>

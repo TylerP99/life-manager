@@ -389,3 +389,7 @@ label {
         display: none;
     }
 }
+
+.todays-tasks {
+    border: 1px solid;
+}

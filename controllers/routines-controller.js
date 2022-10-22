@@ -150,6 +150,8 @@ const RoutineController = {
         // Validate routine info
         const errors = RoutineController.validate_routine(routine);
 
+        console.log(routine);
+
         // If errors in validation, return
         if(errors.length) {
             return errors;
@@ -335,7 +337,7 @@ const RoutineController = {
                 owner: requestUser.id,
             }
             // Description
-            if(requestBody.habitDescription[i].length) {
+            if(requestBody.habitDescription[i]?.length) {
                 habit.description = requestBody.habitDescription[i];
             }
             

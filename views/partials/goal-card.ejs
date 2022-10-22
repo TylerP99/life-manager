@@ -49,48 +49,7 @@ function format_date_for_date_input(date) {
                         <option value="routine">Routine</option>
                     </select>
 
-                    <form id="task-form" action="/api/goal/addTask/<%=goal._id%>?_method=PUT" method="POST">
-                        <h5>Add new task</h5>
-                        <section>
-                            <label for="name">Name</label>
-                            <input id=""
-                            name="name"
-                            type="text"
-                            maxlength="50"
-                            placeholder="Enter name here"
-                            required>
-                        </section>
-                        <section>
-                            <label for="description">Description</label>
-                            <textarea id="description"
-                            name="description"
-                            maxlength = "250"
-                            placeholder = "Enter description here"
-                            spellcheck = "true"></textarea>
-                        </section>
-                        <section>
-                            <label for="date">Date</label>
-                            <input id="date"
-                            name="date"
-                            type="date"
-                            required>
-                        </section>
-                        <section>
-                            <label for="startTime">Start Time</label>
-                            <input id="startTime"
-                            name="startTime"
-                            type="time">
-                        </section>
-                        <section>
-                            <label for="endTime">End Time</label>
-                            <input id="endTime"
-                            name="endTime"
-                            type="time">
-                        </section>
-                        <section>
-                            <button type="submit">Add Task</button>
-                        </section>
-                    </form>
+                    <%-include("create-task-form.ejs", {id:"task-form", action:`/api/goal/addTask/${goal._id}?_method=PUT`})%>
 
                     <form class="hidden" id="habit-form" action="/api/goal/addHabit/<%=goal._id%>?_method=PUT" method="POST">
                         <h5>Add new habit</h5>
@@ -117,14 +76,14 @@ function format_date_for_date_input(date) {
                             <input id="startDate"
                             name="startDate"
                             type="date"
-                            required>
+                            >
                         </section>
                         <section>
                             <label for="endDate">Ending Date</label>
                             <input id="endDate"
                             name="endDate"
                             type="date"
-                            required>
+                            >
                         </section>
                         <section>
                             <label for="step">Every:</label>
@@ -153,6 +112,9 @@ function format_date_for_date_input(date) {
                             <input id="endTime"
                             name="endTime"
                             type="time">
+                        </section>
+                        <section class="hidden">
+                            <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
                         </section>
                         <section>
                             <button type="submit">Add Habit</button>
@@ -184,7 +146,7 @@ function format_date_for_date_input(date) {
                             <input id="startDate"
                             name="startDate"
                             type="date"
-                            required>
+                            >
                         </section>
                         <section id="new-task-form-container">
                             <section class="task-form">
@@ -221,6 +183,9 @@ function format_date_for_date_input(date) {
                                     required>
                                 </section>
                             </section>
+                        </section>
+                        <section class="hidden">
+                            <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
                         </section>
                         <button id="add-new-task-button" type="button">Add A Task</button>
                         <section>

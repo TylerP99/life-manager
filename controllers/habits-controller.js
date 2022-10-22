@@ -294,6 +294,8 @@ const HabitController = {
         const LONG_MAX = 250;
         const errors = [];
 
+        console.log(habit);
+
         // Name
         if(habit.name == undefined || habit.name.length == 0) {
             errors.push({msg: "Habit requires a name."});

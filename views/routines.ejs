@@ -24,7 +24,7 @@
                 <li>
                     <button class="open-button" type="menu">Create New Routine</button>
                     <section class="overlay hidden">
-                        <%-include("./partials/create-routine-form.ejs")%>
+                        <%-include("./partials/create-routine-form.ejs", {id:"", className:"", action:"/api/routine/create"})%>
                     </section>
                 </li>
             </ul>

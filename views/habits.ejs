@@ -28,7 +28,7 @@
                 <li>
                     <button class="open-button" type="menu">Create New Habit</button>
                     <section class="overlay hidden">
-                        <%- include("./partials/create-habit-form.ejs") %>
+                        <%- include("./partials/create-habit-form.ejs", {id:"", className:"", action:"/api/habit/create"}) %>
                     </section>
                 </li>
             </ul>

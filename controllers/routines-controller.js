@@ -164,10 +164,15 @@ const RoutineController = {
 
         // For each habit in the routine, add it to the routine (this will handle habit creation and task creation and scheduling)
         for(let i = 0; i < habits.length; ++i) {
-            const newRoutine = await RoutineController.add_routine_task(habits[i], dbRoutine._id);
+            const habitInfo = await RoutineController.add_routine_task(habits[i], dbRoutine._id);
+
+            // Habit info is either an error array or undefined
+            if(Array.isArray(habitInfo)) {
+                return habitInfo;
+            }
         }
 
-        return newRoutine;
+        return dbRoutine;
     },
 
     /*
@@ -218,12 +223,16 @@ const RoutineController = {
         // Get routine from db
         const routine = await Routine.findById(routineID);
 
-        console.log(routineID);
-        console.log(routine);
+        // If the routine isnt found, leave
+        if(!routine) {
+            return;
+        }
 
         // Delete all children
-        for(let i = 0; i < routine.habits.length; ++i) {
-            await HabitController.delete_habit(routine.habits[i]); // Use habit controller delete over routine task delete, since we dont need to remove id from child array (less db calls, the better). Should delete habit and all associated tasks
+        if(routine.habits) {
+            for(let i = 0; i < routine.habits.length; ++i) {
+                await HabitController.delete_habit(routine.habits[i]); // Use habit controller delete over routine task delete, since we dont need to remove id from child array (less db calls, the better). Should delete habit and all associated tasks
+            }
         }
 
         // Delete routine itself

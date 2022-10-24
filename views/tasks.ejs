@@ -24,7 +24,7 @@
                 <li>
                     <button type="button" class="open-button">Create New Task</button>
                     <section class="overlay hidden">
-                        <%- include("./partials/create-task-form.ejs") %>
+                        <%- include("./partials/create-task-form.ejs", {id:"", className:"", action:"/api/task/create"}) %>
                     </section>
                 </li>
                 <li>

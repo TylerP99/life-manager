@@ -29,12 +29,34 @@ function format_date_for_date_input(date) {
             <span><%=goal.endDate.toLocaleDateString()%></span>
         </section>
 
-        <section>
-            <%console.log(goal)%>
-            <% for(let i = 0; i < goal.tasks.length; ++i) { %>
-                <%-include("task-card.ejs", {task:goal.tasks[i]})%>
+        <% if(goal.tasks.length) { %>
+            <section class="display">
+                <% for(let i = 0; i < goal.tasks.length; ++i) { %>
+                    <%-include("task-card.ejs", {task:goal.tasks[i]})%>
+                <% } %>
+            </section>
+        <% } %>
+        <% if(goal.habits.length) { %>
+        <section class="display">
+            <% for(let i = 0; i < goal.habits.length; ++i) { %>
+                <%-include("habit-card.ejs", {habit:goal.habits[i]})%>
             <% } %>
         </section>
+        <% } %>
+        <% if(goal.routines.length) { %>
+        <section class="display">
+            <% for(let i = 0; i < goal.routines.length; ++i) { %>
+                <%-include("routine-card.ejs", {routine:goal.routines[i]})%>
+            <% } %>
+        </section>
+        <% } %>
+        <% if(goal.goals.length) { %>
+        <section class="display">
+            <% for(let i = 0; i < goal.goals.length; ++i) { %>
+                <%-include("goal-card.ejs", {goal:goal.goals[i]})%>
+            <% } %>
+        </section>
+        <% } %>
     </section>
 
 
@@ -134,7 +156,7 @@ function format_date_for_date_input(date) {
                     </section>
 
                     <section>
-                        <button type="submit">Create Goal</button>
+                        <button type="submit">Update Goal</button>
                     </section>
                 </form>
             </section>

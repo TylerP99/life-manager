@@ -43,7 +43,16 @@ router.post("/signout", UserController.signout_user);
 // User settings
 router.get("/settings", ensureAuthenticated, UserController.get_settings_page);
 
-// Change user information
-router.put("/settings/edit", UserController.change_user_info);
+// Change username
+router.put("/settings/update/username", UserController.change_username);
+
+// Change email
+router.put("/settings/update/email", UserController.change_user_email);
+
+// Change password
+router.put("/settings/update/password", UserController.change_user_password);
+
+// Delete account
+router.delete("/settings/delete", UserController.delete_account);
 
 module.exports = router;

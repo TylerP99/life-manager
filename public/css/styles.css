@@ -346,6 +346,9 @@ form {
     justify-content: space-evenly;
     align-items: flex-start;
 
+    min-width: 50%;
+    max-width: 98%;
+
 }
 form > * {
     margin-bottom: 1rem;
@@ -392,4 +395,9 @@ label {
 
 .todays-tasks {
     border: 1px solid;
+}
+
+.display {
+    background: #ddd;
+    padding: 1rem;
 }

@@ -5,12 +5,105 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body class="app-body">
     
-    <h1>Settings</h1>
+    <%- include("../partials/navbar") %>
 
-    <a href="/dashboard">Dashboard</a>
+    <section class="app-section">
 
+        <header class="app-header">
+            <h1>Settings</h1>
+        </header>
+
+        <main class="app-content">
+            <!--Options-->
+            <!--<ul class="app-options">-->
+            <!--</ul>-->
+
+            <%- include("../partials/alerts.ejs") %>
+
+            <form action="/users/settings/update/username?_method=PUT" method="POST">
+                <h5>Change username</h5>
+                <section>
+                    <label for="username">Enter username</label>
+                    <input
+                    name="username"
+                    type="text"
+                    maxlength="50"
+                    placeholder="Enter new username here..."
+                    value="<%=user.username%>"
+                    required>
+                </section>
+                <button type="submit">Change Username</button>
+            </form>
+
+            <form action="/users/settings/update/email?_method=PUT" method="POST">
+                <h5>Change email</h5>
+                <section>
+                    <label for="email">Enter email:</label>
+                    <input
+                    name="email"
+                    type="email"
+                    maxlength="50"
+                    placeholder="Enter new email here..."
+                    value="<%=user.email%>"
+                    required>
+                </section>
+                <button type="submit">Change Email</button>
+            </form>
+
+            <form action="/users/settings/update/password?_method=PUT" method="POST">
+                <h5>Change password</h5>
+                <section>
+                    <label for="oldPassword">Enter old password:</label>
+                    <input
+                    name="oldPassword"
+                    type="password"
+                    maxlength="50"
+                    placeholder="Enter old password here..."
+                    required>
+                </section>
+                <section>
+                    <label for="newPassword">Enter new password:</label>
+                    <input
+                    name="newPassword"
+                    type="password"
+                    maxlength="50"
+                    placeholder="Enter new password here..."
+                    required>
+                </section>
+                <section>
+                    <label for="newPassword2">Confirm new password:</label>
+                    <input
+                    name="newPassword2"
+                    type="password"
+                    maxlength="50"
+                    placeholder="Confirm new password here..."
+                    required>
+                </section>
+                <button type="submit">Change Password</button>
+            </form>
+
+            <form action="/users/settings/delete?_method=DELETE" method="POST">
+                <h5>Delete Account</h5>
+                <section>
+                    <label for="password">Enter password:</label>
+                    <input
+                    name="password"
+                    type="password"
+                    maxlength="50"
+                    placeholder="Enter password here..."
+                    required>
+                </section>
+                <button type="submit">Delete Account</button>
+            </form>
+
+        </main>
+
+    </section>
+<script src="/js/main.js"></script>
 </body>
 </html>

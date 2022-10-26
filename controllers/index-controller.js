@@ -81,6 +81,12 @@ module.exports = {
                 
             for(let i = 0; i < goals.length; ++i) {
                 goals[i].tasks = await Task.find({_id: {$in: goals[i].tasks}});
+                goals[i].habits = await Habit.find({_id: {$in: goals[i].habits}});
+                goals[i].routines = await Routine.find({_id: {$in: goals[i].routines}});
+                for(let j = 0; j < goals[i].routines.length; ++i) {
+                    goals[i].routines[j].habits = await Habit.find({_id: {$in: goals[i].routines[j].habits}});
+                }
+                goals[i].goals = goals.filter(x => goals.includes(x._id));
             }
             res.render("goals.ejs", {goals:goals});
         }

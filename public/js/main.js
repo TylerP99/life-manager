@@ -259,3 +259,25 @@ function format_date_for_date_input(date) {
 
     return `${year}-${month}-${day}`;
 }
+
+
+// Make the date do the thingy (Get timezone offset of input date)
+const dateInputs = document.querySelectorAll("#date");
+
+dateInputs.forEach(x => x.addEventListener("blur", getTZOffset));
+
+function getTZOffset(event) {
+    // Get input date from form
+    let inputDate = event.target.value;
+
+    // Split input date by delim
+    inputDate = inputDate.split("-");
+
+    // Create new date with input date at midnight
+    const date = new Date(inputDate[0], inputDate[1]-1, inputDate[2], "00", "00");
+
+    // Set value of hidden form field to date timezone offset
+    event.target.parentElement.parentElement.querySelector("#offset").value = String(date.getTimezoneOffset());
+
+    console.log(date.getTimezoneOffset());
+}

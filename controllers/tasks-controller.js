@@ -163,20 +163,25 @@ const TaskController = {
     format_task_request_form: (requestBody, requestUser) => {
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
         requestBody.date = requestBody.date.split("-"); // Currently, date is received as YYYY-MM-DD
-        const userDate = new Date(requestBody.userDate); // Hidden input grabs user date as ISO string
         const task = {
             name: requestBody.name,
             owner: requestUser.id,
         };
-        // Set date information using userDate
-        //task.date = new Date(requestBody.date[0], requestBody.date[1]-1,requestBody.date[2])
-        task.date = new Date(userDate);
-        task.date.setFullYear(requestBody.date[0]);
-        task.date.setMonth(requestBody.date[1]-1);
-        task.date.setDate(requestBody.date[2]);
-        task.date.setHours(0);
-        task.date.setMinutes(0);
-        task.date.setSeconds(0);
+        // Set date information
+        // Want the task date to be midnight in user's timezone
+
+        console.log("Date logs");
+        task.date = new Date();
+        console.log(task.date);
+        task.date.setUTCFullYear(requestBody.date[0]);
+        task.date.setUTCMonth(requestBody.date[1]-1);
+        task.date.setUTCDate(requestBody.date[2]);
+        task.date.setUTCSeconds(0);
+        task.date.setUTCMilliseconds(0);
+        console.log(task.date);
+        task.date.setUTCMinutes( Number(requestBody.offset) )
+        console.log(task.date);
+        console.log(requestBody.offset);
 
         if(requestBody.description.length) task.description = requestBody.description;
 
@@ -184,14 +189,14 @@ const TaskController = {
         if(requestBody.startTime.length) {
             requestBody.startTime = requestBody.startTime.split(":");
             task.startTime = new Date(task.date);
-            task.startTime.setHours(requestBody.startTime[0]);
-            task.startTime.setMinutes(requestBody.startTime[1]);
+            task.startTime.setHours(task.startTime.getHours() + Number(requestBody.startTime[0]));
+            task.startTime.setMinutes(task.startTime.getMinutes() + Number(requestBody.startTime[1]));
         }
         if(requestBody.endTime.length) {
             requestBody.endTime = requestBody.endTime.split(":");
             task.endTime = new Date(task.date);
-            task.endTime.setHours(requestBody.endTime[0]);
-            task.endTime.setMinutes(requestBody.endTime[1]);
+            task.endTime.setHours(task.endTime.getHours() + Number(requestBody.endTime[0]));
+            task.endTime.setMinutes(task.endTime.getMinutes() + Number(requestBody.endTime[1]));
         }
 
         return task;
@@ -199,6 +204,7 @@ const TaskController = {
     validate_task: (task) => {
         const errors = [];
         const today = new Date(Date.now()); // This will fuck with timezones, fix soon
+        today.setDate(today.getDate() -1 );
         // Check name
         // Verify name is at most 50 characters
         if(task.name && task.name.length > 50) errors.push({msg: "Name can't be more than 50 characters long."});

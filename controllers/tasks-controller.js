@@ -1,6 +1,6 @@
 // Task Controller: Handles basic CRUD operations for tasks, generates task page
-const { request } = require("express");
 const Task = require("../models/Task");
+const {DateTime} = require("luxon");
 
 //
 const TaskController = {
@@ -178,6 +178,8 @@ const TaskController = {
         task.date.setUTCDate(requestBody.date[2]);
         task.date.setUTCSeconds(0);
         task.date.setUTCMilliseconds(0);
+        task.date.setUTCHours(0);
+        task.date.setUTCMinutes(0);
         console.log(task.date);
         task.date.setUTCMinutes( Number(requestBody.offset) )
         console.log(task.date);

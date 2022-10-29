@@ -9,6 +9,9 @@
         <p><%=task.description%></p>
         <% } %>
         <section>
+            <% console.log(task.date) %>
+            <% console.log(task.startTime) %>
+            <% console.log(task.startTime.getTimezoneOffset()) %>
             <span><%= task.date.toDateString() %></span>
             <p>
                 <% if(task.startTime){%><span><%=task.startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(task.endTime) {%><span><%=task.endTime.toLocaleTimeString()%></span><%}%>
@@ -62,7 +65,6 @@
                         value="<%=task.date.toISOString().slice(0,10)%>"
                         required>
                     </section>
-                    <%console.log(`${task.date.getFullYear()}-${task.date.getMonth()+1}-${task.date.getDate()}`)%>
                     <section>
                         <label for="startTime">Start Time</label>
                         <input id="startTime"

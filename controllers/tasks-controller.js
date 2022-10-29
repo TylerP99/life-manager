@@ -190,7 +190,7 @@ const TaskController = {
         // If Start/End times provided, format and store as date obj
         if(requestBody.startTime.length) {
             requestBody.startTime = requestBody.startTime.split(":");
-            task.startTime = new Date(task.date);
+            task.startTime = new Date(task.date); // New date from midnight user time
             task.startTime.setHours(task.startTime.getHours() + Number(requestBody.startTime[0]));
             task.startTime.setMinutes(task.startTime.getMinutes() + Number(requestBody.startTime[1]));
         }

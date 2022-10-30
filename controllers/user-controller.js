@@ -25,7 +25,8 @@ module.exports = {
         const user = {
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            timezone: req.body.timezone,
         };
         // Init error object to send errors back to user
         const errors = [];

@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    timezone: { // Need for date time formatting
+        type: String,
+        required: true,
+    },
     active: {
         type: Boolean,
         default: false

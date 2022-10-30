@@ -38,7 +38,7 @@
                 <% if(tasks.length) { %>
                     <section class="card-display">
                     <% for(let i = 0; i < tasks.length; ++i) { %>
-                        <%- include("./partials/task-card.ejs", {task: tasks[i]}) %>
+                        <%- include("./partials/task-card.ejs", {task: tasks[i], user:user}) %>
                     <% } %>
                     </section>
                 <% }else{ %>
@@ -50,7 +50,7 @@
                 <% if(complete.length) { %>
                     <section class="card-display">
                     <% for(let i = 0; i < complete.length; ++i) { %>
-                        <%- include("./partials/task-card.ejs", {task: complete[i]}) %>
+                        <%- include("./partials/task-card.ejs", {task: complete[i], user:user}) %>
                     <% } %>
                     </section>
                 <% }else{ %>

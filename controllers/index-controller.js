@@ -5,6 +5,8 @@ const Habit = require("../models/Habit");
 const Routine = require("../models/Routine");
 const Goal = require("../models/Goal");
 
+const { DateTime } = require("luxon");
+
 module.exports = {
     get_landing_page: async (req, res) => {
         res.render("landing.ejs");
@@ -40,7 +42,7 @@ module.exports = {
             completed.sort(taskSort);
             incomplete.sort(taskSort);
 
-            res.render("tasks.ejs",{tasks:incomplete, complete:completed});
+            res.render("tasks.ejs",{tasks:incomplete, complete:completed, user: req.user, DateTime: DateTime});
         }
         catch(e) {
             console.error(e);

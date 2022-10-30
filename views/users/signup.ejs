@@ -56,6 +56,12 @@
                  autocomplete="new-password"
                  required>
             </section>
+            <section class="hidden">
+                <input id="timezone"
+                name="timezone"
+                value="<%=Intl.DateTimeFormat().resolvedOptions().timeZone%>"
+                required>
+            </section>
             <section>
                 <button type="submit">Create Account</button>
             </section>

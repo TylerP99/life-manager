@@ -170,20 +170,21 @@ const TaskController = {
         // Set date information
         // Want the task date to be midnight in user's timezone
 
-        console.log("Date logs");
-        task.date = new Date();
-        console.log(task.date);
-        task.date.setUTCFullYear(requestBody.date[0]);
-        task.date.setUTCMonth(requestBody.date[1]-1);
-        task.date.setUTCDate(requestBody.date[2]);
-        task.date.setUTCSeconds(0);
-        task.date.setUTCMilliseconds(0);
-        task.date.setUTCHours(0);
-        task.date.setUTCMinutes(0);
-        console.log(task.date);
-        task.date.setUTCMinutes( Number(requestBody.offset) )
-        console.log(task.date);
-        console.log(requestBody.offset);
+        task.date = DateTime.fromObject(
+            {
+                year: requestBody.date[0],
+                month: requestBody.date[1],
+                day: requestBody.date[2],
+                hour: 0,
+                minute: 0,
+                second: 0,
+                millisecond: 0
+            },
+            {
+                zone: requestUser.timezone,
+            }
+        );
+        task.date = task.date.toJSDate();
 
         if(requestBody.description.length) task.description = requestBody.description;
 

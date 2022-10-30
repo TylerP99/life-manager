@@ -1,5 +1,6 @@
 <!-- Partial for rendering a full, detailed task card as seen on the tasks page -->
 <!-- Will be passed a single task object named task -->
+
 <section class="card">
 
     <!-- Section for all relevent task details from database -->
@@ -12,9 +13,15 @@
             <% console.log(task.date) %>
             <% console.log(task.startTime) %>
             <% console.log(task.startTime.getTimezoneOffset()) %>
-            <span><%= task.date.toDateString() %></span>
+            <span><%= DateTime.fromJSDate(task.date, {zone:user.timezone}).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) %></span>
             <p>
-                <% if(task.startTime){%><span><%=task.startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(task.endTime) {%><span><%=task.endTime.toLocaleTimeString()%></span><%}%>
+                <% if(task.startTime){%>
+                    <span><%=DateTime.fromJSDate(task.startTime, {zone:user.timezone}).toLocaleString(DateTime.TIME_SIMPLE)%>
+                    </span><span> &ndash; </span>
+                <%}%>
+                <% if(task.endTime) {%>
+                    <span><%=DateTime.fromJSDate(task.endTime, {zone:user.timezone}).toLocaleString(DateTime.TIME_SIMPLE)%>%></span>
+                <%}%>
             </p>
         </section>
     </section>

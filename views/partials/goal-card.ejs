@@ -1,32 +1,14 @@
+<% const startDate = DateTime.fromJSDate(goal.startDate, {zone: user.timezone}); %>
+<% const endDate = DateTime.fromJSDate(goal.endDate, {zone: user.timezone}); %>
+
 <section class="card">
-
-<%
-function format_date_for_date_input(date) {
-    const inputDate = new Date(date);
-    let year = String(inputDate.getFullYear());
-    let month = String(inputDate.getMonth() + 1);
-    let day = String(inputDate.getDate());
-
-    while(year.length < 4) {
-        year = "0" + year;
-    }
-    while(month.length < 2) {
-        month = "0" + month;
-    }
-    while(day.length < 2) {
-        day = "0" + day;
-    }
-
-    return `${year}-${month}-${day}`;
-}
-%>
     <section class="card-info">
         <h5><%=goal.name%></h5>
         <p><%=goal.description%></p>
         <section>
-            <span><%=goal.startDate.toLocaleDateString()%></span>
+            <span><%=startDate.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)%></span>
             <span>&ndash;</span>
-            <span><%=goal.endDate.toLocaleDateString()%></span>
+            <span><%=endDate.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)%></span>
         </section>
 
         <% if(goal.tasks.length) { %>
@@ -115,7 +97,7 @@ function format_date_for_date_input(date) {
                         name="startDate"
                         type="date"
                         placeholder="Enter starting date here"
-                        value="<%=format_date_for_date_input(goal.startDate)%>"
+                        value="<%=startDate.toFormat("yyyy-MM-dd")%>"
                         required>
                     </section>
 
@@ -127,7 +109,7 @@ function format_date_for_date_input(date) {
                         name="endDate"
                         type="date"
                         placeholder="Enter ending date here"
-                        value="<%=format_date_for_date_input(goal.endDate)%>"
+                        value="<%=endDate.toFormat("yyyy-MM-dd")%>"
                         required>
                     </section>
 

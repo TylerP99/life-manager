@@ -53,7 +53,7 @@ module.exports = {
         try{
             const habits = await Habit.find({owner: req.user.id});
 
-            res.render("habits.ejs", {habits:habits});
+            res.render("habits.ejs", {habits:habits, DateTime: DateTime, user: req.user});
         }
         catch(e) {
             console.error(e);
@@ -70,7 +70,7 @@ module.exports = {
 
             console.log(routines);
 
-            res.render("routines.ejs", {routines:routines});
+            res.render("routines.ejs", {routines:routines, DateTime: DateTime, user: req.user});
         }
         catch(e) {
             console.error(e);

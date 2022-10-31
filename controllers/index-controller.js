@@ -90,7 +90,7 @@ module.exports = {
                 }
                 goals[i].goals = goals.filter(x => goals.includes(x._id));
             }
-            res.render("goals.ejs", {goals:goals});
+            res.render("goals.ejs", {goals:goals, DateTime: DateTime, user: req.user});
         }
         catch(e) {
             console.error(e);

@@ -1,4 +1,11 @@
 <!-- Habit card partial as displayed on habit page -->
+
+<!-- Luxon dates from server js dates -->
+<% const startDate = DateTime.fromJSDate(habit.startDate, {zone: user.timezone}); %>
+<% const endDate = DateTime.fromJSDate(habit.endDate, {zone: user.timezone}); %>
+<% const startTime = (habit.startTime != undefined) ? DateTime.fromJSDate(habit.startTime, {zone: user.timezone}) : undefined; %>
+<% const endTime = (habit.endTime != undefined) ? DateTime.fromJSDate(habit.endTime, {zone: user.timezone}) : undefined; %>
+
 <section class="card" data-id="<%=habit._id%>">
 
     <% console.log("Ejs")%>
@@ -7,12 +14,12 @@
         <h5><%=habit.name%></h5>
         <%if(habit.description != undefined){%><p><%=habit.description%></p><%}%>
         <section>
-            <span><%= habit.startDate.toDateString() %></span>
+            <span><%= startDate.toLocaleString(DateTime.DATE_MED); %></span>
             <span>&ndash;</span>
-            <span><%= habit.endDate.toDateString() %></span>
+            <span><%= endDate.toLocaleString(DateTime.DATE_MED); %></span>
         </section>
         <section>
-            <% if(habit.startTime){%><span><%=habit.startTime.toLocaleTimeString()%></span><span> &ndash; </span><%}%><% if(habit.endTime) {%><span><%=habit.endTime.toLocaleTimeString()%></span><%}%>
+            <% if(startTime){%><span><%=startTime.toLocaleString(DateTime.TIME_SIMPLE)%></span><span> &ndash; </span><%}%><% if(endTime) {%><span><%=endTime.toLocaleString(DateTime.TIME_SIMPLE)%></span><%}%>
         </section>
     </section>
     
@@ -48,13 +55,17 @@
                         <label for="startDate">Starting Date</label>
                         <input id="startDate"
                         name="startDate"
-                        type="date">
+                        type="date"
+                        value="<%=startDate.toFormat("yyyy-MM-dd")%>"
+                        >
                     </section>
                     <section>
                         <label for="endDate">Ending Date</label>
                         <input id="endDate"
                         name="endDate"
-                        type="date">
+                        type="date"
+                        value="<%=endDate.toFormat("yyyy-MM-dd")%>"
+                        >
                     </section>
                     <section>
                         <label for="step">Every:</label>
@@ -62,13 +73,14 @@
                         name="step"
                         type="number"
                         min="1"
+                        value="<%=habit.howOften.step%>"
                         required>
                         <select name="timeUnit" required>
                             <option value="">Choose time unit</option>
-                            <option value="day">Day</option>
-                            <option value="week">Week</option>
-                            <option value="month">Month</option>
-                            <option value="year">Year</option>
+                            <option <% if (habit.howOften.timeUnit == "day") { %> selected <% } %> value="day">Day</option>
+                            <option <% if (habit.howOften.timeUnit == "week") { %> selected <% } %> value="week">Week</option>
+                            <option <% if (habit.howOften.timeUnit == "month") { %> selected <% } %> value="month">Month</option>
+                            <option <% if (habit.howOften.timeUnit == "year") { %> selected <% } %> value="year">Year</option>
                         </select>
                     </section>
                     <section>
@@ -76,17 +88,14 @@
                         <input id="startTime"
                         name="startTime"
                         type="time"
-                        <%if(habit.startTime){%>value="<%=habit.startTime.toISOString().slice(11,16)%>"<%}%>>
+                        <%if(startTime){%>value="<%=startTime.toFormat("HH:mm")%>"<%}%>>
                     </section>
                     <section>
                         <label for="endTime">End Time</label>
                         <input id="endTime"
                         name="endTime"
                         type="time"
-                        <%if(habit.endTime){%>value="<%=habit.endTime.toISOString().slice(11,16)%>"<%}%>>
-                    </section>
-                    <section class="hidden">
-                        <input type="text" name="userDate" value="<%=(new Date()).toISOString()%>">
+                        <%if(endTime){%>value="<%=endTime.toFormat("HH:mm")%>"<%}%>>
                     </section>
                     <section>
                         <button type="submit">Update Habit</button>

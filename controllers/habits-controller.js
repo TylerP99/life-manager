@@ -352,46 +352,49 @@ const HabitController = {
         }
 
         // Format starting date
-        habit.startDate = new Date(userDate);
-        habit.startDate.setHours(0);
-        habit.startDate.setMinutes(0);
-        habit.startDate.setSeconds(0);
-        if(requestBody.startDate.length) { // If a startDate was provided, set startDate to that
+        if(requestBody.startDate.length) { // If a startDate was provided, set startDate to that at midnight
             requestBody.startDate = requestBody.startDate.split("-");
-            habit.startDate.setFullYear(requestBody.startDate[0]);
-            habit.startDate.setMonth(requestBody.startDate[1]-1);
-            habit.startDate.setDate(requestBody.startDate[2]);
+            habit.startDate = DateTime.fromObject(
+                {
+                    year: requestBody.startDate[0], 
+                    month: requestBody.startDate[1], 
+                    day: requestBody.startDate[2],
+                    hour: 0, minute: 0, second: 0, millisecond: 0,
+                }, 
+                { zone: user.timezone });
+        }
+        else { // Otherwise, set startDate to today at midnight
+            habit.startDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: user.timezone});
         }
 
         // Format ending date
-        habit.endDate = new Date(userDate);
-        habit.endDate.setHours(0);
-        habit.endDate.setMinutes(0);
-        habit.endDate.setSeconds(0);
-        if(requestBody.endDate?.length) {
+        if(requestBody.endDate.length) { // If a endDate was provided, set endDate to that at midnight
             requestBody.endDate = requestBody.endDate.split("-");
-            habit.endDate.setFullYear(requestBody.endDate[0]);
-            habit.endDate.setMonth(requestBody.endDate[1]-1);
-            habit.endDate.setDate(requestBody.endDate[2]);
+            habit.endDate = DateTime.fromObject(
+                {
+                    year: requestBody.endDate[0], 
+                    month: requestBody.endDate[1], 
+                    day: requestBody.endDate[2],
+                    hour: 0, minute: 0, second: 0, millisecond: 0,
+                }, 
+                { zone: user.timezone });
         }
-        else {
-            habit.endDate.setFullYear(habit.endDate.getFullYear() + 100);
+        else { // Otherwise, set endDate to today at midnight
+            habit.endDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: user.timezone});
         }
 
         // Format starting date
         if(requestBody.startTime.length) {
             requestBody.startTime = requestBody.startTime.split(":");
-            habit.startTime = new Date(habit.startDate);
-            habit.startTime.setHours(requestBody.startTime[0]);
-            habit.startTime.setMinutes(requestBody.startTime[1]);
+            habit.startTime = habit.startDate.plus({ hours: requestBody.startTime[0], minutes: requestBody.startTime[1] });
+            habit.startTime = habit.startTime.toJSDate();
         }
 
         // Format ending time
         if(requestBody.endTime.length) {
             requestBody.endTime = requestBody.endTime.split(":");
-            habit.endTime = new Date(habit.startDate);
-            habit.endTime.setHours(requestBody.endTime[0]);
-            habit.endTime.setMinutes(requestBody.endTime[1]);
+            habit.endTime = habit.startDate.plus({ hours: requestBody.endTime[0], minutes: requestBody.endTime[1] });
+            habit.endTime = habit.endTime.toJSDate();
         }
 
         return habit;

@@ -1,5 +1,8 @@
 <!-- Partial for rendering a full, detailed task card as seen on the tasks page -->
 <!-- Will be passed a single task object named task -->
+<% const date = DateTime.fromJSDate(task.date, {zone: user.timezone}) %>
+<% const startTime = (task.startTime != undefined) ? DateTime.fromJSDate(task.startTime, {zone: user.timezone}) : undefined %>
+<% const endTime = (task.endTime != undefined) ? DateTime.fromJSDate(task.endTime, {zone: user.timezone}) : undefined %>
 
 <section class="card">
 
@@ -10,17 +13,14 @@
         <p><%=task.description%></p>
         <% } %>
         <section>
-            <% console.log(task.date) %>
-            <% console.log(task.startTime) %>
-            <% console.log(task.startTime.getTimezoneOffset()) %>
-            <span><%= DateTime.fromJSDate(task.date, {zone:user.timezone}).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) %></span>
+            <span><%= date.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) %></span>
             <p>
                 <% if(task.startTime){%>
-                    <span><%=DateTime.fromJSDate(task.startTime, {zone:user.timezone}).toLocaleString(DateTime.TIME_SIMPLE)%>
+                    <span><%=startTime.toLocaleString(DateTime.TIME_SIMPLE)%>
                     </span><span> &ndash; </span>
                 <%}%>
                 <% if(task.endTime) {%>
-                    <span><%=DateTime.fromJSDate(task.endTime, {zone:user.timezone}).toLocaleString(DateTime.TIME_SIMPLE)%>%></span>
+                    <span><%=endTime.toLocaleString(DateTime.TIME_SIMPLE)%>%></span>
                 <%}%>
             </p>
         </section>
@@ -69,7 +69,7 @@
                         <input id="date"
                         name="date"
                         type="date"
-                        value="<%=task.date.toISOString().slice(0,10)%>"
+                        value="<%=date.toFormat("yyyy-MM-dd")%>"
                         required>
                     </section>
                     <section>
@@ -77,14 +77,14 @@
                         <input id="startTime"
                         name="startTime"
                         type="time"
-                        <%if(task.startTime){%>value="<%=task.startTime.toISOString().slice(11,16)%>"<%}%>>
+                        <%if(startTime){%>value="<%=startTime.toFormat("HH:mm")%>"<%}%>>
                     </section>
                     <section>
                         <label for="endTime">End Time</label>
                         <input id="endTime"
                         name="endTime"
                         type="time"
-                        <%if(task.endTime){%>value="<%=task.endTime.toISOString().slice(11,16)%>"<%}%>>
+                        <%if(endTime){%>value="<%=endTime.toFormat("HH:mm")%>"<%}%>>
                     </section>
                     <section>
                         <button type="submit">Update Task</button>

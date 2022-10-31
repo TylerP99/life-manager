@@ -1,5 +1,6 @@
+<% const startDate = DateTime.fromJSDate(routine.startDate, {zone: user.timezone}); %>
+
 <section class="card">
-<% console.log(routine) %>
     <section class="card-info">
         <h5><%=routine.name%></h5>
         <% if(routine.description) { %> <p><%=routine.description%> <% } %>
@@ -7,10 +8,12 @@
         <% if(routine.habits.length) { %>
         <ul>
             <% routine.habits.forEach(x => { %>
+            <% const hStartTime = (x.startTime != undefined) ? DateTime.fromJSDate(x.startTime, {zone: user.timezone}) : undefined; %>
+            <% const hEndTime = (x.endTime != undefined) ? DateTime.fromJSDate(x.endTime, {zone: user.timezone}) : undefined; %>
             <li>
                 <h5><%=x.name%></h5>
                 <% if(x.description) { %> <p><%=x.description%></p> <% } %>
-                <p><span><%=x.startTime.toLocaleTimeString()%></span> <span>&ndash;</span> <span><%=x.endTime.toLocaleTimeString()%></span></p>
+                <p><span><%=hStartTime.toLocaleString(DateTime.TIME_SIMPLE)%></span> <span>&ndash;</span> <span><%=hEndTime.toLocaleString(DateTime.TIME_SIMPLE)%></span></p>
                 <ul>
                     <li>
                         <button class="open-button" type="button">Update Task</button>
@@ -39,14 +42,14 @@
                                     <input id="startTime"
                                     name="startTime"
                                     type="time"
-                                    value="<%=x.startTime%>">
+                                    value="<%=hStartTime.toFormat("HH:mm")%>">
                                 </section>
                                 <section class="input-section">
                                     <label for="endTime">End Time</label>
                                     <input id="endTime"
                                     name="endTime"
                                     type="time"
-                                    value="<%=x.endTime%>">
+                                    value="<%=hEndTime.toFormat("HH:mm")%>">
                                 </section>
                                 <section>
                                     <button type="submit">Update Task</button>
@@ -148,7 +151,7 @@
                         <input id="startDate"
                         name="startDate"
                         type="date"
-                        value="<%=routine.startDate.toISOString().slice(0,10)%>"
+                        value="<%=startDate.toFormat("yyyy-MM-dd")%>"
                         required>
                     </section>
                     <section>
@@ -160,15 +163,12 @@
                         value="<%=routine.howOften.step%>"
                         required>
                         <select name="timeUnit" required>
-                            <option value="">Choose time unit</option>
-                            <option value="day">Day</option>
-                            <option value="week">Week</option>
-                            <option value="month">Month</option>
-                            <option value="year">Year</option>
+                            <option <%=(routine.howOften.timeUnit == undefined) ? "selected" : undefined ;%> value="">Choose time unit</option>
+                            <option <%=(routine.howOften.timeUnit == "day") ? "selected" : undefined ;%> value="day">Day</option>
+                            <option <%=(routine.howOften.timeUnit == "week") ? "selected" : undefined ;%> value="week">Week</option>
+                            <option <%=(routine.howOften.timeUnit == "month") ? "selected" : undefined ;%> value="month">Month</option>
+                            <option <%=(routine.howOften.timeUnit == "year") ? "selected" : undefined ;%> value="year">Year</option>
                         </select>
-                    </section>
-                    <section class="hidden">
-                        <input name="userDate" type="text" value="<%=(new Date()).toISOString()%>">
                     </section>
                     <section>
                         <button type="submit">Update Routine</button>

@@ -113,37 +113,37 @@ const HabitController = {
             };
         };
 
-        const currentDate = new Date(habit.startDate);
+        const currentDate = DateTime.fromJSDate(habit.startDate);
         let tasks = [];
 
         for(let i = 0; i < MAX_TASKS && currentDate <= habit.endDate; ++i) {
             const newTask = taskConstructor();
-            newTask.date = new Date(currentDate);
+            newTask.date = currentDate.toJSDate();
 
             tasks.push(newTask);
 
             // Increment current date using step data
             switch(habit.howOften.timeUnit) {
                 case "minute":
-                    currentDate.setMinutes(currentDate.getMinutes() + 1*habit.howOften.step);
+                    currentDate = currentDate.plus({ minutes: 1*habit.howOften.step});
                     break;
                 case "hour":
-                    currentDate.setHours(currentDate.getHours() + 1*habit.howOften.step);
+                    currentDate = currentDate.plus({ hours: 1*habit.howOften.step });
                     break;
                 case "day":
-                    currentDate.setDate(currentDate.getDate() + 1*habit.howOften.step);
+                    currentDate = currentDate.plus({days: 1*habit.howOften.step});
                     break;
                 case "week":
-                    currentDate.setDate(currentDate.getDate() + 7*habit.howOften.step);
+                    currentDate = currentDate.plus({ weeks: 1*habit.howOften.step });
                     break;
                 case "month":
-                    currentDate.setMonth(currentDate.getMonth() + 1*habit.howOften.step);
+                    currentDate = currentDate.plus({ months: 1*habit.howOften.step });
                     break;
                 case "year":
-                    currentDate.setFullYear(currentDate.getFullYear() + 1*habit.howOften.step);
+                    currentDate = currentDate.plus({ years: 1*habit.howOften.step });
                     break;
                 default:
-                    console.log("Fuck you");
+                    console.log("Incorrect step option");
                     break;
             }
         }
@@ -198,40 +198,39 @@ const HabitController = {
         if(updatedHabit.howOften.step != habit.howOften.step || updatedHabit.howOften.timeUnit != habit.howOften.timeUnit || updatedHabit.startDate != habit.startDate) {
             // Need to delete child tasks
             await Task.deleteMany({_id: {$in: habit.children}});
-            console.log("Tasks deleted");
 
             // Need to create new set of tasks with new unit/step
-            const today = new Date(); // Set to client side date grab?
-            const currentDate = (updatedHabit.startDate < today) ? today : new Date(updatedHabit.startDate);
+            const today = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}).toJSDate();
+            const currentDate = (updatedHabit.startDate < today) ? DateTime.fromJSDate(today) : DateTime.fromJSDate(updatedHabit.startDate);
             let tasks = [];
             for(let i = 0; i < 50 && currentDate <= updatedHabit.endDate; ++i) {
                 const newTask = updatedTask();
-                newTask.date = new Date(currentDate);
+                newTask.date = currentDate.toJSDate();
 
                 tasks.push(newTask);
 
                 // Increment current date using step data
-                switch(updatedHabit.howOften.timeUnit) {
+                switch(habit.howOften.timeUnit) {
                     case "minute":
-                        currentDate.setMinutes(currentDate.getMinutes() + 1*updatedHabit.howOften.step);
+                        currentDate = currentDate.plus({ minutes: 1*habit.howOften.step});
                         break;
                     case "hour":
-                        currentDate.setHours(currentDate.getHours() + 1*updatedHabit.howOften.step);
+                        currentDate = currentDate.plus({ hours: 1*habit.howOften.step });
                         break;
                     case "day":
-                        currentDate.setDate(currentDate.getDate() + 1*updatedHabit.howOften.step);
+                        currentDate = currentDate.plus({days: 1*habit.howOften.step});
                         break;
                     case "week":
-                        currentDate.setDate(currentDate.getDate() + 7*updatedHabit.howOften.step);
+                        currentDate = currentDate.plus({ weeks: 1*habit.howOften.step });
                         break;
                     case "month":
-                        currentDate.setMonth(currentDate.getMonth() + 1*updatedHabit.howOften.step);
+                        currentDate = currentDate.plus({ months: 1*habit.howOften.step });
                         break;
                     case "year":
-                        currentDate.setFullYear(currentDate.getFullYear() + 1*updatedHabit.howOften.step);
+                        currentDate = currentDate.plus({ years: 1*habit.howOften.step });
                         break;
                     default:
-                        console.log("fuck you");
+                        console.log("Incorrect step option");
                         break;
                 }
             }
@@ -294,7 +293,8 @@ const HabitController = {
         const LONG_MAX = 250;
         const errors = [];
 
-        console.log(habit);
+        const startDate = habit.startDate.toJSDate();
+        const endDate = habit.endDate.toJSDate();
 
         // Name
         if(habit.name == undefined || habit.name.length == 0) {
@@ -311,7 +311,7 @@ const HabitController = {
 
         // StartDate
         // EndDate - Cannot end before startDate
-        if((habit.startDate && habit.endDate) && (habit.endDate <= habit.startDate)) {
+        if((startDate && endDate) && (endDate <= startDate)) {
             errors.push({msg: "Habit ending date must come after starting date."});
         }
 
@@ -366,6 +366,7 @@ const HabitController = {
         else { // Otherwise, set startDate to today at midnight
             habit.startDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: user.timezone});
         }
+        habit.startDate = DateTime.toJSDate();
 
         // Format ending date
         if(requestBody.endDate.length) { // If a endDate was provided, set endDate to that at midnight
@@ -382,6 +383,7 @@ const HabitController = {
         else { // Otherwise, set endDate to today at midnight
             habit.endDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: user.timezone});
         }
+        habit.endDate = habit.endDate.toJSDate();
 
         // Format starting date
         if(requestBody.startTime.length) {

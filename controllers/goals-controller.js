@@ -10,6 +10,8 @@ const TaskController = require("../controllers/tasks-controller");
 
 const mongoose = require("mongoose");
 
+const {DateTime} = require("luxon");
+
 const GoalController =  {
 
     create_new_goal_handler: async (req, res, next) => {
@@ -350,7 +352,6 @@ const GoalController =  {
         )
         .toJSDate();
 
-        goal.endDate = new Date(userDate);
         requestBody.endDate = requestBody.endDate.split("-");
         goal.endDate = DateTime.fromObject(
             {

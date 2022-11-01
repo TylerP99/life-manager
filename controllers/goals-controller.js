@@ -320,7 +320,6 @@ const GoalController =  {
         return errors;
     },
     format_goal_request_form: (requestBody, requestUser) => {
-        const userDate = new Date(requestBody.userDate);
         const goal = {
             name: requestBody.name,
             owner: requestUser.id,
@@ -339,17 +338,30 @@ const GoalController =  {
             goal.participants = requestBody.participants;
         }
 
-        goal.startDate = new Date(userDate);
         requestBody.startDate = requestBody.startDate.split("-");
-        goal.startDate.setFullYear(requestBody.startDate[0]);
-        goal.startDate.setMonth(requestBody.startDate[1]-1);
-        goal.startDate.setDate(requestBody.startDate[2]);
+        goal.startDate = DateTime.fromObject(
+            {
+                year: requestBody.startDate[0],
+                month: requestBody.startDate[1],
+                day: requestBody.startDate[2],
+                hour: 0, minute: 0, second: 0, millisecond: 0,
+            },
+            {zone: requestUser.timezone}
+        )
+        .toJSDate();
 
         goal.endDate = new Date(userDate);
         requestBody.endDate = requestBody.endDate.split("-");
-        goal.endDate.setFullYear(requestBody.endDate[0]);
-        goal.endDate.setMonth(requestBody.endDate[1]-1);
-        goal.endDate.setDate(requestBody.endDate[2]);
+        goal.endDate = DateTime.fromObject(
+            {
+                year: requestBody.endDate[0],
+                month: requestBody.endDate[1],
+                day: requestBody.endDate[2],
+                hour: 0, minute: 0, second: 0, millisecond: 0,
+            },
+            {zone: requestUser.timezone}
+        )
+        .toJSDate();
 
         return goal;
     }

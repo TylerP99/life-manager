@@ -8,6 +8,8 @@ const Task = require("../models/Task.js");
 
 const mongoose = require("mongoose");
 
+const { DateTime } = require("luxon");
+
 const HabitController = require("../controllers/habits-controller.js");
 
 const RoutineController = {
@@ -306,24 +308,28 @@ const RoutineController = {
             owner: requestUser.id,
         }
 
-        const userDate = new Date(requestBody.userDate);
-
         // Fill description if entered
         if(requestBody.description.length) {
             routine.description = requestBody.description;
         }
 
         // Fill startDate if entered, or use default date
-        routine.startDate = new Date(userDate);
-        routine.startDate.setHours(0);
-        routine.startDate.setMinutes(0);
-        routine.startDate.setSeconds(0);
         if(requestBody.startDate.length) {
             requestBody.startDate = requestBody.startDate.split("-");
-            routine.startDate.setFullYear(requestBody.startDate[0]);
-            routine.startDate.setMonth(requestBody.startDate[1]-1);
-            routine.startDate.setDate(requestBody.startDate[2]);
+            routine.startDate = DateTime.fromObject(
+                { 
+                    year: requestBody.startDate[0], 
+                    month: requestBody.startDate[1], 
+                    day: requestBody.startDate[2],
+                    hour: 0, minute: 0, second: 0, millisecond: 0,
+                },
+                { zone: requestUser.timezone }
+            );
         }
+        else {
+            routine.startDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0} ,{ zone:requestUser.timezone });
+        }
+        routine.startDate = routine.startDate.toJSDate();
 
         if(!Array.isArray(requestBody.habitName)) {
             requestBody.habitName = [requestBody.habitName];
@@ -355,16 +361,17 @@ const RoutineController = {
             // StartTime
             if(requestBody.startTime[i].length) {
                 requestBody.startTime[i] = requestBody.startTime[i].split(":");
-                habit.startTime = new Date(habit.startDate);
-                habit.startTime.setHours(requestBody.startTime[i][0]);
-                habit.startTime.setMinutes(requestBody.startTime[i][1]);
+                console.log(requestBody.startTime[i]);
+                habit.startTime = DateTime.fromJSDate(routine.startDate);
+                habit.startTime = habit.startTime.plus({ hours: requestBody.startTime[i][0], minutes: requestBody.startTime[i][1] });
+                habit.startTime = habit.startTime.toJSDate();
             }
             // EndTime
             if(requestBody.endTime[i].length) {
                 requestBody.endTime[i] = requestBody.endTime[i].split(":");
-                habit.endTime = new Date(habit.startDate);
-                habit.endTime.setHours(requestBody.endTime[i][0]);
-                habit.endTime.setMinutes(requestBody.endTime[i][1]);
+                habit.endTime = DateTime.fromJSDate(routine.startDate);
+                habit.endTime = habit.endTime.plus({ hours: requestBody.endTime[i][0], minutes: requestBody.endTime[i][1] });
+                habit.endTime = habit.endTime.toJSDate();
             }
 
             routine.habits.push(habit);

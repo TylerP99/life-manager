@@ -9,6 +9,8 @@
 const Task = require("../models/Task");
 const Habit = require("../models/Habit");
 
+const { DateTime } = require("luxon");
+
 const HabitController = {
 
     /*
@@ -113,7 +115,7 @@ const HabitController = {
             };
         };
 
-        const currentDate = DateTime.fromJSDate(habit.startDate);
+        let currentDate = DateTime.fromJSDate(habit.startDate);
         let tasks = [];
 
         for(let i = 0; i < MAX_TASKS && currentDate <= habit.endDate; ++i) {
@@ -293,9 +295,6 @@ const HabitController = {
         const LONG_MAX = 250;
         const errors = [];
 
-        const startDate = habit.startDate.toJSDate();
-        const endDate = habit.endDate.toJSDate();
-
         // Name
         if(habit.name == undefined || habit.name.length == 0) {
             errors.push({msg: "Habit requires a name."});
@@ -311,7 +310,7 @@ const HabitController = {
 
         // StartDate
         // EndDate - Cannot end before startDate
-        if((startDate && endDate) && (endDate <= startDate)) {
+        if((habit.startDate && habit.endDate) && (habit.endDate <= habit.startDate)) {
             errors.push({msg: "Habit ending date must come after starting date."});
         }
 
@@ -361,12 +360,12 @@ const HabitController = {
                     day: requestBody.startDate[2],
                     hour: 0, minute: 0, second: 0, millisecond: 0,
                 }, 
-                { zone: user.timezone });
+                { zone: requestUser.timezone });
         }
         else { // Otherwise, set startDate to today at midnight
-            habit.startDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: user.timezone});
+            habit.startDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: requestUser.timezone});
         }
-        habit.startDate = DateTime.toJSDate();
+        habit.startDate = habit.startDate.toJSDate();
 
         // Format ending date
         if(requestBody.endDate.length) { // If a endDate was provided, set endDate to that at midnight
@@ -378,24 +377,26 @@ const HabitController = {
                     day: requestBody.endDate[2],
                     hour: 0, minute: 0, second: 0, millisecond: 0,
                 }, 
-                { zone: user.timezone });
+                { zone: requestUser.timezone });
         }
         else { // Otherwise, set endDate to today at midnight
-            habit.endDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: user.timezone});
+            habit.endDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: requestUser.timezone});
         }
         habit.endDate = habit.endDate.toJSDate();
 
         // Format starting date
         if(requestBody.startTime.length) {
             requestBody.startTime = requestBody.startTime.split(":");
-            habit.startTime = habit.startDate.plus({ hours: requestBody.startTime[0], minutes: requestBody.startTime[1] });
+            habit.startTime = DateTime.fromJSDate(habit.startDate);
+            habit.startTime = habit.startTime.plus({ hours: requestBody.startTime[0], minutes: requestBody.startTime[1] });
             habit.startTime = habit.startTime.toJSDate();
         }
 
         // Format ending time
         if(requestBody.endTime.length) {
             requestBody.endTime = requestBody.endTime.split(":");
-            habit.endTime = habit.startDate.plus({ hours: requestBody.endTime[0], minutes: requestBody.endTime[1] });
+            habit.endTime = DateTime.fromJSDate(habit.startDate);
+            habit.endTime = habit.endTime.plus({ hours: requestBody.endTime[0], minutes: requestBody.endTime[1] });
             habit.endTime = habit.endTime.toJSDate();
         }
 

@@ -8,7 +8,9 @@ Currently hosting on Render, unless I find a better platform. Render is a bit sl
 
 ## How It's Made:
 
-**Tech used:** HTML, CSS, JavaScript, NodeJS, ExpressJS, MongoDB, PassportJS, EJS
+**Tech used:** HTML, CSS, JavaScript, NodeJS, ExpressJS, MongoDB, PassportJS, EJS, LuxonJS
+Front-End - HTML (EJS), CSS, Javascript, LuxonJS
+Back-End - NodeJS, ExpressJS, MongoDB, EJS, PassportJS, LuxonJS, AgendaJS
 
 The frontend of this application was made using EJS for templating, along with CSS and Javascript for client side functionality. This may be updated to React.
 
@@ -79,7 +81,13 @@ I also do my best to limit database calls and use optimal algorithms when I can.
 ## Lessons Learned:
 This project allowed me to compound on skills I already had.
 
-I was allowed to practice MVC architecture again in this project. It is a great way of keeping code organized and separated. 
+I was allowed to practice MVC architecture again in this project. It is a great way of keeping code organized and separated.
+
+I continued to practice keeping my code DRY.
+
+I got A LOT of practice in working with dates. They can be very complicated. I tried to keep to vanilla JS, since I wasn't doing a lot of heavy lifting, but I eventually changed over to Luxon as my solution. Luxon is the successor to the popular MomentJS, but it also uses Intl for timezones.
+
+I learned that EJS renders on server side before sending over to the user. While this wasn't important in my prior projects, it was here when I wanted to use vanilla JS Dates. I was using Date.toLocaleDateString to render dates within EJS, but since it happened server side, it was rendering in my time. When I tested my application using Render, I was getting incorrect times. 
 
 ## Examples:
 Coming Soon

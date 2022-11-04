@@ -379,8 +379,8 @@ const HabitController = {
                 }, 
                 { zone: requestUser.timezone });
         }
-        else { // Otherwise, set endDate to today at midnight
-            habit.endDate = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: requestUser.timezone});
+        else { // Otherwise, set endDate to 100 years from startDate at midnight
+            habit.endDate = DateTime.fromJSDate(new Date(habit.startDate.getFullYear() + 100, habit.startDate.getMonth(), habit.startDate.getDate(),0,0,0,0), {zone: requestUser.timezone});
         }
         habit.endDate = habit.endDate.toJSDate();
 
@@ -400,6 +400,8 @@ const HabitController = {
             habit.endTime = habit.endTime.toJSDate();
         }
 
+        console.log("Habit Formatted: ");
+        console.log(habit);
         return habit;
     },
 

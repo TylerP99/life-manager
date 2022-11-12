@@ -5,6 +5,8 @@ const User = require("../models/User");
 
 const {DateTime} = require("luxon");
 
+const schedule = require("node-schedule");
+
 // Need two types of scheduling
 /* 1. Habit automatic task creation
     - Upon habit creation, scheduler gets called
@@ -13,6 +15,11 @@ const {DateTime} = require("luxon");
 */
 
 const schedule_task = async ( jobDate, taskDate, habitID ) => {
+    const now = new Date(Date.now());
+
+    if(jobDate < now) {
+        jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, now.getSeconds(), 0);
+    }
 
     // Get the habit job assicated with this habit, if there is one
     const habitJob = await TaskJob.findOne({habitID: habitID});
@@ -108,7 +115,7 @@ const init_task_creation_jobs = async () => {
             creationJobs[i].jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 5, now.getSeconds(), now.getMilliseconds());
         }
         
-        schedule_task(creationJobs[i].jobDate, creationJobs[i].taskDate, creationJobs[i],habitID);
+        schedule_task(creationJobs[i].jobDate, creationJobs[i].taskDate, creationJobs[i].habitID);
     }
 };
 
@@ -130,7 +137,7 @@ const init_task_reminder_jobs = async () => {
     for(let i = 0; i < tasks.length; ++i) {
         const now = new Date(Date.now());
         if(!tasks.completed || tasks.date > now) {
-            schedule_reminder(task[i]);
+            schedule_reminder(tasks[i]);
         }
     }
 };

@@ -107,6 +107,8 @@ const HabitController = {
         // If there are errors, return them
         if(errors.length) return errors;
 
+        const storedHabit = await Habit.create(habit);
+
         // Create tasks for habit, up to 50
         const taskConstructor = _ => {
             return {
@@ -118,18 +120,15 @@ const HabitController = {
             };
         };
 
-        let tasks = await HabitController.create_habit_tasks(habit, taskConstructor, tz);
+        let tasks = await HabitController.create_habit_tasks(storedHabit, taskConstructor, tz);
 
         // Add all tasks to database
         tasks = await Task.insertMany(tasks);
         // Save ids of inserted tasks
         tasks = tasks.map(x => x._id);
 
-        // Add ids to children
-        habit.children = tasks;
-
         // Add habit to database
-        const storedHabit = await Habit.create(habit);
+        await Habit.findByIdAndUpdate(storedHabit._id, {children: tasks});
 
         // Return errors
         return storedHabit;

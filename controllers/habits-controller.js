@@ -118,7 +118,7 @@ const HabitController = {
             };
         };
 
-        let tasks = HabitController.create_habit_tasks(habit, taskConstructor, tz);
+        let tasks = await HabitController.create_habit_tasks(habit, taskConstructor, tz);
 
         // Add all tasks to database
         tasks = await Task.insertMany(tasks);
@@ -172,7 +172,7 @@ const HabitController = {
             await Task.deleteMany({_id: {$in: habit.children}});
 
             // Need to create new set of tasks with new unit/step
-            let tasks = HabitController.create_habit_tasks(updatedHabit, updatedTask, tz);
+            let tasks = await HabitController.create_habit_tasks(updatedHabit, updatedTask, tz);
 
             // Need to save new tasks into db
             tasks = await Task.insertMany(tasks);
@@ -228,7 +228,7 @@ const HabitController = {
         
         @returns: An array of tasks
     */
-    create_habit_tasks: (habit, taskConstructor, tz) => {
+    create_habit_tasks: async (habit, taskConstructor, tz) => {
         const MAX_TASKS = 50;
 
         // Get a date representing today at midnight in user's timezone
@@ -279,7 +279,7 @@ const HabitController = {
 
         // If current date is still below endDate, schedule a new task to be created on the date of the first task
         if(currentDate <= habit.endDate) {
-            JobController.schedule_task(tasks[0].date, currentDate.toJSDate(), habit._id);
+            await JobController.schedule_task(tasks[0].date, currentDate.toJSDate(), habit._id);
         }
 
         return tasks;

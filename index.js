@@ -45,6 +45,11 @@ app.use(flash());
 const methodOverride = require("method-override");
 app.use(methodOverride("_method"));
 
+// Init jobs
+const JobController = require("./controllers/job-controller");
+JobController.init_task_creation_jobs();
+JobController.init_task_reminder_jobs();
+
 // Routes
 app.use("/", require("./routes/index.js"));
 

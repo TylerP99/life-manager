@@ -12,7 +12,7 @@ const {DateTime} = require("luxon");
     - Scheduler gets habit from db, constructs task, creates task, adds id to habit, increments date, saves a job in the db, calls scheduler with new info
 */
 
-const schedule_task = ( jobDate, taskDate, habitID ) => {
+const schedule_task = async ( jobDate, taskDate, habitID ) => {
 
     // Get the habit job assicated with this habit, if there is one
     const habitJob = await TaskJob.findOne({habitID: habitID});
@@ -97,7 +97,7 @@ const schedule_task = ( jobDate, taskDate, habitID ) => {
 // Habit job initializer
 // Jobs are saved in db with habit and creation date. 
 // On initialization, get all docs from db, call creation function on all.
-const init_task_creation_jobs = () => {
+const init_task_creation_jobs = async () => {
     // Get all creation jobs from database
     const creationJobs = await TaskJob.find();
 
@@ -115,7 +115,7 @@ const init_task_creation_jobs = () => {
 /* 2. Task automatic reminders
 
 */
-const schedule_reminder = (task) => {
+const schedule_reminder = async (task) => {
     let jobDate = DateTime.fromJSDate(task.date);
     jobDate = jobDate.minus({days: 1});
 
@@ -124,7 +124,7 @@ const schedule_reminder = (task) => {
     });
 };
 
-const init_task_reminder_jobs = () => {
+const init_task_reminder_jobs = async () => {
     const tasks = await Task.find();
 
     for(let i = 0; i < tasks.length; ++i) {

@@ -38,9 +38,6 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
             habitID: habitID,
             owner: habit.owner,
         })
-    } // Otherwise, update it with current info
-    else {
-        TaskJob.findOneAndUpdate({habitID: habitID}, {jobDate: jobDate, taskDate: taskDate});
     }
 
     // Format task object for creation
@@ -56,6 +53,8 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
     // Schedule a job that creates a new task and schedules the next task creation. Runs on newDate
     const job = schedule.scheduleJob(jobDate, async () => {
         const newTask = await Task.create(task); // Create task in db
+
+        await TaskJob.findOneAndDelete({habitID: habitID});
 
         await Habit.findById(habitID, {$push: { children: newTask._id }});
 

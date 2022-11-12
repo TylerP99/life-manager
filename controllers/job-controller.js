@@ -13,10 +13,10 @@ const schedule = require("node-schedule");
     - Scheduler will require: Date to be created, habit id
     - Scheduler gets habit from db, constructs task, creates task, adds id to habit, increments date, saves a job in the db, calls scheduler with new info
 */
-
 const schedule_task = async ( jobDate, taskDate, habitID ) => {
-    const now = new Date(Date.now());
 
+    // Need to do a check. If the jobDate is prior to right now, need to adjust the job to a minute from now so it runs
+    const now = new Date(Date.now());
     if(jobDate < now) {
         jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, now.getSeconds(), 0);
     }
@@ -56,10 +56,21 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
 
         await TaskJob.findOneAndDelete({habitID: habitID});
 
-        await Habit.findById(habitID, {$push: { children: newTask._id }});
+        await Habit.findByIdAndUpdate(habitID, {$push: { children: newTask._id }});
 
         // Increment Dates
-        jobDate = DateTime.fromJSDate(jobDate, {zone: user.timezone});
+        jobDate = DateTime.fromObject(
+            { 
+                year: jobDate.getFullYear(), 
+                month: jobDate.getMonth(),
+                day: jobDate.getDate(),
+                hour: 0,
+                minute: 0,
+                second: 0,
+                millisecond: 0,
+            }, {zone: user.timezone}
+        );
+        
         taskDate = DateTime.fromJSDate(taskDate, {zone: user.timezone});
         switch(habit.howOften.timeUnit) {
             case "minute":

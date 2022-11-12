@@ -8,6 +8,9 @@
 
 const Task = require("../models/Task");
 const Habit = require("../models/Habit");
+const TaskJob = require("../models/TaskJob");
+
+const JobController = require("../controllers/job-controller");
 
 const { DateTime } = require("luxon");
 
@@ -22,7 +25,7 @@ const HabitController = {
         const habit = HabitController.format_habit_request_form(req.body, req.user);
 
         try {
-            const errors = await HabitController.create_habit(habit, req.user);
+            const errors = await HabitController.create_habit(habit, req.user.timezone);
 
             if(errors.length) {
                 req.flash("errors", errors);
@@ -48,7 +51,7 @@ const HabitController = {
         const updatedHabit = HabitController.format_habit_request_form(req.body, req.user);
 
         try {
-            const errors = await HabitController.update_habit(updatedHabit, req.params.id);
+            const errors = await HabitController.update_habit(updatedHabit, req.params.id, req.user.timezone);
 
             if(errors) {
                 req.flash("errors", errors);
@@ -95,7 +98,7 @@ const HabitController = {
         @returns:
             - Habit upon successful creation, or an array of errors if that habit failed validation.
     */
-    create_habit: async (habit) => {
+    create_habit: async (habit, tz) => {
         const MAX_TASKS = 50;
 
         // Validate passed habit
@@ -115,40 +118,7 @@ const HabitController = {
             };
         };
 
-        let currentDate = DateTime.fromJSDate(habit.startDate);
-        let tasks = [];
-
-        for(let i = 0; i < MAX_TASKS && currentDate <= habit.endDate; ++i) {
-            const newTask = taskConstructor();
-            newTask.date = currentDate.toJSDate();
-
-            tasks.push(newTask);
-
-            // Increment current date using step data
-            switch(habit.howOften.timeUnit) {
-                case "minute":
-                    currentDate = currentDate.plus({ minutes: 1*habit.howOften.step});
-                    break;
-                case "hour":
-                    currentDate = currentDate.plus({ hours: 1*habit.howOften.step });
-                    break;
-                case "day":
-                    currentDate = currentDate.plus({days: 1*habit.howOften.step});
-                    break;
-                case "week":
-                    currentDate = currentDate.plus({ weeks: 1*habit.howOften.step });
-                    break;
-                case "month":
-                    currentDate = currentDate.plus({ months: 1*habit.howOften.step });
-                    break;
-                case "year":
-                    currentDate = currentDate.plus({ years: 1*habit.howOften.step });
-                    break;
-                default:
-                    console.log("Incorrect step option");
-                    break;
-            }
-        }
+        let tasks = HabitController.create_habit_tasks(habit, taskConstructor, tz);
 
         // Add all tasks to database
         tasks = await Task.insertMany(tasks);
@@ -174,7 +144,7 @@ const HabitController = {
         @returns:
             - Undefined upon successful update, or an array of errors if the habit failed validation
     */
-    update_habit: async (updatedHabit, habitID) => {
+    update_habit: async (updatedHabit, habitID, tz) => {
         // Validate updatedHabit
         const errors = HabitController.validate_habit(updatedHabit);
 
@@ -202,40 +172,7 @@ const HabitController = {
             await Task.deleteMany({_id: {$in: habit.children}});
 
             // Need to create new set of tasks with new unit/step
-            const today = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}).toJSDate();
-            let currentDate = (updatedHabit.startDate < today) ? DateTime.fromJSDate(today) : DateTime.fromJSDate(updatedHabit.startDate);
-            let tasks = [];
-            for(let i = 0; i < 50 && currentDate <= updatedHabit.endDate; ++i) {
-                const newTask = updatedTask();
-                newTask.date = currentDate.toJSDate();
-
-                tasks.push(newTask);
-
-                // Increment current date using step data
-                switch(habit.howOften.timeUnit) {
-                    case "minute":
-                        currentDate = currentDate.plus({ minutes: 1*habit.howOften.step});
-                        break;
-                    case "hour":
-                        currentDate = currentDate.plus({ hours: 1*habit.howOften.step });
-                        break;
-                    case "day":
-                        currentDate = currentDate.plus({days: 1*habit.howOften.step});
-                        break;
-                    case "week":
-                        currentDate = currentDate.plus({ weeks: 1*habit.howOften.step });
-                        break;
-                    case "month":
-                        currentDate = currentDate.plus({ months: 1*habit.howOften.step });
-                        break;
-                    case "year":
-                        currentDate = currentDate.plus({ years: 1*habit.howOften.step });
-                        break;
-                    default:
-                        console.log("Incorrect step option");
-                        break;
-                }
-            }
+            let tasks = HabitController.create_habit_tasks(updatedHabit, updatedTask, tz);
 
             // Need to save new tasks into db
             tasks = await Task.insertMany(tasks);
@@ -273,11 +210,79 @@ const HabitController = {
         // Delete all child tasks
         await Task.deleteMany({_id: {$in: habit.children}});
 
+        // Delete habit job
+        await TaskJob.findOneAndDelete({habitID: habitID});
+
         // Delete habit
         await Habit.findByIdAndDelete(habitID);
 
         // Done
         return undefined;
+    },
+
+    /*
+        @desc:    Given a habit, this function handles the recurring tasks for that habit. It will create up to 50 tasks, or stop if the habit end date is reached. Also begins the task creation scheduler for the given habit. Returns the habits back to the calling function for storage in the database.
+        
+        @params:  habit: A habit object
+                  taskConstructor: A function that returns a task object using the habit information
+        
+        @returns: An array of tasks
+    */
+    create_habit_tasks: (habit, taskConstructor, tz) => {
+        const MAX_TASKS = 50;
+
+        // Get a date representing today at midnight in user's timezone
+        const today = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}, {zone: tz}).toJSDate();
+
+        // If the provided startDate is before today at midnight, change the startDate to today at midnight
+        let currentDate = (habit.startDate < today) ? DateTime.fromJSDate(today) : DateTime.fromJSDate(habit.startDate);
+
+        // Create task array to store tasks and return
+        let tasks = [];
+
+        // Create tasks up to and including the provided endDate, or up to MAX_TASKS
+        for(let i = 0; i < MAX_TASKS && currentDate <= habit.endDate; ++i) {
+            // Create a task with constructor
+            const newTask = taskConstructor();
+
+            // Set the date to current date
+            newTask.date = currentDate.toJSDate();
+
+            // Add task to task array
+            tasks.push(newTask);
+
+            // Increment current date using step data
+            switch(habit.howOften.timeUnit) {
+                case "minute":
+                    currentDate = currentDate.plus({ minutes: 1*habit.howOften.step});
+                    break;
+                case "hour":
+                    currentDate = currentDate.plus({ hours: 1*habit.howOften.step });
+                    break;
+                case "day":
+                    currentDate = currentDate.plus({days: 1*habit.howOften.step});
+                    break;
+                case "week":
+                    currentDate = currentDate.plus({ weeks: 1*habit.howOften.step });
+                    break;
+                case "month":
+                    currentDate = currentDate.plus({ months: 1*habit.howOften.step });
+                    break;
+                case "year":
+                    currentDate = currentDate.plus({ years: 1*habit.howOften.step });
+                    break;
+                default:
+                    console.log("Incorrect step option");
+                    break;
+            }
+        }
+
+        // If current date is still below endDate, schedule a new task to be created on the date of the first task
+        if(currentDate <= habit.endDate) {
+            JobController.schedule_task(tasks[0].date, currentDate.toJSDate(), habit._id);
+        }
+
+        return tasks;
     },
 
     /*

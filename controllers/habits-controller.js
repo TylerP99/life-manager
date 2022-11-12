@@ -203,7 +203,7 @@ const HabitController = {
 
             // Need to create new set of tasks with new unit/step
             const today = DateTime.fromObject({hour: 0, minute: 0, second: 0, millisecond: 0}).toJSDate();
-            const currentDate = (updatedHabit.startDate < today) ? DateTime.fromJSDate(today) : DateTime.fromJSDate(updatedHabit.startDate);
+            let currentDate = (updatedHabit.startDate < today) ? DateTime.fromJSDate(today) : DateTime.fromJSDate(updatedHabit.startDate);
             let tasks = [];
             for(let i = 0; i < 50 && currentDate <= updatedHabit.endDate; ++i) {
                 const newTask = updatedTask();

@@ -24,7 +24,7 @@ const TaskJobSchema = new mongoose.Schema({
         ref: "User",
     },
 
-}, {timestamps});
+}, {timestamps: true});
 
 const TaskJob = mongoose.model("TaskJob", TaskJobSchema);
 

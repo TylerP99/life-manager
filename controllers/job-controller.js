@@ -55,7 +55,9 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
 
     // Schedule a job that creates a new task and schedules the next task creation. Runs on newDate
     const job = schedule.scheduleJob(jobDate, async () => {
-        await Task.create(task); // Create task in db
+        const newTask = await Task.create(task); // Create task in db
+
+        await Habit.findById(habitID, {$push: { children: newTask._id }});
 
         // Increment Dates
         jobDate = DateTime.fromJSDate(jobDate, {zone: user.timezone});
@@ -112,7 +114,7 @@ const init_task_creation_jobs = async () => {
     for(let i = 0; i < creationJobs.length; ++i) {
         const now = new Date(Date.now());
         if(creationJobs[i].jobDate <= now) {
-            creationJobs[i].jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 5, now.getSeconds(), now.getMilliseconds());
+            creationJobs[i].jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, now.getSeconds(), now.getMilliseconds());
         }
         
         schedule_task(creationJobs[i].jobDate, creationJobs[i].taskDate, creationJobs[i].habitID);

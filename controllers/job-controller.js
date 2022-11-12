@@ -47,7 +47,7 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
     };
 
     // Schedule a job that creates a new task and schedules the next task creation. Runs on newDate
-    const job = schedule.scheduleJob(jobDate, () => {
+    const job = schedule.scheduleJob(jobDate, async () => {
         await Task.create(task); // Create task in db
 
         // Increment Dates

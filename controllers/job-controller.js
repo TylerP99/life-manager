@@ -162,6 +162,7 @@ const schedule_reminder = async (task) => {
 
 const init_task_reminder_jobs = async () => {
     const tasks = await Task.find();
+    tasks = tasks.filter( x => !x.completed && x.reminder); // Filter out completed tasks and tasks that dont want a reminder
 
     for(let i = 0; i < tasks.length; ++i) {
         const now = new Date(Date.now());

@@ -24,6 +24,10 @@ const TaskSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    reminder: {
+        type: Boolean,
+        default: true,
+    },
     owner: {
         type: mongoose.Types.ObjectId,
         required: true

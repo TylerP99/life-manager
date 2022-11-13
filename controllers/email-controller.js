@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
 
 const {DateTime} = require("luxon");
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 const EmailController = {
 
@@ -22,14 +23,14 @@ const EmailController = {
         const task = await Task.findById(taskID);
 
         // Get user from db
-        const user = await User.findByID(task.owner);
+        const user = await User.findById(task.owner);
 
         // Format message
         const greeting = `Hello ${user.username}!\n\n`;
         const content = "You have an upcoming task:" + 
                         "\n" + 
                         task.name +         
-                        ((task.startTime) ? `at ${DateTime.fromJSDate(task.startTime, {zone: user.timezone}).toLocaleString(DateTime.TIME_SIMPLE)}` : "") + 
+                        ((task.startTime) ? ` at ${DateTime.fromJSDate(task.startTime, {zone: user.timezone}).toLocaleString(DateTime.TIME_SIMPLE)}` : "") + 
                         " on " + 
                         DateTime.fromJSDate(task.date, {zone: user.timezone}).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) + 
                         ((task.description) ? "\n" + task.description : "" )
@@ -48,8 +49,12 @@ const EmailController = {
             }
             else {
                 console.log("Mail sent");
+
+                await Task.findByIdAndUpdate(taskID, {reminder: false}); // When a reminder is sent, set task to disallow reminders so additional emails are not sent on server reset
             }
         });
+
+        
     },
     
 };

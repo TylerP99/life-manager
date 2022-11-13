@@ -152,7 +152,7 @@ const schedule_reminder = async (task) => {
 
     const now = new Date(Date.now());
     if(jobDate < now) {
-        jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, now.getSeconds(), 0);
+        jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds() + 5, 0);
     }
 
     const job = schedule.scheduleJob(jobDate, () => {

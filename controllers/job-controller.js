@@ -7,6 +7,8 @@ const {DateTime} = require("luxon");
 
 const schedule = require("node-schedule");
 
+const EmailController = require("./email-controller");
+
 // Need two types of scheduling
 /* 1. Habit automatic task creation
     - Upon habit creation, scheduler gets called
@@ -135,11 +137,26 @@ const init_task_creation_jobs = async () => {
 
 */
 const schedule_reminder = async (task) => {
-    let jobDate = DateTime.fromJSDate(task.date);
+    let jobDate = new Date(
+        task.date.getFullYear(),
+        task.date.getMonth(),
+        task.date.getDate(),
+        (task.startTime) ? task.startTime.getHours() : 0,
+        (task.startTime) ? task.startTime.getMinutes() : 0,
+        0,
+        0
+    );
+    jobDate = DateTime.fromJSDate(jobDate);
     jobDate = jobDate.minus({days: 1});
+    jobDate = jobDate.toJSDate();
+
+    const now = new Date(Date.now());
+    if(jobDate < now) {
+        jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, now.getSeconds(), 0);
+    }
 
     const job = schedule.scheduleJob(jobDate, () => {
-        ReminderController.send_reminder(task.id);
+        EmailController.send_reminder(task.id);
     });
 };
 

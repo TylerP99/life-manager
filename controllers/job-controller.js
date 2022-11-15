@@ -53,7 +53,7 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
     };
 
     // Schedule a job that creates a new task and schedules the next task creation. Runs on newDate
-    const job = schedule.scheduleJob(jobDate, async () => {
+    const job = schedule.scheduleJob(habit._id.toString(), jobDate, async () => {
         const newTask = await Task.create(task); // Create task in db
 
         await TaskJob.findOneAndDelete({habitID: habitID});
@@ -115,6 +115,10 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
 
 };
 
+const delete_task_scheduler = async (habit) => {
+    schedule.cancelJob(habit._id.toString());
+}
+
 // Habit job initializer
 // Jobs are saved in db with habit and creation date. 
 // On initialization, get all docs from db, call creation function on all.
@@ -155,26 +159,36 @@ const schedule_reminder = async (task) => {
         jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds() + 5, 0);
     }
 
-    const job = schedule.scheduleJob(jobDate, () => {
+    const job = schedule.scheduleJob(task._id.toString(), jobDate, () => {
         EmailController.send_reminder(task.id);
     });
 };
 
+const update_reminder = async (task) => {
+    // Delete old reminder
+    schedule.cancelJob(task._id.toString());
+
+    // Set new reminder
+    await schedule_reminder(task);
+};
+
 const init_task_reminder_jobs = async () => {
-    const tasks = await Task.find();
+    let tasks = await Task.find();
     tasks = tasks.filter( x => !x.completed && x.reminder); // Filter out completed tasks and tasks that dont want a reminder
 
     for(let i = 0; i < tasks.length; ++i) {
         const now = new Date(Date.now());
         if(!tasks.completed || tasks.date > now) {
-            schedule_reminder(tasks[i]);
+            await schedule_reminder(tasks[i]);
         }
     }
 };
 
 module.exports = {
     schedule_task,
+    delete_task_scheduler,
     init_task_creation_jobs,
     schedule_reminder,
+    update_reminder,
     init_task_reminder_jobs,
 }

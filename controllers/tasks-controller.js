@@ -2,6 +2,8 @@
 const Task = require("../models/Task");
 const {DateTime} = require("luxon");
 
+const JobController = require("./job-controller");
+
 //
 const TaskController = {
 
@@ -134,6 +136,11 @@ const TaskController = {
         // Add task to db
         const newTask = await Task.create(task);
 
+        // Schedule reminder
+        if(newTask.reminder) {
+            await JobController.schedule_reminder(newTask);
+        }
+
         return newTask; // Success
     },
     /*
@@ -151,7 +158,11 @@ const TaskController = {
             return errors;
         }
 
-        await Task.findByIdAndUpdate(id, task);
+        const oldTask = await Task.findByIdAndUpdate(id, task);
+
+        if(oldTask.date != task.date) {
+            await JobController.update_reminder(task);
+        }
 
         return undefined;
     },

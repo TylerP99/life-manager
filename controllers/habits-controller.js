@@ -124,6 +124,12 @@ const HabitController = {
 
         // Add all tasks to database
         tasks = await Task.insertMany(tasks);
+
+        // Schedule task reminders
+        for(let i = 0; i < tasks.length; ++i) {
+            await JobController.schedule_reminder(tasks[i]);
+        }
+
         // Save ids of inserted tasks
         tasks = tasks.map(x => x._id);
 
@@ -175,6 +181,12 @@ const HabitController = {
 
             // Need to save new tasks into db
             tasks = await Task.insertMany(tasks);
+
+            // Update reminders
+            for(let i = 0; i < tasks.length; ++i) {
+                await JobController.schedule_reminder(tasks[i]);
+            }
+
             tasks = tasks.map(x => x._id);
             updatedHabit.children = tasks;
         }
@@ -211,6 +223,9 @@ const HabitController = {
 
         // Delete habit job
         await TaskJob.findOneAndDelete({habitID: habitID});
+
+        // Cancel task creation job
+        await JobController.delete_task_scheduler(habit);
 
         // Delete habit
         await Habit.findByIdAndDelete(habitID);

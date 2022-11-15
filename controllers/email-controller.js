@@ -43,12 +43,13 @@ const EmailController = {
             text: message,
         };
 
-        transporter.sendMail(mailOptions, (err) => {
+        transporter.sendMail(mailOptions, async (err) => {
             if(err) {
                 console.error(err);
             }
             else {
-                console.log("Mail sent");
+                console.log("Mail sent for: ");
+                console.log(task);
 
                 await Task.findByIdAndUpdate(taskID, {reminder: false}); // When a reminder is sent, set task to disallow reminders so additional emails are not sent on server reset
             }

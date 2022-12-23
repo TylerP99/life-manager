@@ -35,27 +35,42 @@
             <%- include("./partials/alerts.ejs") %>
 
             <section class="app-display">
-                <% if(tasks.length) { %>
-                    <section class="card-display">
-                    <% for(let i = 0; i < tasks.length; ++i) { %>
-                        <%- include("./partials/task-card.ejs", {task: tasks[i], user:user}) %>
+                <section>
+                    <h2>Completed Tasks</h2>
+                    <% if(complete.length) { %>
+                        <section class="card-display">
+                        <% for(let i = 0; i < complete.length; ++i) { %>
+                            <%- include("./partials/task-card.ejs", {task: complete[i], user:user}) %>
+                        <% } %>
+                        </section>
+                    <% }else{ %>
+                        <h5>No tasks to display</h5>
                     <% } %>
-                    </section>
-                <% }else{ %>
-                    <h5>No tasks to display</h5>
-                <% } %>
-            </section>
-
-            <section>
-                <% if(complete.length) { %>
-                    <section class="card-display">
-                    <% for(let i = 0; i < complete.length; ++i) { %>
-                        <%- include("./partials/task-card.ejs", {task: complete[i], user:user}) %>
+                </section>
+                <section>
+                    <h2>Overdue Tasks</h2>
+                    <% if(overdue.length) { %>
+                        <section class="card-display">
+                        <% for(let i = 0; i < overdue.length; ++i) { %>
+                            <%- include("./partials/task-card.ejs", {task: overdue[i], user:user}) %>
+                        <% } %>
+                        </section>
+                    <% }else{ %>
+                        <h5>No tasks to display</h5>
                     <% } %>
-                    </section>
-                <% }else{ %>
-                    <h5>No tasks to display</h5>
-                <% } %>
+                </section>
+                <section>
+                    <h2>Current Tasks</h2>
+                    <% if(tasks.length) { %>
+                        <section class="card-display">
+                        <% for(let i = 0; i < tasks.length; ++i) { %>
+                            <%- include("./partials/task-card.ejs", {task: tasks[i], user:user}) %>
+                        <% } %>
+                        </section>
+                    <% }else{ %>
+                        <h5>No tasks to display</h5>
+                    <% } %>
+                </section>
             </section>
 
         </main>

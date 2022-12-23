@@ -77,11 +77,10 @@ const TaskController = {
 
         console.log("Mark task complete request start")
 
-        const update = { completed: true };
         const id = req.params.id;
 
         try{
-            const errors = await TaskController.update_task(update,id);
+            const task = await Task.findByIdAndUpdate(id, {completed: true});
 
             // Respond
             if(errors) {
@@ -109,7 +108,7 @@ const TaskController = {
         const id = req.params.id;
 
         try{
-            const errors = await TaskController.update_task(update,id);
+            const task = await Task.findByIdAndUpdate(id, {completed: true});
 
             // Respond
             if(errors) {
@@ -192,6 +191,7 @@ const TaskController = {
         }
 
         const oldTask = await Task.findByIdAndUpdate(id, task);
+        console.log(task, oldTask);
 
         if(oldTask.date != task.date) {
             await JobController.update_reminder(task);

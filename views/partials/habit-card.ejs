@@ -8,8 +8,6 @@
 
 <section class="card" data-id="<%=habit._id%>">
 
-    <% console.log("Ejs")%>
-    <% console.log(habit) %>
     <section class="card-info">
         <h5><%=habit.name%></h5>
         <%if(habit.description != undefined){%><p><%=habit.description%></p><%}%>

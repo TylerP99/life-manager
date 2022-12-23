@@ -21,10 +21,13 @@ module.exports = {
         // Get user's tasks
         try {
             const tasks = await Task.find({owner: req.user.id});
-            const completed = [];
+            const complete = [];
+            const overdue = [];
             const incomplete = [];
 
-            tasks.forEach( x => (x.completed) ? completed.push(x) : incomplete.push(x));
+            const now = new Date(Date.now());
+
+            tasks.forEach( x => (x.completed) ? complete.push(x) : (x.date <= now) ? overdue.push(x) : incomplete.push(x));
 
             const taskSort = (a,b) => {
                 if(a.date < b.date) return -1;
@@ -39,10 +42,10 @@ module.exports = {
                 return 0;
             };
 
-            completed.sort(taskSort);
+            complete.sort(taskSort);
             incomplete.sort(taskSort);
 
-            res.render("tasks.ejs",{tasks:incomplete, complete:completed, user: req.user, DateTime: DateTime});
+            res.render("tasks.ejs",{tasks:incomplete, complete, overdue, user: req.user, DateTime: DateTime});
         }
         catch(e) {
             console.error(e);

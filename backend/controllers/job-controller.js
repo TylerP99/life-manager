@@ -17,6 +17,8 @@ const EmailController = require("./email-controller");
 */
 const schedule_task = async ( jobDate, taskDate, habitID ) => {
 
+    console.log("Habit task scheduler function start")
+
     // Need to do a check. If the jobDate is prior to right now, need to adjust the job to a minute from now so it runs
     const now = new Date(Date.now());
     if(jobDate < now) {
@@ -53,6 +55,7 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
     };
 
     // Schedule a job that creates a new task and schedules the next task creation. Runs on newDate
+    console.log("Scheduling task creation for habit ", habit._id, "on ", jobDate)
     const job = schedule.scheduleJob(habit._id.toString(), jobDate, async () => {
         const newTask = await Task.create(task); // Create task in db
 
@@ -60,11 +63,13 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
 
         await Habit.findByIdAndUpdate(habitID, {$push: { children: newTask._id }});
 
+        console.log("Job date pre increment: ", jobDate);
+
         // Increment Dates
         jobDate = DateTime.fromObject(
             { 
                 year: jobDate.getFullYear(), 
-                month: jobDate.getMonth(),
+                month: jobDate.getMonth() + 1, // I think luxon doens't do the funny 0 indexed dates that js dates do
                 day: jobDate.getDate(),
                 hour: 0,
                 minute: 0,
@@ -108,11 +113,14 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
         jobDate = jobDate.toJSDate();
         taskDate = taskDate.toJSDate();
 
+        console.log("Job date post increment: ", jobDate);
+
         if(taskDate < habit.endDate) {
+            console.log("Scheduling next habit task...");
             schedule_task(jobDate, taskDate, habitID); // Schedule the next task
         }
     })
-
+    console.log("Habit task schedule function end")
 };
 
 const delete_task_scheduler = async (habit) => {
@@ -170,6 +178,7 @@ const schedule_reminder = async (task) => {
 
 const update_reminder = async (task) => {
     console.log("Task reminder update function start")
+    console.log(task);
     // Delete old reminder
     schedule.cancelJob(task._id.toString());
 
@@ -193,6 +202,7 @@ const init_task_reminder_jobs = async () => {
 };
 
 module.exports = {
+    schedule,
     schedule_task,
     delete_task_scheduler,
     init_task_creation_jobs,

@@ -141,6 +141,8 @@ const init_task_creation_jobs = async () => {
 
 */
 const schedule_reminder = async (task) => {
+    console.log("Task reminder schedule function start")
+    console.log(schedule)
     let jobDate = new Date(
         task.date.getFullYear(),
         task.date.getMonth(),
@@ -159,14 +161,19 @@ const schedule_reminder = async (task) => {
         jobDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds() + 5, 0);
     }
 
+    console.log("Job scheduled for: ", jobDate)
     const job = schedule.scheduleJob(task._id.toString(), jobDate, () => {
+        console.log("Job fired for task: ", task._id);
         EmailController.send_reminder(task.id);
     });
 };
 
 const update_reminder = async (task) => {
+    console.log("Task reminder update function start")
     // Delete old reminder
     schedule.cancelJob(task._id.toString());
+
+    console.log("Task reminder update function end")
 
     // Set new reminder
     await schedule_reminder(task);
@@ -174,6 +181,7 @@ const update_reminder = async (task) => {
 
 const init_task_reminder_jobs = async () => {
     let tasks = await Task.find();
+    // Consider adding a new reminder collection containing task id
     tasks = tasks.filter( x => !x.completed && x.reminder); // Filter out completed tasks and tasks that dont want a reminder
 
     for(let i = 0; i < tasks.length; ++i) {

@@ -11,10 +11,10 @@ const TaskController = {
         Task API Route Hanlders
     */
     create_task_handler: async (req, res, next) => {
+        console.log("Create task request started")
+
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
         const task = TaskController.format_task_request_form(req.body, req.user);
-
-        console.log(task);
 
         try{
             // Create Task in DB (Returns errors if task doesnt pass validation)
@@ -28,10 +28,13 @@ const TaskController = {
                 req.flash("success", "Task successfully created!");
             }
 
+            console.log("Create task request ending")
+
             // Redirect to page to force a reload and display updated info
             res.redirect("/tasks")
         }
         catch(e) {
+            console.error("Create task request error")
             console.error(e);
             next(e);
         }
@@ -41,6 +44,9 @@ const TaskController = {
         Request body should contain a full task object (minimum name and date)
     */
     update_task_handler: async (req, res, next) => {
+
+        console.log("Update task request start")
+
         // Format request (client should send a new object)
         const task = TaskController.format_task_request_form(req.body, req.user);
         const id = req.params.id;
@@ -57,14 +63,20 @@ const TaskController = {
                 req.flash("success", "Task successfully updated");
             }
 
+            console.log("Update task request end")
+
             res.redirect("/tasks");
         }
         catch(e) {
+            console.log("Update task request error")
             console.error(e);
             next(e);
         }
     },
     mark_complete_handler: async (req, res, next) => {
+
+        console.log("Mark task complete request start")
+
         const update = { completed: true };
         const id = req.params.id;
 
@@ -79,14 +91,20 @@ const TaskController = {
                 req.flash("success", "Task successfully updated");
             }
 
+            console.log("Mark task complete request end")
+
             res.redirect("/tasks");
         }
         catch(e) {
+            console.log("Mark task complete request error")
             console.error(e);
             next(e);
         }
     },
     mark_incomplete_handler: async (req, res, next) => {
+
+        console.log("Mark task incomplete request start")
+
         const update = { completed: false };
         const id = req.params.id;
 
@@ -101,22 +119,30 @@ const TaskController = {
                 req.flash("success", "Task successfully updated");
             }
 
+            console.log("Mark task incomplete request end")
+
             res.redirect("/tasks");
         }
         catch(e) {
+            console.log("Mark task incomplete request error")
             console.error(e);
             next(e);
         }
     },
     delete_task_handler: async (req, res, next) => {
+        console.log("Delete task request start")
+
         const id = req.params.id;
 
         try {
             await TaskController.delete_task(id);
 
+            console.log("Delete task request end")
+
             res.redirect("/tasks");
         }
         catch(e) {
+            console.log("Delete task request error")
             console.error(e);
             next(e);
         }
@@ -126,10 +152,13 @@ const TaskController = {
         Creates a new task in database
     */
     create_task: async (task) => {
+        console.log("Create task function start")
+
         // Validate task
         const errors = TaskController.validate_task(task);
 
         if(errors.length) { // If there are errors during validation, return here and dont add task
+            console.log("Create task function error")
             return errors;
         }
 
@@ -140,6 +169,8 @@ const TaskController = {
         if(newTask.reminder) {
             await JobController.schedule_reminder(newTask);
         }
+
+        console.log("Create task function end")
 
         return newTask; // Success
     },
@@ -152,9 +183,11 @@ const TaskController = {
             An array of error messages if there are errors, or undefined if the provided task is valid
     */
     update_task: async (task, id) => {
+        console.log("Update task function start")
         const errors = TaskController.validate_task(task);
 
         if(errors.length) {
+            console.log("Update task function errors")
             return errors;
         }
 
@@ -164,14 +197,18 @@ const TaskController = {
             await JobController.update_reminder(task);
         }
 
+        console.log("Update task function end")
         return undefined;
     },
     delete_task: async (id) => {
+        console.log("Delete task function start")
         await Task.findByIdAndDelete(id);
+        console.log("Delete task function end")
         return undefined;
     },
 
     format_task_request_form: (requestBody, requestUser) => {
+        console.log("Format task function start")
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
         requestBody.date = requestBody.date.split("-"); // Currently, date is received as YYYY-MM-DD
         const task = {
@@ -213,9 +250,11 @@ const TaskController = {
             task.endTime.setMinutes(task.endTime.getMinutes() + Number(requestBody.endTime[1]));
         }
 
+        console.log("Format task function end")
         return task;
     },
     validate_task: (task) => {
+        console.log("Validate task function start")
         const errors = [];
         const today = new Date(Date.now()); // This will fuck with timezones, fix soon
         today.setDate(today.getDate() -1 );
@@ -243,6 +282,7 @@ const TaskController = {
             errors.push({msg: "Start time must be before end time."});
         }
     
+        console.log("Validate task function end")
         return errors;
     },
 };

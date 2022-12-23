@@ -19,6 +19,7 @@ const User = require("../models/User");
 const EmailController = {
 
     send_reminder: async (taskID) => {
+        console.log("Send email function start")
         // Get task from db
         const task = await Task.findById(taskID);
 
@@ -51,7 +52,9 @@ const EmailController = {
                 console.log("Mail sent for: ");
                 console.log(task);
 
+                // This might change to become task reminder queue reliant, changing this without user interaction is weird to me. Plus, what if they change it?
                 await Task.findByIdAndUpdate(taskID, {reminder: false}); // When a reminder is sent, set task to disallow reminders so additional emails are not sent on server reset
+                console.log("Send mail end");
             }
         });
 

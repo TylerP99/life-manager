@@ -83,12 +83,7 @@ const TaskController = {
             const task = await Task.findByIdAndUpdate(id, {completed: true});
 
             // Respond
-            if(errors) {
-                req.flash("errors", errors);
-            }
-            else {
-                req.flash("success", "Task successfully updated");
-            }
+            req.flash("success", "Task successfully updated");
 
             console.log("Mark task complete request end")
 
@@ -111,12 +106,7 @@ const TaskController = {
             const task = await Task.findByIdAndUpdate(id, {completed: true});
 
             // Respond
-            if(errors) {
-                req.flash("errors", errors);
-            }
-            else {
-                req.flash("success", "Task successfully updated");
-            }
+            req.flash("success", "Task successfully updated");
 
             console.log("Mark task incomplete request end")
 

@@ -262,6 +262,13 @@ const HabitController = {
             // Set the date to current date
             newTask.date = currentDate.toJSDate();
 
+            if(newTask.startTime) {
+                newTask.startTime = new Date(newTask.date.getFullYear(), newTask.date.getMonth(), newTask.date.getDate(), newTask.startTime.getHours(), newTask.startTime.getMinutes());
+            }
+            if(newTask.endTime) {
+                newTask.endTime = new Date(newTask.date.getFullYear(), newTask.date.getMonth(), newTask.date.getDate(), newTask.endTime.getHours(), newTask.endTime.getMinutes());
+            }
+
             // Add task to task array
             tasks.push(newTask);
 

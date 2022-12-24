@@ -54,6 +54,13 @@ const schedule_task = async ( jobDate, taskDate, habitID ) => {
         owner: habit.owner
     };
 
+    if(task.startTime) {
+        task.startTime = new Date(task.date.getFullYear(), task.date.getMonth(), task.date.getDate(), task.startTime.getHours(), task.startTime.getMinutes());
+    }
+    if(task.endTime) {
+        task.endTime = new Date(task.date.getFullYear(), task.date.getMonth(), task.date.getDate(), task.endTime.getHours(), task.endTime.getMinutes());
+    }
+
     // Schedule a job that creates a new task and schedules the next task creation. Runs on newDate
     console.log("Scheduling task creation for habit ", habit._id, "on ", jobDate)
     const job = schedule.scheduleJob(habit._id.toString(), jobDate, async () => {

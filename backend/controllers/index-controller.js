@@ -26,8 +26,24 @@ module.exports = {
             const incomplete = [];
 
             const now = new Date(Date.now());
+            const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
-            tasks.forEach( x => (x.completed) ? complete.push(x) : (x.date <= now) ? overdue.push(x) : incomplete.push(x));
+            // Split up tasks based on status
+            tasks.forEach( x => {
+
+                if(x.completed) { // If task is complete
+                    complete.push(x);
+                }
+                else if((x.startTime && x.startTime <= now) || x.date <= yesterday) { // Task is overdue
+                    console.log(`Name: ${x.name}\nStartTime: ${x.startTime}\nDate: ${x.date}\nnow: ${now}\nyesterday: ${yesterday}\nStartTime Check: ${x.startTime && x.startTime <= now}\nDate check: ${x.date <= yesterday}\n\n\n`);
+                    overdue.push(x);
+                }
+                else {
+                    incomplete.push(x);
+                }
+ 
+                
+            });
 
             const taskSort = (a,b) => {
                 if(a.date < b.date) return -1;
@@ -44,6 +60,7 @@ module.exports = {
 
             complete.sort(taskSort);
             incomplete.sort(taskSort);
+            overdue.sort(taskSort);
 
             res.render("tasks.ejs",{tasks:incomplete, complete, overdue, user: req.user, DateTime: DateTime});
         }

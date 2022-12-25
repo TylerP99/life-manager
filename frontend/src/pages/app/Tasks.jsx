@@ -1,6 +1,15 @@
 import React from 'react'
 
 function Tasks() {
+
+  const completeTasks = [
+
+  ];
+
+  const overdueTasks = [];
+
+  const incompleteTasks = [];
+
   return (
     <div>
       <h1>Tasks</h1>

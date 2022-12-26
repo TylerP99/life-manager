@@ -1,82 +1,162 @@
-import {useState} from 'react'
+import {useState} from 'react';
+import axios from "axios";
 
 import {FaArrowAltCircleRight, FaArrowAltCircleDown} from "react-icons/fa";
 
+import TaskCard from "../../components/App/TaskCard";
+import CreateTaskForm from '../../components/App/CreateTaskForm';
+import Overlay from '../../components/App/Overlay';
+
 function Tasks() {
 
-  const [completeDropdownOpen, setCompleteDropdownOpen] = useState(false);
-  const [overdueDropdownOpen, setOverdueDropdownOpen] = useState(false);
-  const [incompleteDropdownOpen, setIncompleteDropdownOpen] = useState(false);
+  const dropdownStyle = "flex justify-between items-center gap-10 cursor-pointer";
 
-  const toggleComplete = () => setCompleteDropdownOpen(!completeDropdownOpen);
-  const toggleOverdue = () => setOverdueDropdownOpen(!overdueDropdownOpen);
-  const toggleIncomplete = () => setIncompleteDropdownOpen(!incompleteDropdownOpen);
+  const [dropdown, setDropdown] = useState({
+    complete: false,
+    overdue: true,
+    upcoming: true,
+  })
+
+  const [createFormHidden, setCreateFormHidden] = useState(true);
+
+  const toggleCreateForm = () => setCreateFormHidden(!createFormHidden);
+
+  const toggleDropdown = (e) => {
+    setDropdown({...dropdown, [e.currentTarget.id]: !dropdown[e.currentTarget.id]});
+  }
+
+  const completeTasks = [
+    {
+      id: 1,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 2,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 3,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 4,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 5,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+  ]
 
   return (
-    <div className='w-full border-8 border-red-500'>
+    <div className='w-full'>
       <header
       className='flex flex-col mb-5 shadow-md md:flex-row'
       >
         <h1
-        className="w-full text-4xl"
+        className="w-full text-5xl px-5 pt-3 pb-1"
         >
           Tasks
         </h1>
         <section>
-          <section>Forms</section>
+          <section>
+            <button
+            onClick={toggleCreateForm}
+            >Create Task</button>
+            <Overlay hidden={createFormHidden} form={<CreateTaskForm/>} />
+          </section>
         </section>
       </header>
       <section>
         <section
-        className="mb-5 text-lg"
+        className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
         >
           <section 
-          className="flex justify-center items-center gap-10 border-4 rounded-md mx-auto py-3 cursor-pointer w-[95%]"
-          onClick={toggleComplete}
+          className={dropdownStyle + (dropdown.complete ? " pb-5" : "")}
+          id="complete"
+          onClick={toggleDropdown}
           >
             <div>
-              {completeDropdownOpen ? 
+              {dropdown.complete ? 
               <FaArrowAltCircleDown />
               : 
               <FaArrowAltCircleRight /> 
               }
             </div>
-            Completed Tasks
+            <h2 className='mr-10'>
+              Completed Tasks
+            </h2>
+            <div></div>
+          </section>
+            <section className={"border flex justify-center" 
+            + (dropdown.complete ? "" : " hidden")  }>
+              <section className="border flex flex-col gap-3 justify-start items-center flex-wrap md:flex-row">
+                {completeTasks.map(x => <TaskCard key={x.id} task={x} />)}
+              </section>
+            </section>
+        </section>
+        <section
+        className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
+        >
+          <section 
+          className={dropdownStyle + (dropdown.overdue ? " pb-5" : "")}
+          id="overdue"
+          onClick={toggleDropdown}
+          >
+              <div>
+                {dropdown.overdue ? 
+                <FaArrowAltCircleDown />
+                : 
+                <FaArrowAltCircleRight /> 
+                }
+              </div>
+              <h2 className='mr-10'>
+                Overdue Tasks
+              </h2>
+              <div></div>
+          </section>
+          <section className={"" + (dropdown.overdue ? "" : "hidden")  }>
+              <span>BABABAB</span>
           </section>
         </section>
         <section
-        className="mb-5 text-lg"
+        className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
         >
           <section 
-            className="flex justify-center items-center gap-10 border-4 rounded-md mx-auto py-3 cursor-pointer w-[95%]"
-            onClick={toggleOverdue}
-            >
+          className={dropdownStyle + (dropdown.upcoming ? " pb-5" : "")}  
+          id="upcoming"
+          onClick={toggleDropdown}
+          >
               <div>
-                {overdueDropdownOpen ? 
+                {dropdown.upcoming ? 
                 <FaArrowAltCircleDown />
                 : 
                 <FaArrowAltCircleRight /> 
                 }
               </div>
-              Overdue Tasks
-            </section>
+              <h2 className='mr-10'>
+                Upcoming Tasks
+              </h2>
+              <div></div>
           </section>
-        <section
-        className="mb-5 text-lg"
-        >
-          <section 
-            className="flex justify-center items-center gap-10 border-4 rounded-md mx-auto py-3 cursor-pointer w-[95%]"
-            onClick={toggleIncomplete}
-            >
-              <div>
-                {incompleteDropdownOpen ? 
-                <FaArrowAltCircleDown />
-                : 
-                <FaArrowAltCircleRight /> 
-                }
-              </div>
-              Upcoming Tasks
-            </section>
+          <section className={"" + (dropdown.upcoming ? "" : "hidden")  }>
+              <span>BABABAB</span>
+          </section>
         </section>
       </section>
     </div>

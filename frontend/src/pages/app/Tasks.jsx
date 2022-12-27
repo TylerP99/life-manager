@@ -141,7 +141,10 @@ function Tasks() {
     {
       id: 17,
       name: "Test",
-      description: "Test task for frontend development purposes",
+      description: "Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposesTest task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposesTest task for frontend development purposesTest task for frontend development purposesTest task for frontend development purposesTest task for frontend development purposesTest task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes Test task for frontend development purposes ",
+      date: (new Date(Date.now())).toLocaleDateString(),
+      startTime: (new Date(Date.now())).toLocaleTimeString(),
+      endTime: (new Date(Date.now())).toLocaleTimeString(),
       complete: true,
       reminder: true,
     },

@@ -25,8 +25,8 @@ function App() {
           <Route path="/signin" element={<Signin/>}/>
           <Route path="/signout" element={<Signout/>}/>
         </Route>
-        <Route path="/dashboard" element={<AppLayout/>}>
-          <Route index element={<Dashboard/>}/>
+        <Route path="/" element={<AppLayout/>}>
+          <Route path="dashboard" element={<Dashboard/>}/>
           <Route path="goals" element={<Goals/>}/>
           <Route path="routines" element={<Routines/>}/>
           <Route path="habits" element={<Habits/>}/>

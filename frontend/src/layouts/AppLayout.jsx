@@ -5,16 +5,16 @@ import {Outlet, NavLink} from "react-router-dom";
 function AppLayout() {
 
     return (
-        <section className='flex'>
-            <section className='h-screen w-1/6'>
-                <nav className='flex flex-col border h-full'>
-                    <NavLink className="w-full py-5 px-7" to="/settings" >Settings</NavLink>
-                    <NavLink className="w-full py-5 px-7" to="/dashboard" >Dashboard</NavLink>
-                    <NavLink className="w-full py-5 px-7" to="/dashboard/goals" >Goals</NavLink>
-                    <NavLink className="w-full py-5 px-7" to="/dashboard/routines" >Routines</NavLink>
-                    <NavLink className="w-full py-5 px-7" to="/dashboard/habits" >Habits</NavLink>
-                    <NavLink className="w-full py-5 px-7" to="/dashboard/tasks" >Tasks</NavLink>
-                    <NavLink className="w-full py-5 px-7" to="/signout">Sign Out</NavLink>
+        <section className='flex w-full'>
+            <section className='sticky top-0 left-0 h-screen border-r w-1/6'>
+                <nav className='flex flex-col h-full'>
+                    <NavLink className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/settings" >Settings</NavLink>
+                    <NavLink exact className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/dashboard" >Dashboard</NavLink>
+                    <NavLink className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/goals" >Goals</NavLink>
+                    <NavLink className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/routines" >Routines</NavLink>
+                    <NavLink className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/habits" >Habits</NavLink>
+                    <NavLink className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/tasks" >Tasks</NavLink>
+                    <NavLink className={({isActive}) => "w-full py-5 pl-7 pr-24 border" + (isActive ? " bg-slate-100" : "")} to="/signout">Sign Out</NavLink>
                 </nav>
             </section>
             <Outlet/>

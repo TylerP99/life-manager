@@ -61,12 +61,117 @@ function Tasks() {
       complete: true,
       reminder: true,
     },
+    {
+      id: 6,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 7,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 8,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 9,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 10,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 11,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 12,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 13,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 14,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 15,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 16,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 17,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 18,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 19,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
+    {
+      id: 20,
+      name: "Test",
+      description: "Test task for frontend development purposes",
+      complete: true,
+      reminder: true,
+    },
   ]
 
   return (
     <div className='w-full'>
       <header
-      className='flex flex-col mb-5 shadow-md md:flex-row'
+      className='flex flex-col items-center mb-5 shadow-md md:flex-row'
       >
         <h1
         className="w-full text-5xl px-5 pt-3 pb-1"
@@ -78,7 +183,7 @@ function Tasks() {
             <button
             onClick={toggleCreateForm}
             >Create Task</button>
-            <Overlay hidden={createFormHidden} form={<CreateTaskForm/>} />
+            <Overlay onClick={toggleCreateForm} hidden={createFormHidden} form={<CreateTaskForm/>} />
           </section>
         </section>
       </header>

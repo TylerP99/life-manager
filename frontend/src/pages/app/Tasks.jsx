@@ -211,9 +211,9 @@ function Tasks() {
             </h2>
             <div></div>
           </section>
-            <section className={"border flex justify-center" 
+            <section className={"flex justify-center" 
             + (dropdown.complete ? "" : " hidden")  }>
-              <section className="border flex flex-col gap-3 justify-start items-center flex-wrap md:flex-row">
+              <section className="flex flex-col gap-3 justify-start items-center flex-wrap md:flex-row">
                 {completeTasks.map(x => <TaskCard key={x.id} task={x} />)}
               </section>
             </section>

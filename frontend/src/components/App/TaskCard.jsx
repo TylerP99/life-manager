@@ -9,7 +9,7 @@ function TaskCard({task}) {
 
     return (
         <div
-        className='flex flex-col justify-between items-center shadow-lg w-full p-4 text-lg h-[330px] md:w-[47%] xl:w-[24%]'
+        className='flex flex-col justify-between items-center border border-slate-200/80 shadow-lg w-full p-4 text-lg h-[330px] md:w-[47%] xl:w-[24%]'
         >
             <header
             className='w-full flex items-center text-xl border-b-2 mb-3 h-[15%]'

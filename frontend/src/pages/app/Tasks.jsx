@@ -6,6 +6,7 @@ import {FaArrowAltCircleRight, FaArrowAltCircleDown} from "react-icons/fa";
 import TaskCard from "../../components/App/TaskCard";
 import CreateTaskForm from '../../components/App/CreateTaskForm';
 import Overlay from '../../components/App/Overlay';
+import CardDropdown from '../../components/App/CardDropdown';
 
 function Tasks() {
 
@@ -181,16 +182,22 @@ function Tasks() {
         >
           Tasks
         </h1>
-        <section>
-          <section>
-            <button
-            onClick={toggleCreateForm}
-            >Create Task</button>
-            <Overlay onClick={toggleCreateForm} hidden={createFormHidden} form={<CreateTaskForm/>} />
-          </section>
+        <section className='flex justify-end w-full border'>
+          <button
+          className="border-2 block min-w-1/2 rounded-sm px-5 py-2 cursor-pointer hover:bg-slate-50/70"
+          onClick={toggleCreateForm}
+          >Create Task</button>
+          <Overlay onClick={toggleCreateForm} hidden={createFormHidden} form={<CreateTaskForm/>} />
         </section>
       </header>
       <section>
+        <CardDropdown
+        title = "Complete Tasks"
+        id="complete"
+        defaultState={false}
+        cardComponent={TaskCard}
+        content={completeTasks}
+        />
         <section
         className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
         >

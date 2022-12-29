@@ -9,7 +9,10 @@ function AppLayout() {
 
     const [navOpen, setNavOpen] = useState(false);
 
-    const toggleNavOpen = () => setNavOpen(!navOpen);
+    const toggleNavOpen = () => {
+        console.log("Clik")
+        setNavOpen(!navOpen);
+    }
 
     return (
         <section className='flex w-full'>
@@ -48,7 +51,9 @@ function AppLayout() {
                     </nav>
                 </section>
             </section>
-            <Outlet/>
+            <Outlet
+            context={[navOpen, toggleNavOpen]}
+            />
         </section>
     )
 }

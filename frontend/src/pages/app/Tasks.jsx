@@ -1,14 +1,19 @@
 import {useState} from 'react';
+import { useOutletContext } from 'react-router-dom';
 import axios from "axios";
 
-import {FaArrowAltCircleRight, FaArrowAltCircleDown} from "react-icons/fa";
+import {FaPlus} from "react-icons/fa";
 
 import TaskCard from "../../components/App/TaskCard";
 import CreateTaskForm from '../../components/App/CreateTaskForm';
 import Overlay from '../../components/App/Overlay';
 import CardDropdown from '../../components/App/CardDropdown';
+import NavButton from '../../components/App/NavButton';
 
 function Tasks() {
+
+  const [navOpen, toggleNavOpen] = useOutletContext();
+  console.log(navOpen, toggleNavOpen)
 
   const dropdownStyle = "flex justify-between items-center gap-10 cursor-pointer";
 
@@ -184,10 +189,14 @@ function Tasks() {
         </h1>
         <section className='flex justify-end w-full border'>
           <button
-          className="border-2 block min-w-1/2 rounded-sm px-5 py-2 cursor-pointer hover:bg-slate-50/70"
+          className="flex items-center justify-center border-2 text-xl w-10 h-10 rounded-xl cursor-pointer hover:bg-slate-50/70"
           onClick={toggleCreateForm}
-          >Create Task</button>
+          ><FaPlus/></button>
           <Overlay onClick={toggleCreateForm} hidden={createFormHidden} form={<CreateTaskForm/>} />
+          <NavButton
+          navOpen={navOpen}
+          toggleNavOpen={toggleNavOpen}
+          />
         </section>
       </header>
       <section>

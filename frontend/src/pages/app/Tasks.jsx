@@ -9,6 +9,7 @@ import CreateTaskForm from '../../components/App/CreateTaskForm';
 import Overlay from '../../components/App/Overlay';
 import CardDropdown from '../../components/App/CardDropdown';
 import NavButton from '../../components/App/NavButton';
+import AppHeader from '../../components/App/AppHeader';
 
 function Tasks() {
 
@@ -179,6 +180,12 @@ function Tasks() {
 
   return (
     <div className='w-full'>
+      <AppHeader
+      title="Tasks"
+      options={[]}
+      navOpen={navOpen}
+      toggleNavOpen={toggleNavOpen}
+      />
       <header
       className='flex flex-col items-center mb-5 shadow-md md:flex-row'
       >
@@ -191,6 +198,7 @@ function Tasks() {
           <button
           className="flex items-center justify-center border-2 text-xl w-10 h-10 rounded-xl cursor-pointer hover:bg-slate-50/70"
           onClick={toggleCreateForm}
+          title="Create New Task"
           ><FaPlus/></button>
           <Overlay onClick={toggleCreateForm} hidden={createFormHidden} form={<CreateTaskForm/>} />
           <NavButton

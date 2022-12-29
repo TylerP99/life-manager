@@ -2,10 +2,10 @@ import React from 'react'
 
 import NavButton from "./NavButton"
 
-function AppHeader({title = "", options=[]}) {
+function AppHeader({title = "", options=[], navOpen, toggleNavOpen}) {
   return (
     <header
-    className='flex flex-col items-center mb-5 shadow-md md:flex-row'
+    className='flex items-center mb-5 shadow-md'
     >
       <h1
       className="w-full text-5xl px-5 pt-3 pb-1"
@@ -13,8 +13,11 @@ function AppHeader({title = "", options=[]}) {
         {title}
       </h1>
       <section className='flex justify-end items-center gap-5 w-full border'>
-        {...options}
-        <NavButton/>
+        {options.map(x => x)}
+        <NavButton
+        navOpen={navOpen}
+        toggleNavOpen={toggleNavOpen}
+        />
       </section>
     </header>
   )

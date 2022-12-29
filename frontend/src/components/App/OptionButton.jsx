@@ -1,9 +1,13 @@
 import React from 'react'
 
-function OptionButton({Icon, Form}) {
+function OptionButton({Icon, Form, hoverText}) {
   return (
     <div>
-        <button><Icon/></button>
+        <button
+        title={hoverText}
+        >
+            <Icon/>
+        </button>
         <Overlay form={Form} />
     </div>
   )

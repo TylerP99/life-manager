@@ -195,84 +195,20 @@ function Tasks() {
         title = "Complete Tasks"
         id="complete"
         defaultState={false}
-        cardComponent={TaskCard}
+        CardComponent={TaskCard}
         content={completeTasks}
         />
-        <section
-        className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
-        >
-          <section 
-          className={dropdownStyle + (dropdown.complete ? " pb-5" : "")}
-          id="complete"
-          onClick={toggleDropdown}
-          >
-            <div>
-              {dropdown.complete ? 
-              <FaArrowAltCircleDown />
-              : 
-              <FaArrowAltCircleRight /> 
-              }
-            </div>
-            <h2 className='mr-10'>
-              Completed Tasks
-            </h2>
-            <div></div>
-          </section>
-            <section className={"flex justify-center" 
-            + (dropdown.complete ? "" : " hidden")  }>
-              <section className="flex flex-col gap-3 justify-start items-center flex-wrap md:flex-row">
-                {completeTasks.map(x => <TaskCard key={x.id} task={x} />)}
-              </section>
-            </section>
-        </section>
-        <section
-        className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
-        >
-          <section 
-          className={dropdownStyle + (dropdown.overdue ? " pb-5" : "")}
-          id="overdue"
-          onClick={toggleDropdown}
-          >
-              <div>
-                {dropdown.overdue ? 
-                <FaArrowAltCircleDown />
-                : 
-                <FaArrowAltCircleRight /> 
-                }
-              </div>
-              <h2 className='mr-10'>
-                Overdue Tasks
-              </h2>
-              <div></div>
-          </section>
-          <section className={"" + (dropdown.overdue ? "" : "hidden")  }>
-              <span>BABABAB</span>
-          </section>
-        </section>
-        <section
-        className="mb-5 text-lg border-4 rounded-md mx-auto p-3 w-[95%]"
-        >
-          <section 
-          className={dropdownStyle + (dropdown.upcoming ? " pb-5" : "")}  
-          id="upcoming"
-          onClick={toggleDropdown}
-          >
-              <div>
-                {dropdown.upcoming ? 
-                <FaArrowAltCircleDown />
-                : 
-                <FaArrowAltCircleRight /> 
-                }
-              </div>
-              <h2 className='mr-10'>
-                Upcoming Tasks
-              </h2>
-              <div></div>
-          </section>
-          <section className={"" + (dropdown.upcoming ? "" : "hidden")  }>
-              <span>BABABAB</span>
-          </section>
-        </section>
+        <CardDropdown
+        title="Overdue Tasks"
+        id="overdue"
+        defaultState={true}
+        CardComponent={TaskCard}
+        />
+        <CardDropdown
+        title="Upcoming Tasks"
+        defaultState={true}
+        CardComponent={TaskCard}
+        />
       </section>
     </div>
   )

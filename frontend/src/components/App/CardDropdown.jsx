@@ -2,17 +2,18 @@ import {useState} from 'react'
 
 import {FaArrowAltCircleRight, FaArrowAltCircleDown} from "react-icons/fa";
 
-function CardDropdown({title, id, defaultState, cardComponent, content}) {
+function CardDropdown({title = "",
+                       id = "", 
+                       defaultState = false, 
+                       CardComponent, 
+                       content = []}) 
+{
 
   const [open, setOpen] = useState(defaultState);
 
   const toggleDropdown = () => setOpen(!open);
 
   const dropdownStyle = "flex justify-between items-center gap-10 cursor-pointer";
-
-  const Card = cardComponent;
-
-  console.log(Card);
 
   return (
     <section
@@ -38,7 +39,11 @@ function CardDropdown({title, id, defaultState, cardComponent, content}) {
         <section className={"flex justify-center" 
         + (open ? "" : " hidden")  }>
           <section className="flex flex-col gap-3 justify-start items-center flex-wrap md:flex-row">
-            {content.map(x => <Card key={x.id} task={x} />)}
+            {content.length ?
+            content.map(x => <CardComponent key={x.id} task={x} />)
+            :
+            <h5>No content to display</h5>
+            }
           </section>
         </section>
     </section>

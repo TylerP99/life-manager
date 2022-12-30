@@ -7,10 +7,14 @@ function OptionButton({Icon, Form, hoverText}) {
   const [overlayHidden, setOverlayHidden] = useState(true);
 
   const toggleOverlay = (e) => {
-    console.log(e);
     if(!e.target.closest("form")) {
       setOverlayHidden(!overlayHidden);
     }
+  }
+
+  const closeOverlay = (e) => {
+    e.preventDefault();
+    setOverlayHidden(true);
   }
 
 
@@ -23,7 +27,7 @@ function OptionButton({Icon, Form, hoverText}) {
         >
             <Icon/>
         </button>
-        <Overlay hidden={overlayHidden} toggleOverlay={toggleOverlay} Form={Form} />
+        <Overlay hidden={overlayHidden} toggleOverlay={toggleOverlay} closeOverlay={closeOverlay} Form={Form} />
     </div>
   )
 }

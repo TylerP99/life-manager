@@ -171,8 +171,6 @@ function Tasks() {
       <AppHeader
       title="Tasks"
       options={[
-        <OptionButton Icon={FaPlus} Form={CreateTaskForm} hoverText="Create new task" />,
-        <OptionButton Icon={FaPlus} Form={CreateTaskForm} hoverText="Create new task" />,
         <OptionButton Icon={FaPlus} Form={CreateTaskForm} hoverText="Create new task" />
       ]}
       navOpen={navOpen}

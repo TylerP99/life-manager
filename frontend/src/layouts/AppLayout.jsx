@@ -27,7 +27,7 @@ function AppLayout() {
                         <NavLink className={({isActive}) => navLinkStyle + (isActive ? " " + navLinkActive : "")} to="/tasks" >Tasks</NavLink>
                         <NavLink className={({isActive}) => navLinkStyle + (isActive ? " " + navLinkActive : "")} to="/signout">Sign Out</NavLink>
                     </nav>
-                    <div className='absolute top-[2%] left-[90%]'>
+                    <div className='absolute top-[2%] left-[90%] hidden'>
                         <button 
                             id="menu-btn" 
                             className={"block hamburger md:hidden focus:outline-none" + ((navOpen) ? " open" : "")}

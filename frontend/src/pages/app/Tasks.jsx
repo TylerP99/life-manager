@@ -10,27 +10,15 @@ import Overlay from '../../components/App/Overlay';
 import CardDropdown from '../../components/App/CardDropdown';
 import NavButton from '../../components/App/NavButton';
 import AppHeader from '../../components/App/AppHeader';
+import OptionButton from '../../components/App/OptionButton';
 
 function Tasks() {
 
   const [navOpen, toggleNavOpen] = useOutletContext();
-  console.log(navOpen, toggleNavOpen)
-
-  const dropdownStyle = "flex justify-between items-center gap-10 cursor-pointer";
-
-  const [dropdown, setDropdown] = useState({
-    complete: false,
-    overdue: true,
-    upcoming: true,
-  })
 
   const [createFormHidden, setCreateFormHidden] = useState(true);
 
   const toggleCreateForm = () => setCreateFormHidden(!createFormHidden);
-
-  const toggleDropdown = (e) => {
-    setDropdown({...dropdown, [e.currentTarget.id]: !dropdown[e.currentTarget.id]});
-  }
 
   const completeTasks = [
     {
@@ -182,31 +170,14 @@ function Tasks() {
     <div className='w-full'>
       <AppHeader
       title="Tasks"
-      options={[]}
+      options={[
+        <OptionButton Icon={FaPlus} Form={CreateTaskForm} hoverText="Create new task" />,
+        <OptionButton Icon={FaPlus} Form={CreateTaskForm} hoverText="Create new task" />,
+        <OptionButton Icon={FaPlus} Form={CreateTaskForm} hoverText="Create new task" />
+      ]}
       navOpen={navOpen}
       toggleNavOpen={toggleNavOpen}
       />
-      <header
-      className='flex flex-col items-center mb-5 shadow-md md:flex-row'
-      >
-        <h1
-        className="w-full text-5xl px-5 pt-3 pb-1"
-        >
-          Tasks
-        </h1>
-        <section className='flex justify-end w-full border'>
-          <button
-          className="flex items-center justify-center border-2 text-xl w-10 h-10 rounded-xl cursor-pointer hover:bg-slate-50/70"
-          onClick={toggleCreateForm}
-          title="Create New Task"
-          ><FaPlus/></button>
-          <Overlay onClick={toggleCreateForm} hidden={createFormHidden} form={<CreateTaskForm/>} />
-          <NavButton
-          navOpen={navOpen}
-          toggleNavOpen={toggleNavOpen}
-          />
-        </section>
-      </header>
       <section>
         <CardDropdown
         title = "Complete Tasks"

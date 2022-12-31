@@ -4,21 +4,15 @@ import axios from "axios";
 
 import {FaPlus} from "react-icons/fa";
 
-import TaskCard from "../../components/App/TaskCard";
-import CreateTaskForm from '../../components/App/CreateTaskForm';
-import Overlay from '../../components/App/Overlay';
+import TaskCard from "../../components/App/Tasks/TaskCard";
+import CreateTaskForm from '../../components/App/Tasks/CreateTaskForm';
 import CardDropdown from '../../components/App/CardDropdown';
-import NavButton from '../../components/App/NavButton';
 import AppHeader from '../../components/App/AppHeader';
 import OptionButton from '../../components/App/OptionButton';
 
 function Tasks() {
 
   const [navOpen, toggleNavOpen] = useOutletContext();
-
-  const [createFormHidden, setCreateFormHidden] = useState(true);
-
-  const toggleCreateForm = () => setCreateFormHidden(!createFormHidden);
 
   const completeTasks = [
     {

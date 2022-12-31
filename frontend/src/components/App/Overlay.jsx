@@ -1,6 +1,6 @@
 import {useState} from 'react'
 
-function Overlay({hidden, toggleOverlay, closeOverlay, Form}) {
+function Overlay({hidden, toggleOverlay, closeOverlay, Form, item}) {
 
   return (
     <div
@@ -8,7 +8,7 @@ function Overlay({hidden, toggleOverlay, closeOverlay, Form}) {
     onClick={toggleOverlay}
     >
       <section className='border mt-[10%] max-w-[700px] w-[90%] min-w-[300px]'>
-        <Form closeFunction={closeOverlay} />
+        <Form closeFunction={closeOverlay} item={item} />
       </section>
     </div>
   )

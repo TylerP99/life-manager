@@ -2,7 +2,7 @@ import {useState} from 'react'
 
 import {FaTimes} from "react-icons/fa"
 
-function CreateTaskForm({closeFunction}) {
+function UpdateTaskForm({item, closeFunction}) {
   return (
     <form
     className='w-full bg-white p-5'
@@ -14,7 +14,7 @@ function CreateTaskForm({closeFunction}) {
         <div></div>
         <h3
         className='text-xl px-5 border-b-2'
-        >Create Task</h3>
+        >Update Task</h3>
         <button
         type='menu'
         className="flex items-center justify-center border-2 text-lg w-8 h-8 rounded-xl cursor-pointer hover:bg-slate-50/70"
@@ -140,4 +140,4 @@ function CreateTaskForm({closeFunction}) {
   )
 }
 
-export default CreateTaskForm
+export default UpdateTaskForm

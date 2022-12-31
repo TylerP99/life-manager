@@ -2,7 +2,11 @@ import {useState} from 'react'
 
 import Overlay from './Overlay'
 
-function OptionButton({Icon, Form, hoverText}) {
+function OptionButton({
+  Icon=() => <div>Set Icon</div>, 
+  Form=() => <form>No Content</form>, 
+  item={},
+  hoverText="No content"}) {
 
   const [overlayHidden, setOverlayHidden] = useState(true);
 
@@ -27,7 +31,7 @@ function OptionButton({Icon, Form, hoverText}) {
         >
             <Icon/>
         </button>
-        <Overlay hidden={overlayHidden} toggleOverlay={toggleOverlay} closeOverlay={closeOverlay} Form={Form} />
+        <Overlay hidden={overlayHidden} toggleOverlay={toggleOverlay} closeOverlay={closeOverlay} Form={Form} item={item} />
     </div>
   )
 }

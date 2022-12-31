@@ -1,6 +1,9 @@
-import {useState} from 'react'
+import {useState} from 'react';
 
-import {FaCog, FaArrowLeft, FaCheck} from "react-icons/fa";
+import {FaCog, FaArrowLeft, FaCheck, FaEdit, FaTrash} from "react-icons/fa";
+
+import OptionButton from '../OptionButton';
+import UpdateTaskForm from './UpdateTaskForm';
 
 function TaskCard({task}) {
 
@@ -9,7 +12,7 @@ function TaskCard({task}) {
 
     return (
         <div
-        className='flex flex-col justify-between items-center border border-slate-200/80 shadow-lg w-full p-4 text-lg h-[330px] md:w-[47%] xl:w-[24%]'
+        className='flex flex-col justify-between items-center border border-slate-200/80 shadow-lg w-full p-4 text-lg h-[330px] lg:w-[47%] xl:w-[32%]'
         >
             <header
             className='w-full flex items-center text-xl border-b-2 mb-3 h-[15%]'
@@ -17,14 +20,19 @@ function TaskCard({task}) {
                 <h5
                 className="flex items-center w-full"
                 >{task.complete && <FaCheck className='mr-3'/>} {task.name}</h5>
-                <div>
-                    { !settingsOpen ?
-                    <FaCog
-                    className='cursor-pointer'
-                    onClick={toggleSettings} />
-                    :
-                    <FaArrowLeft onClick={toggleSettings}/>
-                    }
+                <div
+                className="flex justify-end items-center gap-2"
+                >
+                    <OptionButton 
+                    Icon={FaEdit}
+                    Form={UpdateTaskForm}
+                    item={task}
+                    hoverText="Edit Task"
+                    />
+                    <OptionButton 
+                    Icon={FaTrash}
+                    hoverText="Delete Task"
+                    />
                 </div>
             </header>
             <section className={'h-[85%] flex flex-col justify-evenly overflow-hidden' + (settingsOpen ? " hidden" : "")}>

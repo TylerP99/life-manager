@@ -1,12 +1,21 @@
-import React from 'react'
+import {useState} from 'react';
+import { useOutletContext } from 'react-router-dom';
+
+import AppHeader from "../../components/App/AppHeader";
 
 function Dashboard() {
+
+  const [navOpen, toggleNavOpen] = useOutletContext();
+
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className='w-full'>
+      <AppHeader
+      title="Dashboard"
+      options={[]}
+      navOpen={navOpen}
+      toggleNavOpen={toggleNavOpen}
+      />
       <section>
-        {/* Upcoming tasks */}
-        {/* Main Goals */}
       </section>
     </div>
   )

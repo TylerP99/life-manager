@@ -16,12 +16,19 @@ function Signin() {
     });
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    alert(`${formState.username}\n${formState.email}\n${formState.password}\n${formState.password2}`)
+  }
+
   return (
     <div
     className="flex flex-col justify-start items-center w-full"
     >
       <form
       className='border bg-white p-5 mt-10 max-w-[500px] w-[95%]'
+      onSubmit={handleSubmit}
       >
         <h3
         className='text-3xl text-center mx-auto w-1/2 border-b-2 mb-4'

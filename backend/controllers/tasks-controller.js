@@ -7,31 +7,40 @@ const JobController = require("./job-controller");
 //
 const TaskController = {
 
+    /*******************************/
+    /*   Task API Route Hanlders   */
+    /*******************************/
+
     /*
-        Task API Route Hanlders
+    @desc:    Function directly called by router to create a new task
+    @route:   POST /api/task/create
+    @access:  Protected
     */
     create_task_handler: async (req, res, next) => {
-        console.log("Create task request started")
+        console.log("Create task request started");
 
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
         const task = TaskController.format_task_request_form(req.body, req.user);
 
         try{
             // Create Task in DB (Returns errors if task doesnt pass validation)
-            const errors = await TaskController.create_task(task);
+            const info = await TaskController.create_task(task);
 
             // Respond
-            if(errors) { // If there were errors, save them for client side display
-                req.flash("errors", errors);
+            if(Array.isArray(info)) { // If there were errors, save them for client side display
+                // req.flash("errors", errors);
+                return res.status(400).json({errors: info});
             }
-            else { // Otherwise, save a success message
-                req.flash("success", "Task successfully created!");
-            }
+            // else { // Otherwise, save a success message
+            //     req.flash("success", "Task successfully created!");
+            // }
 
-            console.log("Create task request ending")
+            console.log("Create task request ending");
 
             // Redirect to page to force a reload and display updated info
-            res.redirect("/tasks")
+            //res.redirect("/tasks")
+            return res.status(201).json({task: info});
+
         }
         catch(e) {
             console.error("Create task request error")
@@ -39,9 +48,34 @@ const TaskController = {
             next(e);
         }
     },
+
     /*
-        Receives client side PUT request and sends response
-        Request body should contain a full task object (minimum name and date)
+    @desc:    Function directly called by router to get all of a target user's tasks
+    @route:   GET /api/task/get
+    @access:  Protected
+    */
+    get_user_tasks_handler: async (req, res, next) => {
+        console.log("Get user task function start");
+
+        try {
+            // Get tasks from db whose owner field is the same as the requesting user id
+            const tasks = await Task.find({owner: req.user.id});
+
+            console.log("Get user task function end");
+            // Send a response with tasks
+            return res.status(200).json({tasks});
+        }
+        catch(e) {
+            console.error(e);
+            console.log("Get user task function error");
+            next(e);
+        }
+    },
+
+    /*
+    @desc:    Function directly called by router to update a targeted task
+    @route:   PUT /api/task/update/:id
+    @access:  Protected
     */
     update_task_handler: async (req, res, next) => {
 
@@ -53,19 +87,24 @@ const TaskController = {
 
         try{
             // Call action function
-            const errors = await TaskController.update_task(task, id);
+            const info = await TaskController.update_task(task, id);
 
             // Respond
-            if(errors) {
-                req.flash("errors", errors);
+            if(Array.isArray(info)) {
+                // req.flash("errors", errors);
+                return res.status(400).json({errors: info});
             }
-            else {
-                req.flash("success", "Task successfully updated");
-            }
+            // else {
+            //     req.flash("success", "Task successfully updated");
+            // }
 
             console.log("Update task request end")
 
-            res.redirect("/tasks");
+            // res.redirect("/tasks");
+
+
+            // Respond with updated task
+            return res.status(200).json({task: info});
         }
         catch(e) {
             console.log("Update task request error")
@@ -73,6 +112,12 @@ const TaskController = {
             next(e);
         }
     },
+
+    /*
+    @desc:    Function directly called by router to update a targeted task by changing its complete field to true
+    @route:   PUT /api/task/markComplete/:id
+    @access:  Protected
+    */
     mark_complete_handler: async (req, res, next) => {
 
         console.log("Mark task complete request start")
@@ -80,14 +125,15 @@ const TaskController = {
         const id = req.params.id;
 
         try{
-            const task = await Task.findByIdAndUpdate(id, {completed: true});
+            const task = await Task.findByIdAndUpdate(id, {completed: true}, {new: true});
 
             // Respond
-            req.flash("success", "Task successfully updated");
+            // req.flash("success", "Task successfully updated");
 
             console.log("Mark task complete request end")
 
-            res.redirect("/tasks");
+            // res.redirect("/tasks");
+            return res.status(200).json({task});
         }
         catch(e) {
             console.log("Mark task complete request error")
@@ -95,22 +141,27 @@ const TaskController = {
             next(e);
         }
     },
+
+    /*
+    @desc:    Function directly called by router to update a targeted task by changing its complete field to false
+    @route:   PUT /api/task/markIncomplete/:id
+    @access:  Protected
+    */
     mark_incomplete_handler: async (req, res, next) => {
 
         console.log("Mark task incomplete request start")
-
-        const update = { completed: false };
         const id = req.params.id;
 
         try{
-            const task = await Task.findByIdAndUpdate(id, {completed: true});
+            const task = await Task.findByIdAndUpdate(id, {completed: false}, {new: true});
 
             // Respond
-            req.flash("success", "Task successfully updated");
+            // req.flash("success", "Task successfully updated");
 
             console.log("Mark task incomplete request end")
 
-            res.redirect("/tasks");
+            // res.redirect("/tasks");
+            return res.status(200).json({task});
         }
         catch(e) {
             console.log("Mark task incomplete request error")
@@ -118,17 +169,25 @@ const TaskController = {
             next(e);
         }
     },
+
+    /*
+    @desc:    Function directly called by router to delete a targeted task
+    @route:   DELETE /api/task/delete/:id
+    @access:  Protected
+    */
     delete_task_handler: async (req, res, next) => {
         console.log("Delete task request start")
 
         const id = req.params.id;
 
         try {
-            await TaskController.delete_task(id);
+            const task = await TaskController.delete_task(id);
 
             console.log("Delete task request end")
 
-            res.redirect("/tasks");
+            // res.redirect("/tasks");
+
+            return res.status(200).json({task});
         }
         catch(e) {
             console.log("Delete task request error")
@@ -180,7 +239,8 @@ const TaskController = {
             return errors;
         }
 
-        const oldTask = await Task.findByIdAndUpdate(id, task);
+        const oldTask = await Task.findById(id);
+        const newTask = await Task.findByIdAndUpdate(id, task, {new: true});
         console.log(task, oldTask);
 
         if(oldTask.date != task.date) {
@@ -188,13 +248,14 @@ const TaskController = {
         }
 
         console.log("Update task function end")
-        return undefined;
+        return newTask;
     },
+
     delete_task: async (id) => {
         console.log("Delete task function start")
-        await Task.findByIdAndDelete(id);
+        const task = await Task.findByIdAndDelete(id);
         console.log("Delete task function end")
-        return undefined;
+        return task;
     },
 
     format_task_request_form: (requestBody, requestUser) => {

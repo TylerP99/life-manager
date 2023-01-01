@@ -17,33 +17,31 @@ const TaskController = {
     @access:  Private
     */
     create_task_handler: async (req, res, next) => {
-        console.log("Create task request started");
+
+        const reqErrors = TaskController.validate_task_request(req.body);
+
+        if(reqErrors.length) return res.status(400).json({errors: reqErrors});
 
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
-        const task = TaskController.format_task_request_form(req.body, req.user);
+        let task = TaskController.format_task_request_form(req.body, req.user);
 
         try{
-            // Create Task in DB (Returns errors if task doesnt pass validation)
-            const info = await TaskController.create_task(task);
+            // Validate task object
+            const errors = TaskController.validate_task(task);
 
-            // Respond
-            if(Array.isArray(info)) { // If there were errors, save them for client side display
-                // req.flash("errors", errors);
-                return res.status(400).json({errors: info});
+            // If errors, respond
+            if(errors.length) {
+                return res.status(400).json({errors});
             }
-            // else { // Otherwise, save a success message
-            //     req.flash("success", "Task successfully created!");
-            // }
 
-            console.log("Create task request ending");
+            // Create task in db
+            task = await TaskController.create_task(task);
 
-            // Redirect to page to force a reload and display updated info
-            //res.redirect("/tasks")
-            return res.status(201).json({task: info});
+            // Respond with created task
+            return res.status(201).json({task});
 
         }
         catch(e) {
-            console.error("Create task request error")
             console.error(e);
             next(e);
         }
@@ -55,18 +53,14 @@ const TaskController = {
     @access:  Private
     */
     get_user_tasks_handler: async (req, res, next) => {
-        console.log("Get user task function start");
-
         try {
             // Get tasks from db whose owner field is the same as the requesting user id
             const tasks = await Task.find({owner: req.user.id});
 
-            console.log("Get user task function end");
             // Send a response with tasks
             return res.status(200).json({tasks});
         }
         catch(e) {
-            console.error(e);
             console.log("Get user task function error");
             next(e);
         }
@@ -79,35 +73,30 @@ const TaskController = {
     */
     update_task_handler: async (req, res, next) => {
 
-        console.log("Update task request start")
-
-        // Format request (client should send a new object)
-        const task = TaskController.format_task_request_form(req.body, req.user);
         const id = req.params.id;
 
+        const reqErrs = TaskController.validate_task_request(req.body);
+        if(reqErrs.length) return res.status(400).json({errors: reqErrs});
+
+        // Format request (client should send a full object)
+        let task = TaskController.format_task_request_form(req.body, req.user);
+
         try{
-            // Call action function
-            const info = await TaskController.update_task(task, id);
+            // Validate task object
+            const errors = TaskController.validate_task(task);
 
-            // Respond
-            if(Array.isArray(info)) {
-                // req.flash("errors", errors);
-                return res.status(400).json({errors: info});
+            // If there are validation errors, respond
+            if(errors.length) {
+                return res.status(400).json({errors});
             }
-            // else {
-            //     req.flash("success", "Task successfully updated");
-            // }
 
-            console.log("Update task request end")
-
-            // res.redirect("/tasks");
-
+            // Update task in db
+            task = await TaskController.update_task(task, id);
 
             // Respond with updated task
-            return res.status(200).json({task: info});
+            return res.status(200).json({task});
         }
         catch(e) {
-            console.log("Update task request error")
             console.error(e);
             next(e);
         }
@@ -119,24 +108,13 @@ const TaskController = {
     @access:  Private
     */
     mark_complete_handler: async (req, res, next) => {
-
-        console.log("Mark task complete request start")
-
         const id = req.params.id;
 
         try{
             const task = await Task.findByIdAndUpdate(id, {completed: true}, {new: true});
-
-            // Respond
-            // req.flash("success", "Task successfully updated");
-
-            console.log("Mark task complete request end")
-
-            // res.redirect("/tasks");
             return res.status(200).json({task});
         }
         catch(e) {
-            console.log("Mark task complete request error")
             console.error(e);
             next(e);
         }
@@ -148,23 +126,13 @@ const TaskController = {
     @access:  Private
     */
     mark_incomplete_handler: async (req, res, next) => {
-
-        console.log("Mark task incomplete request start")
         const id = req.params.id;
 
         try{
             const task = await Task.findByIdAndUpdate(id, {completed: false}, {new: true});
-
-            // Respond
-            // req.flash("success", "Task successfully updated");
-
-            console.log("Mark task incomplete request end")
-
-            // res.redirect("/tasks");
             return res.status(200).json({task});
         }
         catch(e) {
-            console.log("Mark task incomplete request error")
             console.error(e);
             next(e);
         }
@@ -176,21 +144,14 @@ const TaskController = {
     @access:  Private
     */
     delete_task_handler: async (req, res, next) => {
-        console.log("Delete task request start")
-
         const id = req.params.id;
 
         try {
+
             const task = await TaskController.delete_task(id);
-
-            console.log("Delete task request end")
-
-            // res.redirect("/tasks");
-
             return res.status(200).json({task});
         }
         catch(e) {
-            console.log("Delete task request error")
             console.error(e);
             next(e);
         }
@@ -202,16 +163,6 @@ const TaskController = {
     @returns: If there are errors, returns an array of errors. If there are no errors, returns the task document
     */
     create_task: async (task) => {
-        console.log("Create task function start")
-
-        // Validate task
-        const errors = TaskController.validate_task(task);
-
-        if(errors.length) { // If there are errors during validation, return here and dont add task
-            console.log("Create task function error")
-            return errors;
-        }
-
         // Add task to db
         const newTask = await Task.create(task);
 
@@ -219,8 +170,6 @@ const TaskController = {
         if(newTask.reminder) {
             await JobController.schedule_reminder(newTask);
         }
-
-        console.log("Create task function end")
 
         return newTask; // Success
     },
@@ -231,23 +180,13 @@ const TaskController = {
     @returns: The updated document if the operation is successful, or an array of errors otherwise.
     */
     update_task: async (task, id) => {
-        console.log("Update task function start")
-        const errors = TaskController.validate_task(task);
-
-        if(errors.length) {
-            console.log("Update task function errors")
-            return errors;
-        }
-
         const oldTask = await Task.findById(id);
         const newTask = await Task.findByIdAndUpdate(id, task, {new: true});
-        console.log(task, oldTask);
 
         if(oldTask.date != task.date) {
             await JobController.update_reminder(task);
         }
 
-        console.log("Update task function end")
         return newTask;
     },
 
@@ -257,8 +196,6 @@ const TaskController = {
     @returns:  If there are errors, returns an array of errors. If the deletion is successful, returns the deleted task
     */
     delete_task: async (id) => {
-        console.log("Delete task function start")
-
         const errors = [];
 
         const task = await Task.findById(id);
@@ -268,7 +205,6 @@ const TaskController = {
 
         await Task.findByIdAndDelete(id);
 
-        console.log("Delete task function end")
         return task;
     },
 
@@ -279,16 +215,15 @@ const TaskController = {
     @returns: Formatted task object
     */
     format_task_request_form: (requestBody, requestUser) => {
-        console.log("Format task function start")
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
         requestBody.date = requestBody.date.split("-"); // Currently, date is received as YYYY-MM-DD
         const task = {
             name: requestBody.name,
             owner: requestUser.id,
         };
+        
         // Set date information
         // Want the task date to be midnight in user's timezone
-
         task.date = DateTime.fromObject(
             {
                 year: requestBody.date[0],
@@ -323,6 +258,21 @@ const TaskController = {
 
         console.log("Format task function end")
         return task;
+    },
+
+    /*
+    @desc:    Validates a task request, ensuring that required fields are present before creating a task object
+    @params:  reqBody: Incoming request body
+    @returns: An array containing any errors, or an empty array if all fields pass
+    */
+    validate_task_request: (reqBody) => {
+        const {name, date} = reqBody;
+        const reqErrs = [];
+
+        if(!name || !name.length) reqErrs.push({message: "Name field required"});
+        if(!date || !date.length) reqErrs.push({message: "Date field required"});
+
+        return reqErrs;
     },
 
     /*

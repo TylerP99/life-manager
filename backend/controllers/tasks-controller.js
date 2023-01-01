@@ -14,7 +14,7 @@ const TaskController = {
     /*
     @desc:    Function directly called by router to create a new task
     @route:   POST /api/task/create
-    @access:  Protected
+    @access:  Private
     */
     create_task_handler: async (req, res, next) => {
         console.log("Create task request started");
@@ -52,7 +52,7 @@ const TaskController = {
     /*
     @desc:    Function directly called by router to get all of a target user's tasks
     @route:   GET /api/task/get
-    @access:  Protected
+    @access:  Private
     */
     get_user_tasks_handler: async (req, res, next) => {
         console.log("Get user task function start");
@@ -75,7 +75,7 @@ const TaskController = {
     /*
     @desc:    Function directly called by router to update a targeted task
     @route:   PUT /api/task/update/:id
-    @access:  Protected
+    @access:  Private
     */
     update_task_handler: async (req, res, next) => {
 
@@ -116,7 +116,7 @@ const TaskController = {
     /*
     @desc:    Function directly called by router to update a targeted task by changing its complete field to true
     @route:   PUT /api/task/markComplete/:id
-    @access:  Protected
+    @access:  Private
     */
     mark_complete_handler: async (req, res, next) => {
 
@@ -145,7 +145,7 @@ const TaskController = {
     /*
     @desc:    Function directly called by router to update a targeted task by changing its complete field to false
     @route:   PUT /api/task/markIncomplete/:id
-    @access:  Protected
+    @access:  Private
     */
     mark_incomplete_handler: async (req, res, next) => {
 
@@ -173,7 +173,7 @@ const TaskController = {
     /*
     @desc:    Function directly called by router to delete a targeted task
     @route:   DELETE /api/task/delete/:id
-    @access:  Protected
+    @access:  Private
     */
     delete_task_handler: async (req, res, next) => {
         console.log("Delete task request start")
@@ -197,7 +197,9 @@ const TaskController = {
     },
 
     /*
-        Creates a new task in database
+    @desc:    Creates a new task document within the db. If the reminder flag is set on the incoming task, also calls for a reminder to be scheduled.
+    @params:  task: Formatted task object
+    @returns: If there are errors, returns an array of errors. If there are no errors, returns the task document
     */
     create_task: async (task) => {
         console.log("Create task function start")
@@ -223,12 +225,10 @@ const TaskController = {
         return newTask; // Success
     },
     /*
-        Updates a target task in database
-        @params:
-            - task: An object containing task items to update
-            - id: A mongoDB id associated to a task document in the database
-        @returns:
-            An array of error messages if there are errors, or undefined if the provided task is valid
+    @desc:    Updates a specified task within the database. If the task date has been updated, requests for the reminder to be updated as well.
+    @params:  task: The updated task object
+              id: The id of the task to be updated
+    @returns: The updated document if the operation is successful, or an array of errors otherwise.
     */
     update_task: async (task, id) => {
         console.log("Update task function start")
@@ -251,13 +251,33 @@ const TaskController = {
         return newTask;
     },
 
+    /*
+    @desc:     Deletes a target task from the db
+    @params:   id: id of task to delete
+    @returns:  If there are errors, returns an array of errors. If the deletion is successful, returns the deleted task
+    */
     delete_task: async (id) => {
         console.log("Delete task function start")
-        const task = await Task.findByIdAndDelete(id);
+
+        const errors = [];
+
+        const task = await Task.findById(id);
+
+        if(!task) errors.push({message: "Task not found"});
+        if(task.owner !== req.user.id) errors.push({message: "Unauthorized"})
+
+        await Task.findByIdAndDelete(id);
+
         console.log("Delete task function end")
         return task;
     },
 
+    /*
+    @desc:    Creates a task object from request information and formats date/time information into proper JS date objects
+    @params:  requestBody: Incoming request body data
+              requestUser: User object tied to request
+    @returns: Formatted task object
+    */
     format_task_request_form: (requestBody, requestUser) => {
         console.log("Format task function start")
         // Format request information into valid task object as shown in Task model (just make them have same datatype)
@@ -304,6 +324,12 @@ const TaskController = {
         console.log("Format task function end")
         return task;
     },
+
+    /*
+    @desc:    Validates a formatted task object, ensuring each field meets certain requirments
+    @params:  task: Formatted task object
+    @returns: An array containing any errors found during validation. This array is empty if the task passes all checks
+    */
     validate_task: (task) => {
         console.log("Validate task function start")
         const errors = [];
@@ -311,11 +337,11 @@ const TaskController = {
         today.setDate(today.getDate() -1 );
         // Check name
         // Verify name is at most 50 characters
-        if(task.name && task.name.length > 50) errors.push({msg: "Name can't be more than 50 characters long."});
+        if(task.name && task.name.length > 50) errors.push({message: "Name can not exceed 50 characters."});
     
         // Check description
         // Verify description is at most 250 characters
-        if(task.description && task.description.length > 250) errors.push({msg: "Description can't be more than 250 characters long."});
+        if(task.description && task.description.length > 250) errors.push({message: "Description can not exceed 250 characters."});
     
         // Check date
         // Verify date is on or after today
@@ -323,14 +349,14 @@ const TaskController = {
         if( task.date && ( task.date.getFullYear() < today.getFullYear() || // Year is before current year
         (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() < today.getMonth()) || // Year is current year, but month is before current month
         (task.date.getFullYear() == today.getFullYear() && task.date.getMonth() == today.getMonth() && task.date.getDate() < today.getDate()) ) ) { // Year is current year, month is current month, date is before current date
-            errors.push({msg: "Date must be on or after the current date."});
+            errors.push({message: "Date must be on or after the current date."});
         }
         // Check startTime
         // Check endTime
         // Verify startTime is before endTime
         if( (task.startTime && task.endTime) && (task.startTime.getHours() > task.endTime.getHours() ||
         (task.startTime.getHours() == task.endTime.getHours() && task.startTime.getMinutes() > task.endTime.getMinutes() ) ) ) {
-            errors.push({msg: "Start time must be before end time."});
+            errors.push({message: "Start time must be before end time."});
         }
     
         console.log("Validate task function end")

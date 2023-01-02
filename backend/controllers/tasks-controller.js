@@ -38,7 +38,10 @@ const TaskController = {
             task = await TaskController.create_task(task);
 
             // Respond with created task
-            return res.status(201).json({task});
+            return res.status(201).json({
+                task,
+                message: "Task created successfully"
+            });
 
         }
         catch(e) {
@@ -57,8 +60,15 @@ const TaskController = {
             // Get tasks from db whose owner field is the same as the requesting user id
             const tasks = await Task.find({owner: req.user.id});
 
+            if(!tasks || !tasks.length) {
+                return res.status(404).json({errors: [{message: "Tasks not found"}]});
+            }
+
             // Send a response with tasks
-            return res.status(200).json({tasks});
+            return res.status(200).json({
+                tasks,
+                message: "Tasks fetched successfully"
+            });
         }
         catch(e) {
             console.log("Get user task function error");
@@ -94,7 +104,10 @@ const TaskController = {
             task = await TaskController.update_task(task, id);
 
             // Respond with updated task
-            return res.status(200).json({task});
+            return res.status(200).json({
+                task,
+                message: "Task successfully updated"
+            });
         }
         catch(e) {
             console.error(e);
@@ -112,7 +125,15 @@ const TaskController = {
 
         try{
             const task = await Task.findByIdAndUpdate(id, {completed: true}, {new: true});
-            return res.status(200).json({task});
+
+            if(!task) {
+                return res.status(400).json({errors: [{message: "Task with that id not found"}]});
+            }
+
+            return res.status(200).json({
+                task,
+                message: "Task successfully marked as complete",
+            });
         }
         catch(e) {
             console.error(e);
@@ -130,7 +151,15 @@ const TaskController = {
 
         try{
             const task = await Task.findByIdAndUpdate(id, {completed: false}, {new: true});
-            return res.status(200).json({task});
+
+            if(!task) {
+                return res.status(400).json({errors: [{message: "Task with that id not found"}]});
+            }
+
+            return res.status(200).json({
+                task,
+                message: "Task successfully marked as incomplete",
+            });
         }
         catch(e) {
             console.error(e);
@@ -149,7 +178,10 @@ const TaskController = {
         try {
 
             const task = await TaskController.delete_task(id);
-            return res.status(200).json({task});
+            return res.status(200).json({
+                task,
+                message: "Task successfully deleted",
+            });
         }
         catch(e) {
             console.error(e);

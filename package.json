@@ -22,6 +22,7 @@
   "homepage": "https://github.com/TylerP99/life-manager#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "concurrently": "^7.6.0",
     "connect-mongo": "^4.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
@@ -39,5 +40,8 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }

@@ -48,7 +48,7 @@ module.exports = {
                 console.log("Errors");
                 console.log(errors);
                 req.flash("errors", errors);
-                return res.redirect("/users/signup");
+                return res.status(400).json(errors);
             }
 
             // Normalize the email according to validator specs
@@ -60,6 +60,7 @@ module.exports = {
             // Log user in with passport, redirect to dashboard
             req.logIn(newUser,(err) => {
                 if(err) return next(err);
+                return res.status(201).json({msg:"Success"});
                 res.redirect("/dashboard");
             });
             // Send user to verify email page
@@ -89,6 +90,7 @@ module.exports = {
 
         if(errors.length) {
             req.flash("errors", errors);
+            return res.status(400).json(errors);
             return res.redirect("/users/signin");
         }
 
@@ -99,11 +101,13 @@ module.exports = {
             if(err) return next(err);
             if(!user) {
                 req.flash("errors", [info]);
+                return res.status(401).json(info);
                 return res.redirect("/users/signin");
             }
             req.logIn(user, (err) => {
                 if(err) return next(err);
                 req.flash("success", { msg: "You have been logged in!" });
+                return res.status(200).json({msg:"Success"});
                 return res.redirect(req.session.returnTo || "/dashboard");
             });
         })(req,res,next);

@@ -1,12 +1,11 @@
+import axios from 'axios';
 import { useState } from 'react';
 
 function Signin() {
 
   const [formState, setFormState] = useState({
-    username: "",
     email: "",
     password: "",
-    password2: "",
   });
 
   const handleInputChange = (e) => {
@@ -16,10 +15,16 @@ function Signin() {
     });
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    alert(`${formState.username}\n${formState.email}\n${formState.password}\n${formState.password2}`)
+    try{
+      const data = await axios.post("http://localhost:3001/users/authenticate", formState);
+      console.log(data);
+    }
+    catch(e) {
+      console.error(e);
+    }
   }
 
   return (

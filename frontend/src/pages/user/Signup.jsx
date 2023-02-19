@@ -17,15 +17,25 @@ function Signup() {
     });
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // TODO: Validate fields
+    try{
+      const data = await axios.post(
+        "http://localhost:3001/users/create",
+        {
+          ...formState,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        }
+      );
 
-    const data = axios.post(
-      "/users/create",
-      formState
-    );
+    console.log(data);
+    }
+    catch(e) {
+      console.error(e);
+      console.log(e.response.data);
+    }
   }
 
   return (
